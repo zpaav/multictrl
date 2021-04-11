@@ -1,0 +1,6 @@
+<?xml version="1.1" ?>
+<settings>
+    <global>
+        <send_all_delay>0.5</send_all_delay>
+    </global>
+</settings>

@@ -25,6 +25,7 @@ default = {
 	autows=false,
 	rangedmode=false,
 	send_all_delay = 0.83,
+	antisleep=true,
 	
 }
 
@@ -32,7 +33,7 @@ InternalCMDS = S{
 	'on','off','night','wake','foff',
 	'mnt','dis','reload','unload','fin',
 	'lotall','buff',
-	'fight','fightsmall','ws','rng','trib','rads','buyalltemps',
+	'fight','fightsmall','ws','sleep','rng','trib','rads','buyalltemps',
 	'warp','omen','domain','wsall','ambu','cc'}
 
 DelayCMDS = S{'trib','rads','buyalltemps'}
@@ -172,6 +173,7 @@ function init_box_pos()
 	if buy_help then buy_help:destroy() end
 	if ws_help then ws_help:destroy() end
 	if rng_help then rng_help:destroy() end
+	if sleep_help then sleep_help:destroy() end
 
 	local settings = windower.get_windower_settings()
 	local x,y
@@ -179,6 +181,7 @@ function init_box_pos()
 	local bx,by
 	local wx,wy
 	local rx,ry
+	local slx,sly
 	
 	--if settings["ui_x_res"] == 1920 and settings["ui_y_res"] == 1080 then
 		--x,y = settings["ui_x_res"]-1917, settings["ui_y_res"]-18 -- -285, -18
@@ -192,6 +195,8 @@ function init_box_pos()
 	wx,wy = settings["ui_x_res"]-510, 45
 	
 	rx,ry = settings["ui_x_res"]-510, 65
+	
+	slx,sly = settings["ui_x_res"]-510, 25
 
 	local font = displayfont or 'Arial'
 	local size = displaysize or 11
@@ -240,6 +245,16 @@ function init_box_pos()
     ws_help:stroke_width(strokewidth)
     ws_help:stroke_transparency(stroketransparancy)
 	
+	sleep_help = texts.new()
+	sleep_help:pos(slx,sly)
+    sleep_help:font(font)--Arial
+    sleep_help:size(size)
+    sleep_help:bold(bold)
+    sleep_help:bg_alpha(bg)--128
+    sleep_help:right_justified(false)
+    sleep_help:stroke_width(strokewidth)
+    sleep_help:stroke_transparency(stroketransparancy)
+	
 	rng_help = texts.new()
 	rng_help:pos(rx,ry)
     rng_help:font(font)--Arial
@@ -256,6 +271,7 @@ function init_box_pos()
 	buy_help:pos(bx,by)
 	ws_help:pos(wx,wy)
 	rng_help:pos(rx,ry)
+	sleep_help:pos(slx,sly)
 	
 	display_box()
 	--burn_status:show()
@@ -282,6 +298,9 @@ display_box = function()
 	ws_help:clear()
 	ws_help:append(' ')
 	
+	sleep_help:clear()
+	sleep_help:append(' ')
+	
 	rng_help:clear()
 	rng_help:append(' ')
 	
@@ -300,6 +319,12 @@ display_box = function()
 		ws_help:append(string.format("%sWS/BUFF: %sON", clr.w, clr.r))
 	else
 		ws_help:clear()
+	end
+	
+	if settings.antisleep then
+		sleep_help:append(string.format("%sAnti-Sleep: %sON", clr.w, clr.r))
+	else
+		sleep_help:clear()
 	end
 	
 	if settings.rangedmode then
@@ -358,6 +383,7 @@ display_box = function()
 	smn_help:show()
 	buy_help:show()
 	ws_help:show()
+	sleep_help:show()
 	rng_help:show()
 	burn_status:show()
 end
@@ -495,7 +521,11 @@ function on()
 	-- SCH sub toggles
 	if player_job.sub_job == "SCH" then
 		if player_job.main_job ~= "RDM" then
-			windower.send_command('gs c set autosubmode on')
+			if settings.antisleep == true then
+				windower.send_command('gs c set autosubmode sleep')
+			elseif settings.antisleep == false then
+				windower.send_command('gs c set autosubmode on')
+			end
 		end
 	end
 	
@@ -533,6 +563,8 @@ function off()
 		windower.send_command('gs c set rnghelper off')
 	elseif player_job.main_job == "RDM" then
 		windower.send_command('gs c set autoarts off')
+	elseif player_job.main_job == "WHM" then
+		windower.send_command('gs c set autosubmode off')
 	end
 	windower.send_command('hb off')
 	windower.send_command('roller off')
@@ -616,6 +648,18 @@ function ws(cmd2)
 	end
 	display_box()
 end
+
+function sleep(cmd2)
+	if cmd2 == 'off' then
+		log('AntiSleep DISABLED')
+		settings.antisleep = false
+	elseif cmd2 == 'on' then
+		log('AntiSleep ACTIVE')
+		settings.antisleep = true
+	end
+	display_box()
+end
+
 
 function rng(cmd2)
 	if cmd2 == 'off' then

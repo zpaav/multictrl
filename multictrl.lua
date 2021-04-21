@@ -464,16 +464,16 @@ function cc()
 	if SleepJobs:contains(player_job.main_job) then
 		
 			if player_job.main_job == "BRD" then
-				windower.send_command('input /ma \'Horde Lullaby II\' <bt>')
+				windower.send_command('input /ma \'Horde Lullaby II\' <t>')
 			elseif player_job.main_job == "BLM" then
-				windower.send_command('input /ma \'Sleepga II\' <bt>')
+				windower.send_command('input /ma \'Sleepga II\' <t>')
 			elseif player_job.main_job == "RDM" then
 				if player_job.sub_job == "BLM" then
-					windower.send_command('input /ma \'Sleepga\' <bt>')
+					windower.send_command('input /ma \'Sleepga\' <t>')
 				end
 			elseif player_job.main_job == "GEO" then
 				if player_job.sub_job == "BLM" then
-					windower.send_command('input /ma \'Sleepga\' <bt>')
+					windower.send_command('input /ma \'Sleepga\' <t>')
 				end
 			end
 		
@@ -1712,9 +1712,9 @@ function done()
 
 	local ror = windower.ffxi.get_mob_by_name('Rune of Release').id
 	--local book = 'Ilrusi Ledger'
-	local book = 'Leujaoam Log'
+	--local book = 'Leujaoam Log'
 	--local book = 'Mamool Ja Journal'
-	--local book = 'Lebros Chronicle'
+	local book = 'Lebros Chronicle'
 	--local book = 'Periqia Diary'
 		windower.send_command('settarget ' .. ror)
 		coroutine.sleep(1)
@@ -1728,6 +1728,8 @@ function done()
 end
 
 function ein(cmd2)
+	local zone = windower.ffxi.get_info()['zone']
+	if zone == 78 then
 	
 	if (cmd2 == 'enter') then
 		--windower.send_command('settarget 17097342')
@@ -1760,6 +1762,10 @@ function ein(cmd2)
 	else
 		log('No sub command specified')
 	end
+	else
+		windower.add_to_chat(123,"Not in proper zone, skipping")
+	end
+	
 end
 
 -- Beta functions

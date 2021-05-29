@@ -26,7 +26,13 @@ default = {
 	rangedmode=false,
 	send_all_delay = 0.83,
 	antisleep=true,
-	
+}
+
+jobnames = {
+	[0] = {job="WHM",name=""},
+    [1] = {job="RDM",name=""},
+	[2] = {job="BRD",name=""},
+
 }
 
 InternalCMDS = S{
@@ -34,9 +40,9 @@ InternalCMDS = S{
 	'mnt','dis','reload','unload','fin',
 	'lotall','buff',
 	'fight','fightsmall','ws','sleep','rng','trib','rads','buyalltemps',
-	'warp','omen','domain','wsall','ambu','cc'}
+	'warp','omen','domain','wsall','cc','getjobs'}
 
-DelayCMDS = S{'trib','rads','buyalltemps'}
+DelayCMDS = S{'trib','rads','buyalltemps','getjobs'}
 	
 isCasting = false
 ipcflag = false
@@ -104,8 +110,8 @@ windower.register_event('addon command', function(input, ...)
 				haste()
 			elseif cmd == 'proc' then
 				proc(cmd2)
-			elseif cmd == 'corws' then
-				corws(cmd2)
+			elseif cmd == 'wstype' then
+				wstype(cmd2)
 
 	elseif cmd == '30' then
 		cmd2 = '30'
@@ -129,6 +135,8 @@ windower.register_event('addon command', function(input, ...)
 		geoburn()
 	elseif cmd == 'smnhelp' then
 		smnhelp(cmd2)
+	elseif cmd == 'ambu' then
+		ambu(cmd2)
 	elseif cmd == 'send' then
 		send(term)
 	elseif cmd == 'gettarget' then
@@ -138,6 +146,8 @@ windower.register_event('addon command', function(input, ...)
 	end
 
 end)
+
+
 
 
 function send_int_cmd(cmd,cmd2)
@@ -390,68 +400,114 @@ end
 
 -- Sub functions
 
+function getjobs()
+	local j = windower.ffxi.get_player().main_job 
+	j = j:upper()
+	settings[j] = windower.ffxi.get_player().name
+	settings:save()
+
+end
+
 function ambu(cmd2)
 	local player_job = windower.ffxi.get_player()
+	local MeleeJobs = S{'WAR','SAM','DRG','DRK','NIN','MNK','COR','BLU','PUP','DNC','RUN','BRD','THF','RNG'}
 
+	
+	settings = settings.load('data/settings.xml')
 
 	if cmd2 == 'start' then
+		if player_job.sub_job == 'NIN' then
+			windower.send_command('gs c set AutoShadowMode on; send @all /autotarget off')
+		end
+		
 		if player_job.main_job == 'BRD' then
-			windower.send_command('sing pl melee; hb as attack; gs c set weapons DualAeneas')
+			log('here it is')
+			log(settings.job_rdm)
+			windower.send_command('sing pl ambu; gs c set weapons DualSavage; gs c autows Savage Blade; sing int 2 ' .. settings.rdm .. ';'.. ' sing debuff wind threnody ii; gaze ap on')
 		elseif player_job.main_job == 'COR' then
-			windower.send_command('roll melee; gs c set HybridMode HybridDT; gs c set weapons DualSavage; gaze ap on')
-		elseif player_job.main_job == 'RNG' then
-			--windower.send_command('lua u gazecheck')
-		elseif player_job.main_job == 'RUN' then
-			windower.send_command('lua r autows; autows use dimidiation; autows on; gs c set RuneElement tenebrae; gs c set autobuffmode auto; gs c set HybridMode DTLite;')
-		elseif player_job.main_job == 'GEO' then
-			windower.send_command('lua r react; gs c autoentrust barrier; hb disable na; hb disable cure; hb disable curaga')
-		elseif player_job.main_job == 'RDM' then
-			windower.send_command('dambu; mc haste; gs c set CastingMode Resistant')
-		elseif player_job.main_job == 'WHM' then
-			--windower.send_command('hb buff <me> barwatera; gs c set HybridMode MEVA')
+			windower.send_command('roll melee; gs c set HybridMode HybridMEVA; gs c set weapons DualSavage; gaze ap on; roll roll1 warlock;')
+		elseif player_job.main_job == 'NIN' then
+			windower.send_command('gs c set AutoShadowMode on; gs c set HybridMode HybridMEVA; gs c set weapons Naegling; gs c autows Savage Blade; gaze ap on')
+		elseif player_job.main_job == 'WAR' then
+			windower.send_command('gs c set AutoShadowMode on; gs c set HybridMode HybridMEVA; gs c set weapons Naegling; gaze ap on')
 		elseif player_job.main_job == 'SAM' or player_job.main_job == 'DRK' then
-			windower.send_command('gs c set HybridMode HybridDT; gaze ap on')
-		end
-	elseif cmd2 == 'mid' then
-		if player_job.main_job == 'GEO' then
-			windower.send_command('gs c autoindi fury; gs c autoentrust attunement;')
+			windower.send_command('gs c set HybridMode HybridMEVA; gaze ap on')
 		elseif player_job.main_job == 'RUN' then
-			windower.send_command('gs c set RuneElement lux;')
-		end
-	elseif cmd2 == 'boss' then
-
-		if player_job.main_job == 'RNG' then
-			--windower.send_command('input /ja "berserk" <me>; wait 1; input /ja "aggressor" <me>; wait 1; input /ja "sharpshot" <me>; wait 1; input /ja "barrage" <me>; wait 1; input /ja "double shot" <me>')
-		elseif player_job.main_job == 'SAM' or player_job.main_job == 'DRG' or player_job.main_job == 'DRK' then
-			windower.send_command('gs c set autojumpmode on; gaze ap off')
-		elseif player_job.main_job == 'COR' then
-			windower.send_command('gaze ap off')
+		elseif player_job.main_job == 'PLD' then
+			windower.send_command('gs c set AutoShadowMode on; gs c autows Savage Blade; gs c set weapons Aegis gaze ap on')
 		elseif player_job.main_job == 'GEO' then
-			windower.send_command('gs c autoindi fury; gs c autoentrust attunement;')
-		elseif player_job.main_job == 'RUN' then
-			windower.send_command('gs c set RuneElement lux; gs c set HybridMode DTLite;')
+			windower.send_command('gs c autoindi fury; gs c autogeo fend; hb as off')
+		elseif player_job.main_job == 'RDM' then
+			windower.send_command('mc haste; hb f off; hb as off; hb disable cure; gaze ap off')
+		elseif player_job.main_job == 'WHM' then
+			windower.send_command('hb f dist 19; hb as off')
 		end
+		
+		if ipcflag == false then
+			ipcflag = true
+			windower.send_ipc_message('ambu start')
+		end
+		ipcflag = false
+	elseif cmd2 == 'ody' then
+		if player_job.main_job == 'WHM' then
+			windower.send_command('hb buff ' .. settings.run .. ' haste; hb buff ' .. settings.sam .. ' haste; hb buff ' .. settings.run .. ' regen4')
+		elseif player_job.main_job == 'RUN' then
+			windower.send_command('send @others gaze ap on; send @all /autotarget on;')
+		elseif player_job.main_job == 'BRD' then
+			windower.send_command('sing pl melee; hb buff ' .. settings.drk .. ' haste; hb buff ' .. settings.cor .. ' haste;')
+		elseif player_job.main_job == 'COR' then
+			windower.send_command('roll melee')
+		end
+		
+		if ipcflag == false then
+			ipcflag = true
+			windower.send_ipc_message('ambu ody')
+		end
+		ipcflag = false
+
+	else
+		log('nothing specified')
 	end
+	
+
 end
 
 
 function wsall()
 	local player_job = windower.ffxi.get_player()
-	local MeleeJobs = S{'WAR','SAM','DRG','DRK','NIN','MNK','COR','BLU','PUP','DNC','RUN','BRD','THF'}
+	local MeleeJobs = S{'WAR','SAM','DRG','DRK','NIN','MNK','COR','BLU','PUP','DNC','RUN','BRD','THF','RNG','PLD'}
 	if MeleeJobs:contains(player_job.main_job) then
 		
 			if player_job.main_job == "SAM" then
 				windower.send_command('input /ws \'Tachi: Fudo\' <t>')
+			elseif player_job.main_job == "MNK" then
+				windower.send_command('input /ws \'Victory Smite\' <t>')
+			elseif player_job.main_job == "NIN" then
+				windower.send_command('input /ws \'Blade: Metsu\' <t>')
 			elseif player_job.main_job == "DRG" then
 				windower.send_command('input /ws \'Stardiver\' <t>')
+			elseif player_job.main_job == "DRK" then
+				windower.send_command('input /ws \'Torcleaver\' <t>')
+			elseif player_job.main_job == "WAR" then
+				windower.send_command('input /ws \'Upheaval\' <t>')
 			elseif player_job.main_job == "COR" then
+				windower.send_command('input /ws \'Savage Blade\' <t>')
+			elseif player_job.main_job == "RNG" then
+				windower.send_command('input /ws \'Last Stand\' <t>')
+			elseif player_job.main_job == "BLU" then
 				windower.send_command('input /ws \'Savage Blade\' <t>')
 			elseif player_job.main_job == "BRD" then
 				windower.send_command('input /ws \'Rudra\'s Storm\' <t>')
 			elseif player_job.main_job == "RUN" then
 				windower.send_command('input /ws \'Dimidiation\' <t>')
+			elseif player_job.main_job == "PLD" then
+				windower.send_command('input /ws \'Savage Blade\' <t>')
 			elseif player_job.main_job == "THF" then
 				windower.send_command('input /ws \'Rudra\'s Storm\' <t>')
+			elseif player_job.main_job == "DNC" then
+				windower.send_command('input /ws \'Rudra\'s Storm\' <t>')
+			elseif player_job.main_job == "PUP" then
+				windower.send_command('input /ws \'Howling Fist\' <t>')
 			end
 		
 	end
@@ -499,7 +555,7 @@ function on()
 		windower.send_command('cancel mobilization')
 	end
 	local player_job = windower.ffxi.get_player()
-	local MeleeJobs = S{'WAR','SAM','DRG','DRK','NIN','MNK','COR','BLU','PUP','DNC','RUN','BRD','THF','RNG'}
+	local MeleeJobs = S{'WAR','SAM','DRG','DRK','NIN','MNK','COR','BLU','PUP','DNC','RUN','BRD','THF','RNG','PLD'}
 	if player_job.main_job == "GEO" then
 		windower.send_command('geo on')
 		windower.send_command('gs c set autobuffmode auto')
@@ -515,7 +571,7 @@ function on()
 		windower.send_command('gs c set autosubmode on')
 	elseif player_job.main_job == "RDM" then
 		windower.send_command('gs c set autoarts on')
-		windower.send_command('/ja composure <me>')
+		windower.send_command('input /ja composure <me>')
 	end
 	
 	-- SCH sub toggles
@@ -536,6 +592,9 @@ function on()
 			--windower.send_command('gs c set autobuffmode auto;')
 			if player_job.main_job == "DRG" then
 				windower.send_command('gs c set autojumpmode on;')
+				windower.send_command('gs c set autobuffmode on;')
+			elseif player_job.main_job == "SAM" or player_job.main_job == "MNK" or player_job.main_job == "DRK" or player_job.main_job == "WAR" or player_job.main_job == "NIN" then
+				windower.send_command('gs c set autobuffmode auto;')
 			end
 		end
 		if settings.rangedmode then
@@ -572,6 +631,7 @@ function off()
 	windower.send_command('gs c set autowsmode off;')
 	windower.send_command('gs c set autobuffmode off;')
 	windower.send_command('gs c set autonukemode off;')
+	windower.send_command('gs c set autotankmode off')
 end
 
 function fon()
@@ -870,7 +930,6 @@ function assist(cmd,namearg)
 			log('Assist & Attack -> ' ..namearg)
 			windower.send_command('hb assist ' .. namearg)
 			windower.send_command('wait 0.5; hb assist attack on')
-			windower.send_command('wait 0.5; hb on')
 		end
 	elseif cmd == 'on' then
 		if ipcflag == false then
@@ -1802,33 +1861,85 @@ function haste()
 		end
 end
 
-function corws(cmd2)
+function wstype(cmd2)
 	local player_job = windower.ffxi.get_player()
-	local WSjobs = S{'COR'}		
+	local WSjobs = S{'COR','DRG','SAM','BLU'}		
 
 	if cmd2 == 'l' then
 		if ipcflag == false then
 			ipcflag = true
-			windower.send_ipc_message('corws l')
+			windower.send_ipc_message('wstype l')
 		end
 		ipcflag = false
 		if WSjobs:contains(player_job.main_job) then
-			log('WS is Leaden Salute')
-			windower.send_command('gs c autows Leaden Salute')
-			windower.send_command('gs c set weapons DualLeaden')
+			if player_job.main_job == 'COR' then
+				log('WS is Leaden Salute')
+				windower.send_command('gs c autows Leaden Salute')
+				windower.send_command('gs c set weapons DualLeaden')
+			end
 		else
 			log('Skipping')
 		end
 	elseif cmd2 == 's' then
 		if ipcflag == false then
 			ipcflag = true
-			windower.send_ipc_message('corws s')
+			windower.send_ipc_message('wstype s')
 		end
 		ipcflag = false
 		if WSjobs:contains(player_job.main_job) then
-			log('WS is Savage')
-			windower.send_command('gs c autows Savage Blade')
-			windower.send_command('gs c set weapons DualSavage')
+			if player_job.main_job == 'COR' then
+				log('WS is Savage')
+				windower.send_command('gs c autows Savage Blade')
+				windower.send_command('gs c set weapons DualSavage')
+			elseif player_job.main_job == 'DRG' then
+				log('WS is Savage')
+				windower.send_command('gs c autows Savage Blade')
+				windower.send_command('gs c set weapons Naegling')
+			elseif player_job.main_job == 'SAM' then
+				log('WS is Fudo')
+				windower.send_command('gs c set weapons Masamune')
+			elseif player_job.main_job == 'BLU' then
+				log('WS is Savage')
+				windower.send_command('gs c set weapons NaegThib')
+				windower.send_command('gs c autows Savage Blade')
+			end
+		else
+			log('Skipping')
+		end
+	elseif cmd2 == 'p' then
+		if ipcflag == false then
+			ipcflag = true
+			windower.send_ipc_message('wstype p')
+		end
+		ipcflag = false
+		if WSjobs:contains(player_job.main_job) then
+			if player_job.main_job == 'COR' then
+				log('WS is Savage')
+				windower.send_command('gs c autows Savage Blade')
+				windower.send_command('gs c set weapons DualSavage')
+			elseif player_job.main_job == 'DRG' then
+				log('WS is Stardiver')
+				windower.send_command('gs c autows Stardiver')
+				windower.send_command('gs c set weapons Trishula')
+			elseif player_job.main_job == 'SAM' then
+				log('WS is Impulse')
+				windower.send_command('gs c set weapons ShiningOne')
+			end
+		else
+			log('Skipping')
+		end
+	elseif cmd2 == 'b' then
+		if ipcflag == false then
+			ipcflag = true
+			windower.send_ipc_message('wstype b')
+		end
+		ipcflag = false
+		if WSjobs:contains(player_job.main_job) then
+			if player_job.main_job == 'BLU' then
+				log('WS is Black Halo')
+				windower.send_command('gs c autows Black Halo')
+				windower.send_command('gs c set weapons MagicWeapons')
+			end
 		else
 			log('Skipping')
 		end
@@ -1896,6 +2007,11 @@ local function get_delay()
     end
 end
 
+
+
+------------
+--IPC Stuff
+------------
 
 windower.register_event('ipc message', function(msg, ...) 
 	local args = msg:split(' ')
@@ -1970,6 +2086,10 @@ windower.register_event('ipc message', function(msg, ...)
 		log('IPC SMNHelp')
 		ipcflag = true
 		smnhelp(cmd2)
+	elseif cmd == 'ambu' then
+		log('IPC AMBU')
+		ipcflag = true
+		ambu(cmd2)
 	elseif cmd == 'buy' then
 		log('IPC Buy')
 		coroutine.sleep(delay)
@@ -2024,11 +2144,11 @@ windower.register_event('ipc message', function(msg, ...)
 		coroutine.sleep(delay)
 		ipcflag = true
 		proc(cmd2)	
-	elseif cmd == 'corws' then
-		log('IPC CORWS')
+	elseif cmd == 'wstype' then
+		log('IPC wstype')
 		coroutine.sleep(delay)
 		ipcflag = true
-		corws(cmd2)	
+		wstype(cmd2)	
 	end
 end)
 

@@ -26,6 +26,8 @@ default = {
 	rangedmode=false,
 	send_all_delay = 0.83,
 	antisleep=true,
+	autofood=false,
+	rngsc=false,
 }
 
 jobnames = {
@@ -39,7 +41,7 @@ InternalCMDS = S{
 	'on','off','night','wake','foff',
 	'mnt','dis','reload','unload','fin',
 	'lotall','buff',
-	'fight','fightsmall','ws','sleep','rng','trib','rads','buyalltemps',
+	'fight','fightmage','fightsmall','ws','food','sleep','rng','trib','rads','buyalltemps',
 	'warp','omen','domain','wsall','cc','getjobs'}
 
 DelayCMDS = S{'trib','rads','buyalltemps','getjobs'}
@@ -121,6 +123,8 @@ windower.register_event('addon command', function(input, ...)
 		fps(cmd2)
 	elseif cmd == 'd2' then
 		d2()
+	elseif cmd == 'buyshields' then
+		buyshields()
 	elseif cmd == 'fon' then
 		fon(cmd2)
 	elseif cmd == 'buy' then
@@ -135,8 +139,10 @@ windower.register_event('addon command', function(input, ...)
 		geoburn()
 	elseif cmd == 'smnhelp' then
 		smnhelp(cmd2)
-	elseif cmd == 'ambu' then
-		ambu(cmd2)
+	elseif cmd == 'rngsc' then
+		rngsc(cmd2)
+	elseif cmd == 'stage' then
+		stage(cmd2)
 	elseif cmd == 'send' then
 		send(term)
 	elseif cmd == 'gettarget' then
@@ -183,7 +189,9 @@ function init_box_pos()
 	if buy_help then buy_help:destroy() end
 	if ws_help then ws_help:destroy() end
 	if rng_help then rng_help:destroy() end
+	if rng_sc then rng_sc:destroy() end
 	if sleep_help then sleep_help:destroy() end
+	if food_help then food_help:destroy() end
 
 	local settings = windower.get_windower_settings()
 	local x,y
@@ -192,6 +200,8 @@ function init_box_pos()
 	local wx,wy
 	local rx,ry
 	local slx,sly
+	local fx,fy
+	local rngx,rngy
 	
 	--if settings["ui_x_res"] == 1920 and settings["ui_y_res"] == 1080 then
 		--x,y = settings["ui_x_res"]-1917, settings["ui_y_res"]-18 -- -285, -18
@@ -207,6 +217,10 @@ function init_box_pos()
 	rx,ry = settings["ui_x_res"]-510, 65
 	
 	slx,sly = settings["ui_x_res"]-510, 25
+	
+	fx,fy = settings["ui_x_res"]-625, 25
+	
+	rngx,rngy = settings["ui_x_res"]-675, 25
 
 	local font = displayfont or 'Arial'
 	local size = displaysize or 11
@@ -265,6 +279,16 @@ function init_box_pos()
     sleep_help:stroke_width(strokewidth)
     sleep_help:stroke_transparency(stroketransparancy)
 	
+	food_help = texts.new()
+	food_help:pos(fx,fy)
+    food_help:font(font)--Arial
+    food_help:size(size)
+    food_help:bold(bold)
+    food_help:bg_alpha(bg)--128
+    food_help:right_justified(false)
+    food_help:stroke_width(strokewidth)
+    food_help:stroke_transparency(stroketransparancy)
+	
 	rng_help = texts.new()
 	rng_help:pos(rx,ry)
     rng_help:font(font)--Arial
@@ -274,14 +298,27 @@ function init_box_pos()
     rng_help:right_justified(false)
     rng_help:stroke_width(strokewidth)
     rng_help:stroke_transparency(stroketransparancy)
+	
+	rng_sc = texts.new()
+	rng_sc:pos(rx,ry)
+    rng_sc:font(font)--Arial
+    rng_sc:size(size)
+    rng_sc:bold(bold)
+    rng_sc:bg_alpha(bg)--128
+    rng_sc:right_justified(false)
+    rng_sc:stroke_width(strokewidth)
+    rng_sc:stroke_transparency(stroketransparancy)
+	
 
 	burn_status:pos(x,y)
 	
+	rng_sc:pos(rngx,rngy)
 	smn_help:pos(sx,sy)
 	buy_help:pos(bx,by)
 	ws_help:pos(wx,wy)
 	rng_help:pos(rx,ry)
 	sleep_help:pos(slx,sly)
+	food_help:pos(fx,fy)
 	
 	display_box()
 	--burn_status:show()
@@ -314,6 +351,12 @@ display_box = function()
 	rng_help:clear()
 	rng_help:append(' ')
 	
+	rng_sc:clear()
+	rng_sc:append(' ')
+	
+	food_help:clear()
+	food_help:append(' ')
+	
 
 	if settings.smnhelp then
 		if settings.smnsc then
@@ -337,10 +380,22 @@ display_box = function()
 		sleep_help:clear()
 	end
 	
+	if settings.autofood then
+		food_help:append(string.format("%sAuto-Food: %sON", clr.w, clr.r))
+	else
+		food_help:clear()
+	end
+	
 	if settings.rangedmode then
 		rng_help:append(string.format("%sRNG: %sON", clr.w, clr.r))
 	else
 		rng_help:clear()
+	end
+	
+	if settings.rngsc then
+		rng_sc:append(string.format("%sRNG SC: %sON", clr.w, clr.r))
+	else
+		rng_sc:clear()
 	end
 
 	if settings.buy then
@@ -394,7 +449,9 @@ display_box = function()
 	buy_help:show()
 	ws_help:show()
 	sleep_help:show()
+	food_help:show()
 	rng_help:show()
+	rng_sc:show()
 	burn_status:show()
 end
 
@@ -408,44 +465,38 @@ function getjobs()
 
 end
 
-function ambu(cmd2)
+function stage(cmd2)
 	local player_job = windower.ffxi.get_player()
 	local MeleeJobs = S{'WAR','SAM','DRG','DRK','NIN','MNK','COR','BLU','PUP','DNC','RUN','BRD','THF','RNG'}
 
 	
 	settings = settings.load('data/settings.xml')
 
-	if cmd2 == 'start' then
-		if player_job.sub_job == 'NIN' then
-			windower.send_command('gs c set AutoShadowMode on; send @all /autotarget off')
-		end
-		
-		if player_job.main_job == 'BRD' then
-			log('here it is')
-			log(settings.job_rdm)
-			windower.send_command('sing pl ambu; gs c set weapons DualSavage; gs c autows Savage Blade; sing int 2 ' .. settings.rdm .. ';'.. ' sing debuff wind threnody ii; gaze ap on')
-		elseif player_job.main_job == 'COR' then
-			windower.send_command('roll melee; gs c set HybridMode HybridMEVA; gs c set weapons DualSavage; gaze ap on; roll roll1 warlock;')
-		elseif player_job.main_job == 'NIN' then
-			windower.send_command('gs c set AutoShadowMode on; gs c set HybridMode HybridMEVA; gs c set weapons Naegling; gs c autows Savage Blade; gaze ap on')
-		elseif player_job.main_job == 'WAR' then
-			windower.send_command('gs c set AutoShadowMode on; gs c set HybridMode HybridMEVA; gs c set weapons Naegling; gaze ap on')
-		elseif player_job.main_job == 'SAM' or player_job.main_job == 'DRK' then
-			windower.send_command('gs c set HybridMode HybridMEVA; gaze ap on')
-		elseif player_job.main_job == 'RUN' then
-		elseif player_job.main_job == 'PLD' then
-			windower.send_command('gs c set AutoShadowMode on; gs c autows Savage Blade; gs c set weapons Aegis gaze ap on')
+	if cmd2 == 'ambustart' then
+		if player_job.main_job == 'SCH' then
+			windower.send_command('lua l maa; gs c set elementalmode water')
 		elseif player_job.main_job == 'GEO' then
-			windower.send_command('gs c autoindi fury; gs c autogeo fend; hb as off')
-		elseif player_job.main_job == 'RDM' then
-			windower.send_command('mc haste; hb f off; hb as off; hb disable cure; gaze ap off')
+			windower.send_command('gs c autoindi acumen; gs c autogeo attunement; gs c autoentrust refresh; lua l maa')
+		elseif player_job.main_job == 'BLM' then
+			windower.send_command('lua l maa')
 		elseif player_job.main_job == 'WHM' then
-			windower.send_command('hb f dist 19; hb as off')
+			windower.send_command('hb buff <me> barfira; mc buffall haste')
+		elseif player_job.main_job == 'RUN' then
+			windower.send_command('gs c set runeelement unda; gs c set autobuffmode auto')
 		end
 		
 		if ipcflag == false then
 			ipcflag = true
-			windower.send_ipc_message('ambu start')
+			windower.send_ipc_message('stage ambustart')
+		end
+		ipcflag = false
+	elseif cmd2 == 'ambusecond' then
+		if player_job.main_job == 'GEO' then
+			windower.send_command('gs c autoindi acumen; gs c autogeo refresh;')
+		end
+		if ipcflag == false then
+			ipcflag = true
+			windower.send_ipc_message('stage ambusecond')
 		end
 		ipcflag = false
 	elseif cmd2 == 'ody' then
@@ -461,7 +512,7 @@ function ambu(cmd2)
 		
 		if ipcflag == false then
 			ipcflag = true
-			windower.send_ipc_message('ambu ody')
+			windower.send_ipc_message('stage ody')
 		end
 		ipcflag = false
 
@@ -587,9 +638,11 @@ function on()
 	
 	-- WS/Buff mode
 	if MeleeJobs:contains(player_job.main_job) then
+		if settings.autofood then
+			windower.send_command('gs c set autofoodmode on;')
+		end
 		if settings.autows then
 			windower.send_command('gs c set autowsmode on;')
-			--windower.send_command('gs c set autobuffmode auto;')
 			if player_job.main_job == "DRG" then
 				windower.send_command('gs c set autojumpmode on;')
 				windower.send_command('gs c set autobuffmode on;')
@@ -720,6 +773,16 @@ function sleep(cmd2)
 	display_box()
 end
 
+function food(cmd2)
+	if cmd2 == 'off' then
+		log('AutoFood DISABLED')
+		settings.autofood = false
+	elseif cmd2 == 'on' then
+		log('Autofood ACTIVE')
+		settings.autofood = true
+	end
+	display_box()
+end
 
 function rng(cmd2)
 	if cmd2 == 'off' then
@@ -839,7 +902,7 @@ function gettarget(term)
 end
 
 function fight()
-	log('Fight distnace.')
+	log('Fight distance.')
 	local player_job = windower.ffxi.get_player()
 	if player_job.main_job == "WHM" then
 		windower.send_command('hb f dist 18;')
@@ -849,6 +912,18 @@ function fight()
 		windower.send_command('hb f dist 19')
 	else
 		windower.send_command('hb f dist 8')
+	end
+end
+
+function fightmage()
+	log('Fight MAGE distance.')
+	local player_job = windower.ffxi.get_player()
+	local mage_jobs = S{"WHM","RDM","GEO","BRD","SMN","BLM","SCH","COR"}
+	
+	if mage_jobs:contains(player_job.main_job) then
+		windower.send_command('hb f dist 19.5;')
+	else
+		windower.send_command('hb f dist 7.5')
 	end
 end
 
@@ -1097,6 +1172,51 @@ function d2()
 	end
 	
 end
+
+
+function buyshields()
+
+	player = windower.ffxi.get_player()
+	get_spells = windower.ffxi.get_spells()
+	
+	log('Starting buying SHIELDS!')
+	
+	for k, v in pairs(windower.ffxi.get_party()) do
+	
+		if type(v) == 'table' then
+			if v.name ~= currentPC.name then
+			
+				coroutine.sleep(2)
+			
+				ptymember = windower.ffxi.get_mob_by_name(v.name)
+				-- check if party member in same zone.
+
+				if v.mob == nil then
+					-- Not in zone.
+					log(v.name .. ' is not in zone, skipping buying shields.')
+					coroutine.sleep(0.5)
+				else
+					-- In zone, do distance check
+					if math.sqrt(ptymember.distance) < 8  and windower.ffxi.get_mob_by_name(v.name).in_party then
+						coroutine.sleep(1.63)
+						windower.send_command('send ' .. v.name .. ' sparks buyall acheron shield')
+						log('Buying shields for: ' .. v.name)
+						coroutine.sleep(45)
+					else
+						log(v.name .. ' is too far to buy shields with sparks, skipping')
+						coroutine.sleep(0.5)
+					end
+				end
+			end
+		end
+	end
+
+	-- Buy shield for self
+	windower.send_command('sparks buyall acheron shield')
+	coroutine.sleep(42)
+	log('DONE!')
+end
+
 
 -- Burn functions SMN/GEO
 
@@ -1522,6 +1642,103 @@ function smnhelp(cmd2)
 	end
 	display_box()
 end	
+
+function rngsc(cmd2)
+	currentPC=windower.ffxi.get_player()
+	
+	local rangedjobs = S{'RNG','COR','RUN'}
+
+	if cmd2 == nil then
+		if settings.rngsc then
+			log('Helper for Ranged SC DISABLED')
+			settings.rngsc = false
+				if ipcflag == false then
+				ipcflag = true
+				windower.send_ipc_message('rngsc')
+			end
+			ipcflag = false
+		else
+			log('Helper for Ranged SC ACTIVE')
+			settings.rngsc = true
+			if ipcflag == false then
+				ipcflag = true
+				windower.send_ipc_message('rngsc')
+			end
+			ipcflag = false
+		end
+	end
+	if settings.rngsc then
+		if rangedjobs:contains(currentPC.main_job) then
+			
+			if cmd2 == 'Wildfire' then
+				if not (currentPC.main_job == 'RUN') then				
+					if ipcflag == false then
+						ipcflag = true
+						windower.add_to_chat(123, 'Starting SC Wildfire')
+						coroutine.sleep(3.8)
+						windower.send_ipc_message('rngsc Wildfire')
+						windower.send_command('wait 1.6; autora start')
+					else
+						windower.add_to_chat(123, 'ENDING SC Wildfire')
+						windower.send_command('input /ws "Wildfire" <t>')
+						coroutine.sleep(3.8)
+						windower.send_command('wait 1.6; autora start')
+					end
+					ipcflag = false
+				end
+			elseif cmd2 == 'Laststand' then
+				if not (currentPC.main_job == 'RUN') then				
+					if ipcflag == false then
+						ipcflag = true
+						windower.add_to_chat(123, 'Starting SC Last Stand')
+						coroutine.sleep(3.8)
+						windower.send_ipc_message('rngsc Laststand')
+						windower.send_command('wait 1.6; autora start')
+					else
+						windower.add_to_chat(123, 'ENDING SC Last Stand')
+						windower.send_command('input /ws "Last Stand" <t>')
+						coroutine.sleep(3.8)
+						windower.send_command('wait 1.6; autora start')
+					end
+					ipcflag = false
+				end
+			elseif cmd2 == 'GroundStrike' then
+				if ipcflag == false then
+					ipcflag = true
+					windower.add_to_chat(123, 'Starting SC Ground Strike')
+					coroutine.sleep(3.8)
+					windower.send_ipc_message('rngsc GroundStrike')
+				else
+					windower.add_to_chat(123, 'ENDING SC Ground Strike')
+					windower.send_command('input /ws "Leaden Salute" <t>')
+					coroutine.sleep(3.8)
+					windower.send_command('wait 1.6; autora start')
+				end
+				ipcflag = false
+			elseif cmd2 == 'shoot' then
+				if not (currentPC.main_job == 'RUN') then				
+					if ipcflag == false then
+						ipcflag = true
+						windower.add_to_chat(123, 'Shooting!')
+						windower.send_ipc_message('rngsc shoot')
+						windower.send_command('autora start')
+					else
+						windower.add_to_chat(123, 'Shooting')
+						windower.send_command('autora start')
+					end
+					ipcflag = false
+				end
+			end
+		else
+			if ipcflag == false then
+				ipcflag = true
+			end
+			ipcflag = false
+		end
+	end
+	display_box()
+end	
+
 
 function geoburn()
 	
@@ -2086,10 +2303,14 @@ windower.register_event('ipc message', function(msg, ...)
 		log('IPC SMNHelp')
 		ipcflag = true
 		smnhelp(cmd2)
-	elseif cmd == 'ambu' then
-		log('IPC AMBU')
+	elseif cmd == 'rngsc' then
+		log('IPC RNGSC')
 		ipcflag = true
-		ambu(cmd2)
+		rngsc(cmd2)
+	elseif cmd == 'stage' then
+		log('IPC STAGE')
+		ipcflag = true
+		stage(cmd2)
 	elseif cmd == 'buy' then
 		log('IPC Buy')
 		coroutine.sleep(delay)

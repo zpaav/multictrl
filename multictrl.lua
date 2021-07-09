@@ -106,6 +106,9 @@ windower.register_event('addon command', function(input, ...)
 			enter()
 		elseif cmd == 'endown' then
 			endown()
+			
+		elseif cmd == 'enup' then
+			enup()
 			elseif cmd == 'buffall' then
 				buffall(cmd2)
 			elseif cmd == 'haste' then
@@ -154,7 +157,27 @@ windower.register_event('addon command', function(input, ...)
 end)
 
 
+-- function zone_change(new_id,old_id)
+	-- default_zone_change(new_id,old_id)
+-- end
 
+
+
+-- function default_zone_change(new_id,old_id)
+	-- tickdelay = os.clock() + 10
+	-- coroutine.sleep(5)
+	-- local zone = windower.ffxi.get_info()['zone']
+	-- local gaol_zones = S{92,147}
+	-- windower.add_to_chat(122,'Current zone: ' .. zone)
+	-- local gaol_auras = {'accuracy down','attack down','defense down','evasion down','magic def. down','magic atk. down','magic evasion down','magic acc. down','str down','int down','vit down','chr down','mnd down','dex down','agi down'}
+	
+	-- if gaol_zones:contains(zone) then
+		-- windower.add_to_chat(122,'In Shaol: Gaol zones, disabling HB debuff removal on auras.')
+		-- for i, debuff_name in ipairs(gaol_auras) do
+			-- windower.send_command('hb ignore_debuff all ' .. debuff_name)
+		-- end
+	-- end
+-- end
 
 function send_int_cmd(cmd,cmd2)
 	-- Single command functions
@@ -1646,7 +1669,7 @@ end
 function rngsc(cmd2)
 	currentPC=windower.ffxi.get_player()
 	
-	local rangedjobs = S{'RNG','COR','RUN'}
+	local rangedjobs = S{'RNG','COR'}
 
 	if cmd2 == nil then
 		if settings.rngsc then
@@ -1706,13 +1729,43 @@ function rngsc(cmd2)
 				if ipcflag == false then
 					ipcflag = true
 					windower.add_to_chat(123, 'Starting SC Ground Strike')
-					coroutine.sleep(3.8)
+					coroutine.sleep(2.7)
 					windower.send_ipc_message('rngsc GroundStrike')
 				else
 					windower.add_to_chat(123, 'ENDING SC Ground Strike')
+					windower.send_command('input /ja "Earth Shot" <t>')
+					coroutine.sleep(1.2)
 					windower.send_command('input /ws "Leaden Salute" <t>')
-					coroutine.sleep(3.8)
+					coroutine.sleep(3.4)
 					windower.send_command('wait 1.6; autora start')
+				end
+				ipcflag = false
+			elseif cmd2 == 'Jishnu' then
+				if ipcflag == false then
+					ipcflag = true
+					windower.add_to_chat(123, 'Starting SC Jishnu 4 step')
+					windower.send_command('wait 3.3; autora start')
+					--coroutine.sleep(5.8)
+					coroutine.sleep(2.1)
+					windower.send_ipc_message('rngsc Jishnu')
+					coroutine.sleep(8.3)
+					coroutine.sleep(3.7)
+					windower.add_to_chat(123, 'Third step Namas Arrow')
+					windower.send_command('input /ws "Namas Arrow" <t>')
+					--coroutine.sleep(1.5)
+					windower.send_command('wait 3.3; autora start')
+				else
+					windower.add_to_chat(123, 'Second step Leaden Salute + Earth shot!')
+					windower.send_command('input /ja "Earth Shot" <t>')
+					coroutine.sleep(3.7)
+					windower.send_command('input /ws "Leaden Salute" <t>')
+					--coroutine.sleep(1.5)
+					windower.send_command('wait 3.3; autora start')
+					coroutine.sleep(14.4)
+					windower.add_to_chat(123, 'Forth step Wildfire')
+					windower.send_command('input /ws "Wildfire" <t>')
+					--coroutine.sleep(1.5)
+					windower.send_command('wait 3.3; autora start')
 				end
 				ipcflag = false
 			elseif cmd2 == 'shoot' then
@@ -1876,10 +1929,10 @@ end
 function enter()
 	if ipcflag == false then
 		ipcflag = true
-		windower.send_command('input /targetnpc; wait 1; input /lockon; wait 2; setkey enter down; wait 0.5; setkey enter up; wait 5; setkey up down; wait 0.5; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
+		windower.send_command('input /targetnpc; wait 1; input /lockon; wait 1; setkey enter down; wait 0.5; setkey enter up; wait 3; setkey up down; wait 0.5; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
 		windower.send_ipc_message('enter')
 	elseif ipcflag == true then
-		windower.send_command('input /targetnpc; wait 1; input /lockon; wait 2; setkey enter down; wait 0.5; setkey enter up; wait 5; setkey up down; wait 0.5; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
+		windower.send_command('input /targetnpc; wait 1; input /lockon; wait 1; setkey enter down; wait 0.5; setkey enter up; wait 3; setkey up down; wait 0.5; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
 	end
 	ipcflag = false
 end
@@ -1891,6 +1944,17 @@ function endown()
 		windower.send_ipc_message('endown')
 	elseif ipcflag == true then
 		windower.send_command('input /targetnpc; wait 1; input /lockon; wait 2; setkey enter down; wait 0.5; setkey enter up; wait 5; setkey down down; wait 0.5; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
+	end
+	ipcflag = false
+end
+
+function enup()
+	if ipcflag == false then
+		ipcflag = true
+		windower.send_command('input /targetnpc; wait 1; input /lockon; wait 2; setkey up down; wait 0.5; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
+		windower.send_ipc_message('enup')
+	elseif ipcflag == true then
+		windower.send_command('input /targetnpc; wait 1; input /lockon; wait 2; setkey up down; wait 0.5; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
 	end
 	ipcflag = false
 end
@@ -2132,8 +2196,8 @@ function wstype(cmd2)
 		if WSjobs:contains(player_job.main_job) then
 			if player_job.main_job == 'COR' then
 				log('WS is Savage')
-				windower.send_command('gs c autows Savage Blade')
-				windower.send_command('gs c set weapons DualSavage')
+				windower.send_command('gs c autows Last Stand')
+				windower.send_command('gs c set weapons DualLastStand')
 			elseif player_job.main_job == 'DRG' then
 				log('WS is Stardiver')
 				windower.send_command('gs c autows Stardiver')
@@ -2177,6 +2241,7 @@ function proc(cmd2)
 			log('Proc casting ON')
 			windower.send_command('gs c set castingmode proc')
 			windower.send_command('gs c set MagicBurstMode off')
+			windower.send_command('gs c set AutoNukeMode off')
 			windower.send_command('lua u maa')
 			if player_job.main_job == "GEO" then
 				windower.send_command('gs c autoindi refresh; gs c autogeo haste')
@@ -2194,9 +2259,28 @@ function proc(cmd2)
 			log('Proc casting OFF')
 			windower.send_command('gs c set castingmode normal')
 			windower.send_command('gs c set MagicBurstMode lock')
+			windower.send_command('gs c set AutoNukeMode off')
 			windower.send_command('lua r maa')
 			if player_job.main_job == "GEO" then
 				windower.send_command('gs c autoindi acumen; gs c autogeo malaise')
+			end
+		else
+			log('Skipping')
+		end
+	elseif cmd2 == 'nuke' then
+		if ipcflag == false then
+			ipcflag = true
+			windower.send_ipc_message('proc nuke - low tier')
+		end
+		ipcflag = false
+		if MageNukeJobs:contains(player_job.main_job) then
+			log('Auto nuke - low tier')
+			windower.send_command('gs c set castingmode normal')
+			windower.send_command('gs c set MagicBurstMode off')
+			windower.send_command('gs c set AutoNukeMode on')
+			windower.send_command('lua u maa')
+			if player_job.main_job == "GEO" then
+				windower.send_command('gs c autoindi refresh; gs c autogeo haste')
 			end
 		else
 			log('Skipping')
@@ -2339,6 +2423,11 @@ windower.register_event('ipc message', function(msg, ...)
 		coroutine.sleep(delay)
 		ipcflag = true
 		endown()
+	elseif cmd == 'enup' then
+		log('IPC UP MENU')
+		coroutine.sleep(delay)
+		ipcflag = true
+		enup()
 	elseif cmd == 'htmb' then
 		log('IPC HTMB')
 		local moredelay = delay + 0.3
@@ -2379,3 +2468,4 @@ function loaded()
 end
 
 windower.register_event('load', loaded)
+--windower.register_event('zone change', zone_change)

@@ -42,7 +42,7 @@ InternalCMDS = S{
 	'mnt','dis','reload','unload','fin',
 	'lotall','buff',
 	'fight','fightmage','fightsmall','ws','food','sleep','rng','trib','rads','buyalltemps',
-	'warp','omen','domain','wsall','cc','getjobs'}
+	'warp','omen','domain','wsall','cc','getjobs','remdrop'}
 
 DelayCMDS = S{'trib','rads','buyalltemps','getjobs'}
 	
@@ -106,9 +106,10 @@ windower.register_event('addon command', function(input, ...)
 			enter()
 		elseif cmd == 'endown' then
 			endown()
-			
 		elseif cmd == 'enup' then
 			enup()
+		elseif cmd == 'esc' then
+			esc()
 			elseif cmd == 'buffall' then
 				buffall(cmd2)
 			elseif cmd == 'haste' then
@@ -1951,10 +1952,21 @@ end
 function enup()
 	if ipcflag == false then
 		ipcflag = true
-		windower.send_command('input /targetnpc; wait 1; input /lockon; wait 2; setkey up down; wait 0.5; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
+		windower.send_command('setkey up down; wait 0.5; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
 		windower.send_ipc_message('enup')
 	elseif ipcflag == true then
-		windower.send_command('input /targetnpc; wait 1; input /lockon; wait 2; setkey up down; wait 0.5; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
+		windower.send_command('setkey up down; wait 0.5; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
+	end
+	ipcflag = false
+end
+
+function esc()
+	if ipcflag == false then
+		ipcflag = true
+		windower.send_command('setkey escape down; wait 0.5; setkey escape up;')
+		windower.send_ipc_message('esc')
+	elseif ipcflag == true then
+		windower.send_command('setkey escape down; wait 0.5; setkey escape up;')
 	end
 	ipcflag = false
 end
@@ -2066,6 +2078,25 @@ function done()
 	end
 	ipcflag = false
 end
+
+function remdrop()
+	local rem_chapters = S{4069,4070,4071,4072,4073}
+
+	-- [4069] = {id=4069,en="Rem's Tale Ch.6",ja="レム物語第六章",enl="copy of Rem's Tale, chapter 6",jal="レム物語第六章",category="General",flags=28756,stack=99,targets=0,type=1},
+    -- [4070] = {id=4070,en="Rem's Tale Ch.7",ja="レム物語第七章",enl="copy of Rem's Tale, chapter 7",jal="レム物語第七章",category="General",flags=28756,stack=99,targets=0,type=1},
+    -- [4071] = {id=4071,en="Rem's Tale Ch.8",ja="レム物語第八章",enl="copy of Rem's Tale, chapter 8",jal="レム物語第八章",category="General",flags=28756,stack=99,targets=0,type=1},
+    -- [4072] = {id=4072,en="Rem's Tale Ch.9",ja="レム物語第九章",enl="copy of Rem's Tale, chapter 9",jal="レム物語第九章",category="General",flags=28756,stack=99,targets=0,type=1},
+    -- [4073] = {id=4073,en="Rem's Tale Ch.10",ja="レム物語終章",enl="copy of Rem's Tale, chapter 10",jal="レム物語終章",category="General",flags=28756,stack=99,targets=0,type=1},
+
+	local items = windower.ffxi.get_items()
+	for index, item in pairs(items.inventory) do
+		if type(item) == 'table' and rem_chapters:contains(item.id) then
+			log('Dropping REM: ' .. item.id)
+			windower.ffxi.drop_item(index, item.count)
+		end
+	end
+end
+
 
 function ein(cmd2)
 	local zone = windower.ffxi.get_info()['zone']
@@ -2428,6 +2459,11 @@ windower.register_event('ipc message', function(msg, ...)
 		coroutine.sleep(delay)
 		ipcflag = true
 		enup()
+	elseif cmd == 'esc' then
+		log('IPC ESC MENU')
+		coroutine.sleep(delay)
+		ipcflag = true
+		esc()
 	elseif cmd == 'htmb' then
 		log('IPC HTMB')
 		local moredelay = delay + 0.3

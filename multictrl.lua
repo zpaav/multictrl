@@ -497,16 +497,17 @@ function stage(cmd2)
 	settings = settings.load('data/settings.xml')
 
 	if cmd2 == 'ambustart' then
-		if player_job.main_job == 'SCH' then
-			windower.send_command('lua l maa; gs c set elementalmode water')
+			windower.send_command('send @all /autotarget off')
+		if player_job.main_job == 'DRK' or player_job.main_job == 'SAM' then
+			windower.send_command('lua r autows; autows on; gs c set hybridmode DT; gaze ap on')
 		elseif player_job.main_job == 'GEO' then
-			windower.send_command('gs c autoindi acumen; gs c autogeo attunement; gs c autoentrust refresh; lua l maa')
-		elseif player_job.main_job == 'BLM' then
-			windower.send_command('lua l maa')
+			windower.send_command('gs c autoindi barrier; gs c autogeo frailty; gs c autoentrust fury; gs c set castingmode HybridDT; gs c set idlemode PDT; hb debuff dia2')
+		elseif player_job.main_job == 'BRD' then
+			windower.send_command('sing pl melee; wait 1; sing n off; sing p on; sing debuff carnage elegy; sing debuffing on; gs c set idlemode DT')
 		elseif player_job.main_job == 'WHM' then
-			windower.send_command('hb buff <me> barfira; mc buffall haste')
+			windower.send_command('hb f dist 19; hb buff <me> barthundra; hb disable erase')
 		elseif player_job.main_job == 'RUN' then
-			windower.send_command('gs c set runeelement unda; gs c set autobuffmode auto')
+			windower.send_command('gs c set runeelement tellus; gs c set autobuffmode auto')
 		end
 		
 		if ipcflag == false then
@@ -524,19 +525,46 @@ function stage(cmd2)
 		end
 		ipcflag = false
 	elseif cmd2 == 'ody' then
+		windower.send_command('send @all lua r gazecheck;')
+		coroutine.sleep(2)
 		if player_job.main_job == 'WHM' then
-			windower.send_command('hb buff ' .. settings.run .. ' haste; hb buff ' .. settings.sam .. ' haste; hb buff ' .. settings.run .. ' regen4')
+			windower.send_command('gaze ap off; hb buff ' .. settings.run .. ' haste; hb buff ' .. settings.sam .. ' haste; hb buff ' .. settings.run .. ' regen4')
 		elseif player_job.main_job == 'RUN' then
-			windower.send_command('send @others gaze ap on; send @all /autotarget on;')
+			windower.send_command('send @all /autotarget on;')
 		elseif player_job.main_job == 'BRD' then
-			windower.send_command('sing pl melee; hb buff ' .. settings.drk .. ' haste; hb buff ' .. settings.cor .. ' haste;')
+			windower.send_command('gaze ap off; sing pl melee; sing n off; sing p on; hb buff ' .. settings.drk .. ' haste; hb buff ' .. settings.cor .. ' haste;')
 		elseif player_job.main_job == 'COR' then
-			windower.send_command('roll melee')
+			windower.send_command('roll melee; gaze ap on;')
+			windower.send_command('gs c set hybridmode HybridDT')
+		elseif player_job.main_job == 'SAM' or player_job.main_job == 'DRK' then
+			windower.send_command('gs c set hybridmode DT; gaze ap on;')
 		end
 		
 		if ipcflag == false then
 			ipcflag = true
 			windower.send_ipc_message('stage ody')
+		end
+		ipcflag = false
+	elseif cmd2 == 'shin' then
+		windower.send_command('send @all lua r gazecheck;')
+		coroutine.sleep(2)
+		if player_job.main_job == 'WHM' then
+			windower.send_command('gaze ap off; hb buff <me> barfira; gs c set castingmode MEVA; gs c set idlemode DT;')
+		elseif player_job.main_job == 'RUN' then
+			windower.send_command('gs c set runeelement lux; gs c set autobuffmode auto; gs c set hybridmode DTLite;')
+		elseif player_job.main_job == 'BRD' then
+			windower.send_command('gaze ap off; sing pl shin; sing n on; sing p on; gs c set idlemode DT;')
+		elseif player_job.main_job == 'THF' then
+			windower.send_command('gs c set hybridmode HybridMEVA; gs c set treasuremode fulltime; gs c set weapons TH;')
+		elseif player_job.main_job == 'SAM' or player_job.main_job == 'DRK' then
+			windower.send_command('gs c set hybridmode DT; gaze ap on;')
+		elseif player_job.main_job == 'SCH' then
+			windower.send_command('gs c set elementalmode light; gs c set castingmode MEVA; gs c set idlemode DT; hb enable cure; hb enable na;')
+		end
+		
+		if ipcflag == false then
+			ipcflag = true
+			windower.send_ipc_message('stage shin')
 		end
 		ipcflag = false
 
@@ -556,7 +584,7 @@ function wsall()
 			if player_job.main_job == "SAM" then
 				windower.send_command('input /ws \'Tachi: Fudo\' <t>')
 			elseif player_job.main_job == "MNK" then
-				windower.send_command('input /ws \'Victory Smite\' <t>')
+				windower.send_command('input /ws \'Howling Fist\' <t>')
 			elseif player_job.main_job == "NIN" then
 				windower.send_command('input /ws \'Blade: Metsu\' <t>')
 			elseif player_job.main_job == "DRG" then
@@ -640,6 +668,7 @@ function on()
 		windower.send_command('gs c set autorunemode on')
 	elseif player_job.main_job == "BRD" then
 		windower.send_command('singer on')
+		windower.send_command('gs c set autobuffmode auto')
 	elseif player_job.main_job == "COR" then
 		windower.send_command('roller on')
 	elseif player_job.main_job == "SCH" then
@@ -647,6 +676,9 @@ function on()
 	elseif player_job.main_job == "RDM" then
 		windower.send_command('gs c set autoarts on')
 		windower.send_command('input /ja composure <me>')
+	elseif player_job.main_job == "DNC" then
+		windower.send_command('gs c set autosambamode on')
+		--windower.send_command('gs c set autobuffmode auto')
 	end
 	
 	-- SCH sub toggles
@@ -709,6 +741,7 @@ function off()
 	windower.send_command('gs c set autobuffmode off;')
 	windower.send_command('gs c set autonukemode off;')
 	windower.send_command('gs c set autotankmode off')
+	windower.send_command('gs c set autosambamode off')
 end
 
 function fon()
@@ -2064,9 +2097,9 @@ function done()
 
 	local ror = windower.ffxi.get_mob_by_name('Rune of Release').id
 	--local book = 'Ilrusi Ledger'
-	--local book = 'Leujaoam Log'
+	local book = 'Leujaoam Log'
 	--local book = 'Mamool Ja Journal'
-	local book = 'Lebros Chronicle'
+	--local book = 'Lebros Chronicle'
 	--local book = 'Periqia Diary'
 		windower.send_command('settarget ' .. ror)
 		coroutine.sleep(1)
@@ -2081,12 +2114,6 @@ end
 
 function remdrop()
 	local rem_chapters = S{4069,4070,4071,4072,4073}
-
-	-- [4069] = {id=4069,en="Rem's Tale Ch.6",ja="レム物語第六章",enl="copy of Rem's Tale, chapter 6",jal="レム物語第六章",category="General",flags=28756,stack=99,targets=0,type=1},
-    -- [4070] = {id=4070,en="Rem's Tale Ch.7",ja="レム物語第七章",enl="copy of Rem's Tale, chapter 7",jal="レム物語第七章",category="General",flags=28756,stack=99,targets=0,type=1},
-    -- [4071] = {id=4071,en="Rem's Tale Ch.8",ja="レム物語第八章",enl="copy of Rem's Tale, chapter 8",jal="レム物語第八章",category="General",flags=28756,stack=99,targets=0,type=1},
-    -- [4072] = {id=4072,en="Rem's Tale Ch.9",ja="レム物語第九章",enl="copy of Rem's Tale, chapter 9",jal="レム物語第九章",category="General",flags=28756,stack=99,targets=0,type=1},
-    -- [4073] = {id=4073,en="Rem's Tale Ch.10",ja="レム物語終章",enl="copy of Rem's Tale, chapter 10",jal="レム物語終章",category="General",flags=28756,stack=99,targets=0,type=1},
 
 	local items = windower.ffxi.get_items()
 	for index, item in pairs(items.inventory) do
@@ -2175,12 +2202,12 @@ end
 
 function wstype(cmd2)
 	local player_job = windower.ffxi.get_player()
-	local WSjobs = S{'COR','DRG','SAM','BLU'}		
+	local WSjobs = S{'COR','DRG','SAM','BLU','DRK'}		
 
-	if cmd2 == 'l' then
+	if cmd2 == 'leaden' then
 		if ipcflag == false then
 			ipcflag = true
-			windower.send_ipc_message('wstype l')
+			windower.send_ipc_message('wstype leaden')
 		end
 		ipcflag = false
 		if WSjobs:contains(player_job.main_job) then
@@ -2188,14 +2215,33 @@ function wstype(cmd2)
 				log('WS is Leaden Salute')
 				windower.send_command('gs c autows Leaden Salute')
 				windower.send_command('gs c set weapons DualLeaden')
+			else
+				log('Not COR, no WS change.')
 			end
 		else
-			log('Skipping')
+			log('Not correct job for WS Change, Skipping')
 		end
-	elseif cmd2 == 's' then
+	elseif cmd2 == 'savage' then
 		if ipcflag == false then
 			ipcflag = true
-			windower.send_ipc_message('wstype s')
+			windower.send_ipc_message('wstype savage')
+		end
+		ipcflag = false
+		if WSjobs:contains(player_job.main_job) then
+			if player_job.main_job == 'COR' then
+				log('WS is Savage Blade')
+				windower.send_command('gs c autows Savage Blade')
+				windower.send_command('gs c set weapons DualSavage')
+			else
+				log('Not COR, no WS change.')
+			end
+		else
+			log('Not correct job for WS Change, Skipping')
+		end
+	elseif cmd2 == 'slash' then
+		if ipcflag == false then
+			ipcflag = true
+			windower.send_ipc_message('wstype slash')
 		end
 		ipcflag = false
 		if WSjobs:contains(player_job.main_job) then
@@ -2210,18 +2256,21 @@ function wstype(cmd2)
 			elseif player_job.main_job == 'SAM' then
 				log('WS is Fudo')
 				windower.send_command('gs c set weapons Masamune')
+			elseif player_job.main_job == 'DRK' then
+				log('WS is Torcleaver')
+				windower.send_command('gs c set weapons Caladbolg')
 			elseif player_job.main_job == 'BLU' then
 				log('WS is Savage')
 				windower.send_command('gs c set weapons NaegThib')
 				windower.send_command('gs c autows Savage Blade')
 			end
 		else
-			log('Skipping')
+			log('Not correct job for WS Change, Skipping')
 		end
-	elseif cmd2 == 'p' then
+	elseif cmd2 == 'pierce' then
 		if ipcflag == false then
 			ipcflag = true
-			windower.send_ipc_message('wstype p')
+			windower.send_ipc_message('wstype pierce')
 		end
 		ipcflag = false
 		if WSjobs:contains(player_job.main_job) then
@@ -2236,14 +2285,21 @@ function wstype(cmd2)
 			elseif player_job.main_job == 'SAM' then
 				log('WS is Impulse')
 				windower.send_command('gs c set weapons ShiningOne')
+			elseif player_job.main_job == 'DRK' then
+				log('WS is Torcleaver')
+				windower.send_command('gs c set weapons Caladbolg')
+				elseif player_job.main_job == 'BLU' then
+					log('WS is ????')
+					windower.send_command('gs c set weapons NaegThib')
+					windower.send_command('gs c autows Savage Blade')
 			end
 		else
-			log('Skipping')
+			log('Not correct job for WS Change, Skipping')
 		end
-	elseif cmd2 == 'b' then
+	elseif cmd2 == 'blunt' then
 		if ipcflag == false then
 			ipcflag = true
-			windower.send_ipc_message('wstype b')
+			windower.send_ipc_message('wstype blunt')
 		end
 		ipcflag = false
 		if WSjobs:contains(player_job.main_job) then
@@ -2251,9 +2307,20 @@ function wstype(cmd2)
 				log('WS is Black Halo')
 				windower.send_command('gs c autows Black Halo')
 				windower.send_command('gs c set weapons MagicWeapons')
+			elseif player_job.main_job == 'SAM' or player_job.main_job == 'DRK' then
+				log('WS is True Strike')
+				windower.send_command('gs c set weapons MaficCudgel')
+			elseif player_job.main_job == 'COR' then
+				log('WS is WildFire')
+				windower.send_command('gs c autows Wildfire')
+				windower.send_command('gs c set weapons DualLeaden')
+				elseif player_job.main_job == 'DRG' then
+					log('WS is Staff???')
+					windower.send_command('gs c autows Stardiver')
+					windower.send_command('gs c set weapons Trishula')
 			end
 		else
-			log('Skipping')
+			log('Not correct job for WS Change, Skipping')
 		end
 	end
 end

@@ -586,14 +586,14 @@ function stage(cmd2)
 			windower.send_command('hb buff <me> barblizzara; hb buff <me> barparalyzra; hb disable na; gs c set castingmode MEVA; gs c set idlemode DT; hb debuff dia2; hb as attack off; gaze ap off')
 			windower.send_command('input /p Haste melee')
 		elseif player_job.main_job == 'WAR' or player_job.main_job == 'DRG' then
-			windower.send_command('gs c set weapons Naegling; gs c set hybridmode DT;')
+			windower.send_command('gs c set weapons Naegling;')
 		elseif player_job.main_job == 'BRD' then
 			windower.send_command('sing pl bumba; sing n on; sing p on; gs c set idlemode DT; gs c set hybridmode DT; gs c set weapons Naegling; gs c autows Savage Blade')
 		elseif player_job.main_job == 'GEO' then
 			windower.send_command('gs c autoindi haste; gs c autogeo fury; gs c autoentrust fend; gs c set castingmode DT; gs c set idlemode DT;')
 		elseif player_job.main_job == 'COR' then
 			windower.send_command('roll roll1 sam; roll roll2 fighter')
-			windower.send_command('gs c set hybridmode DT; gs c set weapons Naegling;')
+			windower.send_command('gs c set weapons Naegling;')
 		end
 		
 		if ipcflag == false then
@@ -653,21 +653,31 @@ function stage(cmd2)
 		end
 		ipcflag = false
 	elseif cmd2 == 'gog' then
-		windower.send_command('gaze ap off')
 		if player_job.main_job == 'RDM' then
-			windower.send_command('mc haste; dsmall; hb buff ' .. settings.run .. ' refresh3;')
-		elseif player_job.main_job == 'MNK' then
-			windower.send_command('gs c set hybridmode MEVA;')
-		elseif player_job.main_job == 'BRD' then
-			windower.send_command('sing pl sv5; sing n off; sing p off; sing debuffing off; gs c set idlemode DT; sing debuff wind threnody 2')
-			windower.send_command('input /p Piano WHM BLU SMN')
+			windower.send_command('gaze ap off; mc haste; dsmall; hb buff ' .. settings.run .. ' refresh3; hb buff ' .. settings.drk .. ' refresh3; reraise me;')
+		elseif player_job.main_job == 'PUP' then
+			windower.send_command('gs c set hybridmode HybridPET; gs c set petmode melee; input /ja "Activate" <me>;')
 		elseif player_job.main_job == 'BLU' then
-			windower.send_command('gs c set hybridmode DT; gs c set weapons magic;')
+			windower.send_command('gs c set weapons magic;')
 		end
 		
 		if ipcflag == false then
 			ipcflag = true
 			windower.send_ipc_message('stage gog')
+		end
+		ipcflag = false
+	elseif cmd2 == 'dae' then
+		if player_job.main_job == 'SCH' then
+			windower.send_command('hb enable cure; hb enable na; reraise me;')
+		elseif player_job.main_job == 'SAM' then
+			windower.send_command('gs c set weapons ShiningOne')
+		elseif player_job.main_job == 'BST' then
+			windower.send_command('gs c set weapons Kaja; gs c set jugmode GenerousArthur; gs c toggle AutoCallPet')
+		end
+		
+		if ipcflag == false then
+			ipcflag = true
+			windower.send_ipc_message('stage dae')
 		end
 		ipcflag = false
 	else
@@ -678,14 +688,36 @@ end
 function jc(cmd2)
 	local player_job = windower.ffxi.get_player()
 
+	-- First from 3rd.
+	if cmd2 == '1' then
+		if player_job.main_job == 'RUN' then
+			windower.send_command('jc main WAR;' )
+		elseif player_job.main_job == 'DNC' then
+			windower.send_command('jc main DRG;' )
+		elseif player_job.main_job == 'RNG' then
+			windower.send_command('jc main COR;' )
+		elseif player_job.main_job == 'SCH' then
+			windower.send_command('jc main BRD')
+		elseif player_job.main_job == 'SAM' then
+			windower.send_command('jc main GEO')
+		elseif player_job.main_job == 'BST' then
+			windower.send_command('jc main whm')
+		end
+		
+		if ipcflag == false then
+			ipcflag = true
+			windower.send_ipc_message('jc 1')
+		end
+		ipcflag = false
+
 	-- 2nd NM fight
-	if cmd2 == '2' then
+	elseif cmd2 == '2' then
 		if player_job.main_job == 'WAR' then
-			windower.send_command('jc main pld;')
+			windower.send_command('jc main pld;' )
 		elseif player_job.main_job == 'DRG' then
-			windower.send_command('jc main blu;')
+			windower.send_command('jc main blu;' )
 		elseif player_job.main_job == 'COR' then
-			windower.send_command('jc main mnk;')
+			windower.send_command('jc main mnk;' )
 		elseif player_job.main_job == 'BRD' then
 			windower.send_command('jc main smn')
 		elseif player_job.main_job == 'GEO' then
@@ -699,13 +731,14 @@ function jc(cmd2)
 			windower.send_ipc_message('jc 2')
 		end
 		ipcflag = false
+	-- 3rd NM fight
 	elseif cmd2 == '3' then
 		if player_job.main_job == 'PLD' then
-			windower.send_command('jc main run;')
+			windower.send_command('jc main run;' )
 		elseif player_job.main_job == 'BLU' then
-			windower.send_command('jc main dnc;')
-		elseif player_job.main_job == 'mnk' then
-			windower.send_command('jc main rng;')
+			windower.send_command('jc main dnc;' )
+		elseif player_job.main_job == 'MNK' then
+			windower.send_command('jc main rng;' )
 		elseif player_job.main_job == 'SMN' then
 			windower.send_command('jc main sch')
 		elseif player_job.main_job == 'PUP' then
@@ -1191,7 +1224,7 @@ function assist(cmd,namearg)
 			windower.send_ipc_message('assist melee ' .. currentPC.name)
 		elseif ipcflag == true then
 			local player_job = windower.ffxi.get_player()
-			local MeleeJobs = S{'WAR','SAM','DRG','DRK','NIN','MNK','COR','BLU','PUP','DNC','RUN','THF','BST','RNG'}		
+			local MeleeJobs = S{'WAR','SAM','DRG','DRK','NIN','MNK','COR','BLU','PUP','DNC','RUN','PLD','THF','BST','RNG'}		
 			if MeleeJobs:contains(player_job.main_job) then
 				log('Assist & Attack -> ' ..namearg)
 				windower.send_command('hb assist ' .. namearg)

@@ -792,66 +792,23 @@ function jc(cmd2)
 
 	-- First from 3rd.
 	if cmd2 == 'ody' then
-		if player_job.main_job == "" ..settings.char1.. "" then
+		if player_job.name == "" ..settings.char1.. "" then
 			windower.send_command('jc RUN/DRK;' )
-		elseif player_job.main_job == "" ..settings.char2.. "" then
+		elseif player_job.name == "" ..settings.char2.. "" then
 			windower.send_command('jc SAM/WAR;' )
-		elseif player_job.main_job == "" ..settings.char3.. "" then
+		elseif player_job.name == "" ..settings.char3.. "" then
 			windower.send_command('jc DRK/SAM' )
-		elseif player_job.main_job == "" ..settings.char4.. "" then
+		elseif player_job.name == "" ..settings.char4.. "" then
 			windower.send_command('jc BRD/RDM')
-		elseif player_job.main_job == "" ..settings.char5.. "" then
+		elseif player_job.name == "" ..settings.char5.. "" then
 			windower.send_command('jc WHM/SCH')
-		elseif player_job.main_job == "" ..settings.char6.. "" then
+		elseif player_job.name == "" ..settings.char6.. "" then
 			windower.send_command('jc COR/NIN')
 		end
 		
 		if ipcflag == false then
 			ipcflag = true
 			windower.send_ipc_message('jc ody')
-		end
-		ipcflag = false
-
-	-- 2nd NM fight
-	elseif cmd2 == '2' then
-		if player_job.main_job == 'WAR' then
-			windower.send_command('jc main pld;' )
-		elseif player_job.main_job == 'DRG' then
-			windower.send_command('jc main blu;' )
-		elseif player_job.main_job == 'COR' then
-			windower.send_command('jc main mnk;' )
-		elseif player_job.main_job == 'BRD' then
-			windower.send_command('jc main smn')
-		elseif player_job.main_job == 'GEO' then
-			windower.send_command('jc main pup')
-		elseif player_job.main_job == 'WHM' then
-			windower.send_command('jc main rdm')
-		end
-		
-		if ipcflag == false then
-			ipcflag = true
-			windower.send_ipc_message('jc 2')
-		end
-		ipcflag = false
-	-- 3rd NM fight
-	elseif cmd2 == '3' then
-		if player_job.main_job == 'PLD' then
-			windower.send_command('jc main run;' )
-		elseif player_job.main_job == 'BLU' then
-			windower.send_command('jc main dnc;' )
-		elseif player_job.main_job == 'MNK' then
-			windower.send_command('jc main rng;' )
-		elseif player_job.main_job == 'SMN' then
-			windower.send_command('jc main sch')
-		elseif player_job.main_job == 'PUP' then
-			windower.send_command('jc main sam')
-		elseif player_job.main_job == 'RDM' then
-			windower.send_command('jc main bst')
-		end
-		
-		if ipcflag == false then
-			ipcflag = true
-			windower.send_ipc_message('jc 3')
 		end
 		ipcflag = false
 	else
@@ -1111,19 +1068,32 @@ function ws(cmd2)
 	if cmd2 == 'off' then
 		atc('WS: AutoWS DISABLED')
 		settings.autows = false
+		windower.send_command('gs c set autowsmode off')
 	elseif cmd2 == 'on' then
 		atc('WS: AutoWS ACTIVE')
 		settings.autows = true
+		windower.send_command('gs c set autowsmode on')
 	end
 	display_box()
 end
 
 function sleep(cmd2)
+	local player_job = windower.ffxi.get_player()
 	if cmd2 == 'off' then
-		atc('WS: AntiSleep DISABLED')
+		if player_job.sub_job == "SCH" then
+			if player_job.main_job ~= "RDM" then
+				windower.send_command('gs c set autosubmode on')
+			end
+		end
+		atc('SLEEP: AntiSleep DISABLED')
 		settings.antisleep = false
 	elseif cmd2 == 'on' then
-		atc('WS: AntiSleep ACTIVE')
+		if player_job.sub_job == "SCH" then
+			if player_job.main_job ~= "RDM" then
+				windower.send_command('gs c set autosubmode sleep')
+			end
+		end
+		atc('SLEEP: AntiSleep ACTIVE')
 		settings.antisleep = true
 	end
 	display_box()

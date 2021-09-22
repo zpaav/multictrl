@@ -26,7 +26,6 @@ default = {
 	rangedmode=false,
 	send_all_delay = 0.83,
 	antisleep=true,
-	--autofood=false,
 	rngsc=false,
 }
 
@@ -573,7 +572,7 @@ function stage(cmd2)
 		elseif player_job.main_job == 'COR' then
 			windower.send_command('hb debuff silence; hb mincure 5; roll roll1 sam; roll roll2 fighters')
 		elseif player_job.main_job == 'RDM' then
-			windower.send_command('hb buff ' .. settings.sam .. ' haste2; hb debuff dia3; hb debuff silence; hb debuff frazzle 3; hb debuff inundation; hb mincure 5')
+			windower.send_command('hb buff ' .. settings.char2 .. ' haste2; hb debuff dia3; hb debuff silence; hb debuff frazzle 3; hb debuff inundation; hb mincure 5')
 		elseif player_job.main_job == 'SMN' then
 			windower.send_command('gs c set avatar caitsith; gs c set autobpmode on; gs c set idlemode DT;')
 		elseif player_job.main_job == 'GEO' then
@@ -598,11 +597,11 @@ function stage(cmd2)
 		windower.send_command('lua r gazecheck')
 		windower.send_command('input /autotarget on')
 		if player_job.main_job == 'WHM' then
-			windower.send_command('wait 1.5; gs c set castingmode DT; gs c set idlemode DT; gaze ap off; hb buff ' .. settings.run .. ' haste; hb buff ' .. settings.sam .. ' haste; hb buff ' .. settings.run .. ' regen4; hb ignore_debuff all poison')
+			windower.send_command('wait 1.5; gs c set castingmode DT; gs c set idlemode DT; gaze ap off; hb buff ' .. settings.char1 .. ' haste; hb buff ' .. settings.char2 .. ' haste; hb buff ' .. settings.char1 .. ' regen4; hb ignore_debuff all poison')
 		elseif player_job.main_job == 'RUN' then
 			windower.send_command('wait 1.5; gaze ap off; gs c set runeelement sulpor;')
 		elseif player_job.main_job == 'BRD' then
-			windower.send_command('wait 1.5; gs c set idlemode DT; gaze ap off; sing pl melee; sing n off; sing p on; hb buff ' .. settings.drk .. ' haste; hb buff ' .. settings.cor .. ' haste;')
+			windower.send_command('wait 1.5; gs c set idlemode DT; gaze ap off; sing pl melee; sing n off; sing p on; hb buff ' .. settings.char3 .. ' haste; hb buff ' .. settings.char6 .. ' haste;')
 		elseif player_job.main_job == 'COR' then
 			windower.send_command('wait 1.5; roll melee; gaze ap on;')
 		elseif player_job.main_job == 'SAM' or player_job.main_job == 'DRK' then
@@ -639,11 +638,11 @@ function stage(cmd2)
 		ipcflag = false
 	elseif cmd2 == 'kalunga' then
 		if player_job.main_job == 'WHM' then
-			windower.send_command('hb buff <me> barfira; gs c set castingmode DT; gs c set idlemode DT; hb debuff dia2; hb buff ' ..settings.run.. ' haste; hb buff ' ..settings.run.. ' shell5; hb buff ' .. settings.sam .. ' haste; hb buff ' .. settings.drk .. ' haste;')
+			windower.send_command('hb buff <me> barfira; gs c set castingmode DT; gs c set idlemode DT; hb debuff dia2; hb buff ' ..settings.char1.. ' haste; hb buff ' ..settings.char1.. ' shell5; hb buff ' .. settings.char2 .. ' haste; hb buff ' .. settings.char3 .. ' haste;')
 		elseif player_job.main_job == 'RUN' then
 			windower.send_command('gs c set runeelement unda; gs c set autobuffmode auto; hb buff <me> barfire')
 		elseif player_job.main_job == 'BRD' then
-			windower.send_command('sing pl kalunga; sing n on; sing p on; gs c set idlemode DT; sing sirvente ' ..settings.run)
+			windower.send_command('sing pl kalunga; sing n on; sing p on; gs c set idlemode DT; sing sirvente ' ..settings.char1)
 		elseif player_job.main_job == 'GEO' then
 			windower.send_command('gs c autoindi barrier; gs c autogeo fury; gs c autoentrust refresh; gs c set castingmode DT; gs c set idlemode DT;')
 		elseif player_job.main_job == 'SAM' then
@@ -756,7 +755,7 @@ function stage(cmd2)
 	elseif cmd2 == 'gog' then
 		windower.send_command('autoitem off')
 		if player_job.main_job == 'RDM' then
-			windower.send_command('gaze ap off; mc haste; dsmall; hb buff ' .. settings.run .. ' refresh3; hb buff ' .. settings.drk .. ' refresh3; hb buff ' .. settings.brd .. ' refresh3;')
+			windower.send_command('gaze ap off; mc haste; dsmall; hb buff ' .. settings.char1 .. ' refresh3; hb buff ' .. settings.char3 .. ' refresh3; hb buff ' .. settings.char4 .. ' refresh3;')
 		elseif player_job.main_job == 'PUP' then
 			windower.send_command('gs c set hybridmode HybridPET; gs c set petmode melee; input /ja "Activate" <me>;')
 		elseif player_job.main_job == 'BLU' then
@@ -792,24 +791,24 @@ function jc(cmd2)
 	local player_job = windower.ffxi.get_player()
 
 	-- First from 3rd.
-	if cmd2 == '1' then
-		if player_job.main_job == 'RUN' then
-			windower.send_command('jc main WAR;' )
-		elseif player_job.main_job == 'DNC' then
-			windower.send_command('jc main DRG;' )
-		elseif player_job.main_job == 'RNG' then
-			windower.send_command('jc main COR;' )
-		elseif player_job.main_job == 'SCH' then
-			windower.send_command('jc main BRD')
-		elseif player_job.main_job == 'SAM' then
-			windower.send_command('jc main GEO')
-		elseif player_job.main_job == 'BST' then
-			windower.send_command('jc main whm')
+	if cmd2 == 'ody' then
+		if player_job.main_job == "" ..settings.char1.. "" then
+			windower.send_command('jc RUN/DRK;' )
+		elseif player_job.main_job == "" ..settings.char2.. "" then
+			windower.send_command('jc SAM/WAR;' )
+		elseif player_job.main_job == "" ..settings.char3.. "" then
+			windower.send_command('jc DRK/SAM' )
+		elseif player_job.main_job == "" ..settings.char4.. "" then
+			windower.send_command('jc BRD/RDM')
+		elseif player_job.main_job == "" ..settings.char5.. "" then
+			windower.send_command('jc WHM/SCH')
+		elseif player_job.main_job == "" ..settings.char6.. "" then
+			windower.send_command('jc COR/NIN')
 		end
 		
 		if ipcflag == false then
 			ipcflag = true
-			windower.send_ipc_message('jc 1')
+			windower.send_ipc_message('jc ody')
 		end
 		ipcflag = false
 

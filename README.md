@@ -4,17 +4,15 @@ Tired of entering commands everytime you want healbot or other addons to start o
 
 Using IPC now, don't require entering any alt's names.
 
-Also included is loading addons/commands for Quetz farming.
-
-Current commands:  Use //multi or //mc
+Current commands:  Use //mc
 
 ================================================================================
 
-ON:  Toggles all addons that are defined under ON function such as healbot/autogeo/roller/singer etc.
+on:  Toggles all addons that are defined under ON function such as healbot/autogeo/roller/singer etc.
 
-OFF:  Toggles all addons to turn off.
+off:  Toggles all addons to turn off.
 
-D2:  Will D2 all members of current party, will rest for MP if low on MP.
+d2:  Will D2 all members of current party, will rest for MP if low on MP.
 
 fon:  Toggles healbot's follow on function, will follow to the current player executing this command.
 
@@ -24,8 +22,11 @@ warp:  Warp all chars using myhome addon.
 
 omen:  Warps all chars to omen crag using myomen addon. (See MyOmen repository)
 
-mount:  Mount all chars using defined mount.
+mnt:  Mount all chars using defined mount.
 
-dismount:  Dismount all chars.
+dis:  Dismount all chars.
 
-refresh:  Reload healbot or more addons if you defined it.
+go:  Send all chars to targetnpc and press enter
+
+enter:  Usual common enter menu to accept/enter things like eg (Library in Adoulin)
+

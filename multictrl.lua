@@ -800,6 +800,23 @@ function stage(cmd2)
 			windower.send_ipc_message('stage alex')
 		end
 		ipcflag = false
+	elseif cmd2 == 'ouryu' then
+		windower.send_command('gaze ap on')
+		if player_job.main_job == 'WHM' then
+			windower.send_command('hb buff <me> barstonra; hb buff <me> barpetra; gs c set castingmode DT; gs c set idlemode DT; hb buff <me> auspice;')
+		elseif player_job.main_job == 'RUN' then
+			windower.send_command('gaze ap off; gs c set runeelement flabra')
+		elseif player_job.main_job == 'BRD' then
+			windower.send_command('sing pl ouryu; hb debuff dia2')
+		elseif player_job.main_job == 'GEO' then
+			windower.send_command('gs c set castingmode DT; gs c set idlemode DT; gs c autoentrust attunement')
+		end
+		
+		if ipcflag == false then
+			ipcflag = true
+			windower.send_ipc_message('stage ouryu')
+		end
+		ipcflag = false
 	elseif cmd2 == 'gog' then
 		windower.send_command('autoitem off')
 		if player_job.main_job == 'RDM' then

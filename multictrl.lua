@@ -75,7 +75,7 @@ jobnames = {
 
 InternalCMDS = S{
 	'on','off','foff',
-	'mnt','dis','reload','unload','fin',
+	'mnt','dis','reload','unload','fin','sch',
 	'lotall','buff','esc','nitro','sv5','cleanstones',
 	'fight','fightmage','fightsmall','ws','food','sleep','rng','trib','rads','buyalltemps',
 	'warp','omen','wsall','cc','getjobs','drop'}
@@ -796,14 +796,12 @@ function stage(cmd2)
 		end
 		ipcflag = false
 	elseif cmd2 == 'alex' then
-		-- WAR/DRG, WHM/SCH, BRD/DNC, THF/WAR, COR/NIN, GEO/RDM
+		-- PLD, WHM/SCH, BRD/NIN, THF/WAR, COR/NIN, GEO/RDM
 		windower.send_command('gaze ap on')
 		if player_job.main_job == 'WHM' then
 			windower.send_command('hb buff <me> barstonra; hb buff <me> barpetra; gs c set castingmode DT; gs c set idlemode DT; hb buff <me> auspice; hb disable na;')
 			windower.send_command('input /p Haste WAR')
 			windower.send_command('gaze ap off')
-		elseif player_job.main_job == 'WAR' then
-			windower.send_command('gs c set weapons Naegling; gs c set hybridmode DT;')
 		elseif player_job.main_job == 'BRD' then
 			windower.send_command('sing pl alex; sing p off; sing debuffing off; gs c set idlemode DT; gs c set hybridmode DT; gs c set weapons DualSavage; gs c autows Savage Blade;')
 		elseif player_job.main_job == 'THF' then
@@ -925,7 +923,7 @@ function wsall()
 			elseif player_job.main_job == "RNG" then
 				windower.send_command('input /ws \'Last Stand\' <t>')
 			elseif player_job.main_job == "BLU" then
-				windower.send_command('input /ws \'Savage Blade\' <t>')
+				windower.send_command('input /ws \'Expaciation\' <t>')
 			elseif player_job.main_job == "BRD" then
 				windower.send_command('input /ws \'Rudra\'s Storm\' <t>')
 			elseif player_job.main_job == "RUN" then
@@ -1017,6 +1015,8 @@ function on()
 		elseif player_job.main_job == "RDM" then
 			windower.send_command('gs c set autoarts on;')
 			windower.send_command('input /ja composure <me>')
+		elseif player_job.main_job == "WHM" then
+			windower.send_command('gs c set autoarts on;')
 		elseif player_job.main_job == "DNC" then
 			windower.send_command('gs c toggle autosambamode')
 			windower.send_command('gs c set autobuffmode auto')
@@ -1086,6 +1086,7 @@ function off()
 	windower.send_command('gs c set autotankmode off')
 	windower.send_command('gs c set autosambamode off')
 	windower.send_command('gs c set autozergmode off')
+	windower.send_command('gs c set autoarts off')
 end
 
 function fon()
@@ -1165,6 +1166,23 @@ function sv5()
 		windower.send_command('sing off; sing pl sv5; gs c set autozergmode on')
 	else
 		atc('Not BRD')
+	end
+end
+
+function sch(cmd2)
+	local player_job = windower.ffxi.get_player()
+	if player_job.main_job == "SCH" then
+		if cmd2 == 'heal' then
+			atc('SCH Stance: Healing')
+			windower.send_command('gs c set autoarts light; hb enable cure; hb enable curaga; hb enable na; wait 2; gs c set autobuffmode Healing')
+		elseif cmd2 == 'nuke' then
+			atc('SCH Stance: Nuking')
+			windower.send_command('gs c set autoarts dark; hb disable cure; hb disable curaga; hb disable na; wait 2; gs c set autobuffmode Nuking')
+		else
+			atc('SCH Stance: No parameter specified')
+		end
+	else
+		atc('SCH Stance: Not SCH')
 	end
 end
 
@@ -1264,7 +1282,7 @@ function buy(cmd2)
 	elseif cmd2 == 'off' then
 		atc('Shutting off BUY function, unloading addons')
 		settings.buy = false
-		windower.send_command('lua u powder; wait 1; lua u sparks; wait 1; lua u sellnpc')
+		windower.send_command('lua u powder; wait 1; lua u sparks; wait 1')
 		if ipcflag == false then
 			ipcflag = true
 			windower.send_ipc_message('buy off')
@@ -1280,7 +1298,7 @@ function buy(cmd2)
 			windower.send_command('sparks buyall acheron shield')		
 		elseif (cmd2 == 'powder' and settings.buy == true) then
 			atc('Buying powders!')
-			windower.send_command('powder buy 3335')
+			windower.send_command('powder buy 3315; wait 10; fa prize powder')
 			if ipcflag == false then
 				ipcflag = true
 				windower.send_ipc_message('buy powder')
@@ -1304,7 +1322,7 @@ function buy(cmd2)
 			
 			windower.send_command('settarget ' .. targetid.id)
 			coroutine.sleep(1)
-			windower.send_command('input /lockon; wait 1; setkey enter down; wait 0.5; setkey enter up;')
+			windower.send_command('input /lockon; wait 1; setkey enter down; wait 0.5; setkey enter up; wait 10; fa prize powder')
 			if ipcflag == false then
 				ipcflag = true
 				windower.send_ipc_message('buy sp')
@@ -1313,7 +1331,7 @@ function buy(cmd2)
 		elseif (cmd2 == 're' and settings.buy == true) then
 			windower.send_command('buy re')
 			
-			windower.send_command('lua r sparks; wait 0.5; lua r powder')
+			windower.send_command('lua r sparks; wait 0.5; lua r powder; wait 10; fa acheron shield')
 
 			if ipcflag == false then
 				ipcflag = true
@@ -2763,6 +2781,45 @@ function wstype(cmd2)
 		else
 			atc('WS-Type: Savage - Skipping')
 		end
+	elseif cmd2 == 'laststand' then
+		if ipcflag == false then
+			ipcflag = true
+			windower.send_ipc_message('wstype laststand')
+		end
+		ipcflag = false
+		if WSjobs:contains(player_job.main_job) then
+			if player_job.main_job == 'COR' then
+				if player_job.sub_job == 'NIN' or player_job.sub_job == 'DNC' then
+					atc('WS-Type: Last Stand')
+					windower.send_command('gs c autows Last Stand')
+					windower.send_command('gs c set weapons DualLastStand')
+				else
+					atc('WS-Type: Last Stand')
+					windower.send_command('gs c autows Last Stand')
+					windower.send_command('gs c set weapons Fomalhaut')
+				end
+			else
+				atc('WS-Type: Last Stand - Not COR, no WS change.')
+			end
+		else
+			atc('WS-Type: Last Stand - Skipping')
+		end	
+	elseif cmd2 == 'mace' then
+		if ipcflag == false then
+			ipcflag = true
+			windower.send_ipc_message('wstype mace')
+		end
+		ipcflag = false
+		if WSjobs:contains(player_job.main_job) then
+			if player_job.main_job == 'DRK' then
+				atc('WS is Judgment')
+				windower.send_command('gs c set weapons Loxotic; gs c autows tp 1692')
+			else
+				atc('WS-Type: DRK Mace - Not DRK, no WS change.')
+			end
+		else
+			atc('WS-Type: DRK Mace - Skipping')
+		end	
 	elseif cmd2 == 'slash' then
 		if ipcflag == false then
 			ipcflag = true

@@ -839,11 +839,17 @@ function stage(cmd2)
 	elseif cmd2 == 'gog' then
 		windower.send_command('autoitem off')
 		if player_job.main_job == 'RDM' then
-			windower.send_command('gaze ap off; mc haste; dsmall; hb buff ' .. settings.char1 .. ' refresh3; hb buff ' .. settings.char3 .. ' refresh3; hb buff ' .. settings.char4 .. ' refresh3;')
+			windower.send_command('gaze ap off; mc haste; dsmall; hb buff ' .. settings.char3 .. ' refresh3; hb buff ' .. settings.char4 .. ' refresh3;')
 		elseif player_job.main_job == 'PUP' then
 			windower.send_command('gs c set hybridmode HybridPET; gs c set petmode melee; input /ja "Activate" <me>;')
 		elseif player_job.main_job == 'BLU' then
-			windower.send_command('gs c set weapons magic;')
+			windower.send_command('azuresets set melee; gs c set weapons magic;')
+		elseif player_job.main_job == 'MNK' then
+			windower.send_command('gs c set hybridmode Tank; gs c set weaponskillmode tank')
+		elseif player_job.main_job == 'THF' then
+			windower.send_command('gs c weapons KajaKnuckles;')
+		elseif player_job.main_job == 'WAR' then
+			windower.send_command('gs c weapons Loxotic;')
 		end
 		
 		if ipcflag == false then
@@ -1020,6 +1026,8 @@ function on()
 		elseif player_job.main_job == "DNC" then
 			windower.send_command('gs c toggle autosambamode')
 			windower.send_command('gs c set autobuffmode auto')
+		elseif player_job.main_job == "PUP" then
+			windower.send_command('gs c set autopuppetmode on')
 		end
 		
 		-- SCH sub toggles
@@ -1076,6 +1084,8 @@ function off()
 		windower.send_command('gs c set autowardmode off; gs c set autobpmode off')
 	elseif player_job.main_job == "SCH" then
 		windower.send_command('gs c set autoapmode off')
+	elseif player_job.main_job == "PUP" then
+		windower.send_command('gs c set autopuppetmode off')
 	end
 	windower.send_command('hb off')
 	windower.send_command('roller off')
@@ -2811,14 +2821,14 @@ function wstype(cmd2)
 		end
 		ipcflag = false
 		if WSjobs:contains(player_job.main_job) then
-			if player_job.main_job == 'DRK' then
+			if player_job.main_job == 'DRK' or  player_job.main_job == 'WAR' then
 				atc('WS is Judgment')
 				windower.send_command('gs c set weapons Loxotic; gs c autows tp 1692')
 			else
-				atc('WS-Type: DRK Mace - Not DRK, no WS change.')
+				atc('WS-Type: WAR/DRK Mace - Not WAR/DRK, no WS change.')
 			end
 		else
-			atc('WS-Type: DRK Mace - Skipping')
+			atc('WS-Type: WAR/DRK Mace - Skipping')
 		end	
 	elseif cmd2 == 'slash' then
 		if ipcflag == false then

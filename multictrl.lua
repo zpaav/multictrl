@@ -538,26 +538,18 @@ function get(cmd2)
 		ipcflag = false
 	elseif cmd2 == 'mog2' and zone == 247 then
 		atc('GET: Moglophone II.')
-		windower.send_command('settarget 17789033; wait 1; input /lockon; wait 1; setkey enter down; wait 0.5; setkey enter up; wait 5; setkey down down; wait 0.1; setkey down up; wait 1; setkey down down; wait 0.1; setkey down up; wait 1; setkey down down; wait 0.1; setkey down up; wait 1; setkey down down; wait 0.1; setkey down up;')
+		windower.send_command('settarget 17789033; wait 1; input /lockon; wait 1; setkey enter down; wait 0.5; setkey enter up; wait 5; setkey down down; wait 0.1; setkey down up; wait 1; setkey down down; wait 0.1; setkey down up; wait 1; setkey down down; wait 0.1; setkey down up; wait 1; setkey down down; wait 0.1; setkey down up; wait 3.5; setkey enter down; wait 0.5; setkey enter up;')
 		if ipcflag == false then
 			ipcflag = true
 			windower.send_ipc_message('get mog2')
 		end
 		ipcflag = false
-	elseif cmd2 == 'mg' then
-		atc('ENTER: Mog Garden')
-		windower.send_command('setkey tab down; wait 0.5; setkey tab up; wait 1; setkey tab down; wait 0.5; setkey tab up; wait 1; setkey enter down; wait 0.5; setkey enter up; wait 1; setkey up down; wait 0.1; setkey up up; wait 1; setkey enter down; wait 0.1; setkey enter up; wait 1; setkey up down; wait 0.1; setkey up up; wait 1; setkey enter down; wait 0.1; setkey enter up;')
+	elseif cmd2 == 'pot' and zone == 291 then
+		atc('ENTER: Potpourri KI')
+		windower.send_command('settarget 17970037; wait 2; input /lockon; wait 1; setkey enter down; wait 0.5; setkey enter up; wait 5; setkey right down; wait 1; setkey right up; wait 2; setkey up down; wait 0.1; setkey up up; wait 2; setkey enter down; wait 0.5; setkey enter up; wait 2; setkey up down; wait 0.1; setkey up up; wait 2; setkey enter down; wait 0.5; setkey enter up;')
 		if ipcflag == false then
 			ipcflag = true
-			windower.send_ipc_message('get mg')
-		end
-		ipcflag = false
-	elseif cmd2 == 'mgexit' then
-		atc('EXIT: Mog Garden')
-		windower.send_command('settarget 17789033; wait 1; input /lockon; setkey tab down; wait 0.5; setkey tab up; wait 1; setkey tab down; wait 0.5; setkey tab up; wait 1; setkey enter down; wait 0.5; setkey enter up; wait 1; setkey up down; wait 0.1; setkey up up; wait 1; setkey enter down; wait 0.1; setkey enter up; wait 1; setkey up down; wait 0.1; setkey up up; wait 1; setkey enter down; wait 0.1; setkey enter up;')
-		if ipcflag == false then
-			ipcflag = true
-			windower.send_ipc_message('get mgexit')
+			windower.send_ipc_message('get pot')
 		end
 		ipcflag = false
 	else
@@ -1086,6 +1078,8 @@ function off()
 		windower.send_command('gs c set autoapmode off')
 	elseif player_job.main_job == "PUP" then
 		windower.send_command('gs c set autopuppetmode off')
+	elseif player_job.main_job == "BST" then
+		windower.send_command('gs c set autocallpet off')
 	end
 	windower.send_command('hb off')
 	windower.send_command('roller off')
@@ -3089,6 +3083,8 @@ windower.register_event('ipc message', function(msg, ...)
 		ipcflag = true
 		stage(cmd2)
 	elseif cmd == 'jc' then
+		local moredelay = delay + 1.8	
+		coroutine.sleep(moredelay)
 		ipcflag = true
 		jc(cmd2)
 	elseif cmd == 'buy' then

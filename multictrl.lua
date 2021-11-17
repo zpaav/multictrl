@@ -27,6 +27,7 @@ default = {
 	send_all_delay = 0.83,
 	antisleep=true,
 	rngsc=false,
+	autoarts='',
 }
 
 areas = {}
@@ -530,7 +531,7 @@ function get(cmd2)
 
 	if cmd2 == 'mog' and zone == 247  then
 		atc('GET: Obtaining Moglophone KI.')
-		windower.send_command('settarget 17789033; wait 1; input /lockon; wait 1; setkey enter down; wait 0.5; setkey enter up; wait 5; setkey enter down; wait 0.5; setkey enter up; wait 2; setkey escape down; wait 0.3; setkey escape up;')
+		windower.send_command('settarget 17789078; wait 1; input /lockon; wait 1; setkey enter down; wait 0.5; setkey enter up; wait 5; setkey enter down; wait 0.5; setkey enter up; wait 2; setkey escape down; wait 0.3; setkey escape up;')
 		if ipcflag == false then
 			ipcflag = true
 			windower.send_ipc_message('get mog')
@@ -538,7 +539,7 @@ function get(cmd2)
 		ipcflag = false
 	elseif cmd2 == 'mog2' and zone == 247 then
 		atc('GET: Moglophone II.')
-		windower.send_command('settarget 17789033; wait 1; input /lockon; wait 1; setkey enter down; wait 0.5; setkey enter up; wait 5; setkey down down; wait 0.1; setkey down up; wait 1; setkey down down; wait 0.1; setkey down up; wait 1; setkey down down; wait 0.1; setkey down up; wait 1; setkey down down; wait 0.1; setkey down up; wait 3.5; setkey enter down; wait 0.5; setkey enter up;')
+		windower.send_command('settarget 17789078; wait 1; input /lockon; wait 1; setkey enter down; wait 0.5; setkey enter up; wait 5; setkey down down; wait 0.1; setkey down up; wait 1; setkey down down; wait 0.1; setkey down up; wait 1; setkey down down; wait 0.1; setkey down up; wait 1; setkey down down; wait 0.1; setkey down up; wait 3.5; setkey enter down; wait 0.5; setkey enter up;')
 		if ipcflag == false then
 			ipcflag = true
 			windower.send_ipc_message('get mog2')
@@ -563,21 +564,20 @@ function stage(cmd2)
 
 	settings = settings.load('data/settings.xml')
 
+	-- Iron giants month - BRD/WHM, GEO/RDM, PLD/RUN, COR/NINx2, RNG/WAR
 	if cmd2 == 'ambu' then
 		atc('Stage : ' .. cmd2)
 		windower.send_command('input /autotarget off')
 		if player_job.main_job == 'BRD' then
-			windower.send_command('sing pl melee; sing n off; sing p on; gaze ap on; gs c set weapons DualCarn')
-		elseif player_job.main_job == 'WHM' then
-			windower.send_command('hb buff <me> auspice; gs c set castingmode DT; gs c set idlemode DT; hb buff ' ..settings.char1.. ' regen 4')
+			windower.send_command('sing pl ambu; sing n on; sing p on; gaze ap off; sing ballad 2 <me>; sing ballad 1 ' ..settings.char1.. '; hb mincure 3; sing sirvente ' ..settings.char1.. ';')
 		elseif player_job.main_job == 'COR' then
-			windower.send_command('roll melee; gaze ap on;')
-		elseif player_job.main_job == 'SAM' or player_job.main_job == 'DRK' then
-			windower.send_command('gaze ap on;')
-		elseif player_job.main_job == 'RUN' then
-			windower.send_command('gs c set runeelement tenebrae; gaze ap off')
+			windower.send_command('gaze ap off; gs c autows Leaden Salute; gs c set weapons DualLeadenRanged')
+		elseif player_job.main_job == 'RNG' then
+			windower.send_command('gaze ap off; gs c autows coronach; gs c set weapons Annihilator')
+		elseif player_job.main_job == 'PLD' then
+			windower.send_command('lua r react; hb buff <me> shell4; gs c set runeelement ignis; hb buff <m3> barblizzard; gaze ap off; gs c set weapons Aegis')
 		elseif player_job.main_job == 'GEO' then
-			windower.send_command('gs c set castingmode DT; gs c set idlemode DT; hb debuff dia2; hb as ' ..settings.char1.. '; hb buff ' ..settings.char1.. ' refresh')
+			windower.send_command('hb mincure 3; gs c autogeo acumen; gs c autoindi fury; gs c autoentrust refresh; hb buff ' ..settings.char1.. ' haste; hb buff ' ..settings.char1.. ' refresh; hb buff ' ..settings.char4.. ' refresh')
 		end
 		
 		if ipcflag == false then
@@ -999,7 +999,17 @@ function on()
 		windower.send_command('hb on')
 		
 		if MageJobs:contains(player_job.main_job) then
-			windower.send_command('gs c set autobuffmode auto')
+			if player_job.main_job == "SCH" then
+				if autoarts == 'Light' then
+					windower.send_command('gs c set autobuffmode Healing')
+				elseif autoarts == 'Dark' then
+					windower.send_command('gs c set autobuffmode Nuking')
+				else
+					windower.send_command('gs c set autobuffmode auto')
+				end
+			else
+				windower.send_command('gs c set autobuffmode auto')
+			end
 		end
 
 		if player_job.main_job == "RUN" then
@@ -1178,9 +1188,11 @@ function sch(cmd2)
 	if player_job.main_job == "SCH" then
 		if cmd2 == 'heal' then
 			atc('SCH Stance: Healing')
+			autoarts='Light'
 			windower.send_command('gs c set autoarts light; hb enable cure; hb enable curaga; hb enable na; wait 2; gs c set autobuffmode Healing')
 		elseif cmd2 == 'nuke' then
 			atc('SCH Stance: Nuking')
+			autoarts='Dark'
 			windower.send_command('gs c set autoarts dark; hb disable cure; hb disable curaga; hb disable na; wait 2; gs c set autobuffmode Nuking')
 		else
 			atc('SCH Stance: No parameter specified')

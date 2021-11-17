@@ -569,13 +569,13 @@ function stage(cmd2)
 		atc('Stage : ' .. cmd2)
 		windower.send_command('input /autotarget off')
 		if player_job.main_job == 'BRD' then
-			windower.send_command('sing pl ambu; sing n on; sing p on; gaze ap off; sing ballad 2 <me>; sing ballad 1 ' ..settings.char1.. '; hb mincure 3; sing sirvente ' ..settings.char1.. ';')
+			windower.send_command('sing pl ambu; sing n on; sing p on; gaze ap off; sing ballad 2 <me>; sing ballad 2 <m3>; sing ballad 2 ' ..settings.char5.. '; hb mincure 3; sing sirvente ' ..settings.char1.. ';')
 		elseif player_job.main_job == 'COR' then
 			windower.send_command('gaze ap off; gs c autows Leaden Salute; gs c set weapons DualLeadenRanged')
 		elseif player_job.main_job == 'RNG' then
 			windower.send_command('gaze ap off; gs c autows coronach; gs c set weapons Annihilator')
 		elseif player_job.main_job == 'PLD' then
-			windower.send_command('lua r react; hb buff <me> shell4; gs c set runeelement ignis; hb buff <m3> barblizzard; gaze ap off; gs c set weapons Aegis')
+			windower.send_command('lua r react; gs c set runeelement ignis; hb buff <me> barblizzard; gaze ap off; gs c set weapons Aegis')
 		elseif player_job.main_job == 'GEO' then
 			windower.send_command('hb mincure 3; gs c autogeo acumen; gs c autoindi fury; gs c autoentrust refresh; hb buff ' ..settings.char1.. ' haste; hb buff ' ..settings.char1.. ' refresh; hb buff ' ..settings.char4.. ' refresh')
 		end
@@ -1043,6 +1043,10 @@ function on()
 			end
 		end
 		
+		if player_job.sub_job == "RUN" then
+			windower.send_command('gs c set autorunemode on')
+		end
+		
 		-- WS/Buff mode
 		if MeleeJobs:contains(player_job.main_job) then
 			if settings.autows then
@@ -1074,6 +1078,10 @@ function off()
 	elseif player_job.main_job == "RUN" then
 		windower.send_command('gs c set autorunemode off')
 		windower.send_command('gs c set autotankmode off')
+	elseif player_job.main_job == "PLD" then
+		windower.send_command('gs c set autorunemode off')
+		windower.send_command('gs c set autotankmode off')
+		windower.send_command('gs c set autotankfull off')
 	elseif player_job.main_job == "DRG" or player_job.sub_job == "DRG" then
 		windower.send_command('gs c set autojumpmode off')
 	elseif player_job.main_job == "RNG" or player_job.main_job == "COR" then

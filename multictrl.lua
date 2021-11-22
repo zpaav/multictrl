@@ -28,6 +28,7 @@ default = {
 	antisleep=true,
 	rngsc=false,
 	autoarts='',
+	npc_dialog=false,
 }
 
 areas = {}
@@ -76,12 +77,12 @@ jobnames = {
 
 InternalCMDS = S{
 	'on','off','foff',
-	'mnt','dis','reload','unload','fin','sch',
-	'lotall','buff','esc','nitro','sv5','cleanstones',
+	'mnt','dis','reload','unload','fin','sch','ent',
+	'lotall','buff','esc','nitro','sv5','cleanstones','brd',
 	'fight','fightmage','fightsmall','ws','food','sleep','rng','trib','rads','buyalltemps',
-	'warp','omen','wsall','cc','getjobs','drop'}
+	'warp','omen','wsall','cc','drop'}
 
-DelayCMDS = S{'trib','rads','buyalltemps','getjobs'}
+DelayCMDS = S{'trib','rads','buyalltemps'}
 	
 isCasting = false
 ipcflag = false
@@ -143,8 +144,6 @@ windower.register_event('addon command', function(input, ...)
 		enter()
 	elseif cmd == 'get' then
 		get(cmd2)
-	elseif cmd == 'sr' then
-		sr(cmd2)
 	elseif cmd == 'endown' then
 		endown()
 	elseif cmd == 'enup' then
@@ -518,46 +517,6 @@ end
 
 -- Sub functions
 
-function getjobs()
-	local j = windower.ffxi.get_player().main_job 
-	j = j:upper()
-	settings[j] = windower.ffxi.get_player().name
-	settings:save()
-
-end
-
-function get(cmd2)
-	local zone = windower.ffxi.get_info()['zone']
-
-	if cmd2 == 'mog' and zone == 247  then
-		atc('GET: Obtaining Moglophone KI.')
-		windower.send_command('settarget 17789078; wait 1; input /lockon; wait 1; setkey enter down; wait 0.5; setkey enter up; wait 5; setkey enter down; wait 0.5; setkey enter up; wait 2; setkey escape down; wait 0.3; setkey escape up;')
-		if ipcflag == false then
-			ipcflag = true
-			windower.send_ipc_message('get mog')
-		end
-		ipcflag = false
-	elseif cmd2 == 'mog2' and zone == 247 then
-		atc('GET: Moglophone II.')
-		windower.send_command('settarget 17789078; wait 1; input /lockon; wait 1; setkey enter down; wait 0.5; setkey enter up; wait 5; setkey down down; wait 0.1; setkey down up; wait 1; setkey down down; wait 0.1; setkey down up; wait 1; setkey down down; wait 0.1; setkey down up; wait 1; setkey down down; wait 0.1; setkey down up; wait 3.5; setkey enter down; wait 0.5; setkey enter up;')
-		if ipcflag == false then
-			ipcflag = true
-			windower.send_ipc_message('get mog2')
-		end
-		ipcflag = false
-	elseif cmd2 == 'pot' and zone == 291 then
-		atc('ENTER: Potpourri KI')
-		windower.send_command('settarget 17970037; wait 2; input /lockon; wait 1; setkey enter down; wait 0.5; setkey enter up; wait 5; setkey right down; wait 1; setkey right up; wait 2; setkey up down; wait 0.1; setkey up up; wait 2; setkey enter down; wait 0.5; setkey enter up; wait 2; setkey up down; wait 0.1; setkey up up; wait 2; setkey enter down; wait 0.5; setkey enter up;')
-		if ipcflag == false then
-			ipcflag = true
-			windower.send_ipc_message('get pot')
-		end
-		ipcflag = false
-	else
-		atc('GET: Incorrect Zone/Command.')
-	end
-end
-
 function stage(cmd2)
 	local player_job = windower.ffxi.get_player()
 	local MeleeJobs = S{'WAR','SAM','DRG','DRK','NIN','MNK','COR','BLU','PUP','DNC','RUN','BRD','THF','RNG'}
@@ -569,7 +528,7 @@ function stage(cmd2)
 		atc('Stage : ' .. cmd2)
 		windower.send_command('input /autotarget off')
 		if player_job.main_job == 'BRD' then
-			windower.send_command('sing pl ambu; sing n on; sing p on; gaze ap off; sing ballad 2 <me>; sing ballad 2 <m3>; sing ballad 2 ' ..settings.char5.. '; hb mincure 3; sing sirvente ' ..settings.char1.. ';')
+			windower.send_command('sing pl ambu; sing n off; sing p on; gaze ap off; sing ballad 2 <me>; sing ballad 2 <m3>; sing ballad 2 ' ..settings.char5.. '; hb mincure 3; sing sirvente ' ..settings.char1.. '; wait 2.5; mc brd reset')
 		elseif player_job.main_job == 'COR' then
 			windower.send_command('gaze ap off; gs c autows Leaden Salute; gs c set weapons DualLeadenRanged')
 		elseif player_job.main_job == 'RNG' then
@@ -1186,6 +1145,27 @@ function sv5()
 	local player_job = windower.ffxi.get_player()
 	if player_job.main_job == "BRD" then
 		windower.send_command('sing off; sing pl sv5; gs c set autozergmode on')
+	else
+		atc('Not BRD')
+	end
+end
+
+function brd(cmd2)
+	atc('BRD')
+	local player_job = windower.ffxi.get_player()
+	if player_job.main_job == "BRD" then
+		if cmd2 == 'ambu' then
+			atc('BRD: Ambu')
+			windower.send_command("hb buff " ..settings.char1.. " mage's ballad III; hb buff " ..settings.char1.. "  sentinel's scherzo;")
+		elseif cmd2 == 'ody' then
+			atc('BRD: Odyssey')
+			windower.send_command("hb buff " ..settings.char1.. " sentinel's scherzo; hb buff " ..settings.char1.. " foe sirvente; hb buff " ..settings.char1.. " scop's operetta; hb buff " ..settings.char1.. " victory march")
+		elseif cmd2 == 'reset' then
+			atc('BRD: Reset')
+			windower.send_command("hb cancelbuff " ..settings.char1.. " mage's ballad III; hb cancelbuff " ..settings.char1.. " mage's ballad II; hb cancelbuff " ..settings.char1.. " sentinel's scherzo; hb cancelbuff " ..settings.char1.. " foe sirvente; hb cancelbuff " ..settings.char1.. " scop's operetta; hb cancelbuff " ..settings.char1.. " victory march")
+		else
+			atc('BRD: Invalid command')
+		end
 	else
 		atc('Not BRD')
 	end
@@ -2405,31 +2385,6 @@ function buyalltemps()
 	windower.send_command('escha buyall')
 end
 
--- Functions to enter instances -> May move to separate addon?
-function go()
-	atc('GO: TargetNPC + ENTER.')
-	if ipcflag == false then
-		ipcflag = true
-		windower.send_command('wait 0.5; input /targetnpc; wait 0.5; setkey enter down; wait 0.5; setkey enter up;')
-		windower.send_ipc_message('go')
-	elseif ipcflag == true then
-		windower.send_command('input /targetnpc; wait 0.5; setkey enter down; wait 0.5; setkey enter up;')
-	end
-	ipcflag = false
-end
-
-function enter()
-	atc('ENTER: Enter menu.')
-	if ipcflag == false then
-		ipcflag = true
-		windower.send_command('input /targetnpc; wait 1; input /lockon; wait 1; setkey enter down; wait 0.5; setkey enter up; wait 3; setkey up down; wait 0.5; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
-		windower.send_ipc_message('enter')
-	elseif ipcflag == true then
-		windower.send_command('input /targetnpc; wait 1; input /lockon; wait 1; setkey enter down; wait 0.5; setkey enter up; wait 3; setkey up down; wait 0.5; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
-	end
-	ipcflag = false
-end
-
 function sr(cmd2)
 	local zone = windower.ffxi.get_info()['zone']
 
@@ -2454,13 +2409,103 @@ function sr(cmd2)
 	end
 end
 
+function get(cmd2)
+	local zone = windower.ffxi.get_info()['zone']
+
+	if cmd2 == 'mog' and zone == 247  then
+		atc('GET: Obtaining Moglophone KI.')
+		get_npc_dialogue('17789078',3)
+		windower.send_command('wait 3; setkey enter down; wait 0.5; setkey enter up; wait 2; setkey escape down; wait 0.3; setkey escape up;')
+		if ipcflag == false then
+			ipcflag = true
+			windower.send_ipc_message('get mog')
+		end
+		ipcflag = false
+	elseif cmd2 == 'mog2' and zone == 247 then
+		atc('GET: Moglophone II.')
+		get_npc_dialogue('17789078',3)
+		windower.send_command('wait 3; setkey down down; wait 0.1; setkey down up; wait 1; setkey down down; wait 0.1; setkey down up; wait 1; setkey down down; wait 0.1; setkey down up; wait 1; setkey down down; wait 0.1; setkey down up; wait 3.5; setkey enter down; wait 0.5; setkey enter up;')
+		
+		if ipcflag == false then
+			ipcflag = true
+			windower.send_ipc_message('get mog2')
+		end
+		ipcflag = false
+	elseif cmd2 == 'pot' and zone == 291 then
+		atc('GET: Potpourri KI')
+		
+		get_npc_dialogue('17970037',3)
+		windower.send_command('wait 3; setkey right down; wait 1; setkey right up; wait 2; setkey up down; wait 0.1; setkey up up; wait 2; setkey enter down; wait 0.5; setkey enter up; wait 2; setkey up down; wait 0.1; setkey up up; wait 2; setkey enter down; wait 0.5; setkey enter up;')
+		if ipcflag == false then
+			ipcflag = true
+			windower.send_ipc_message('get pot')
+		end
+		ipcflag = false
+	elseif cmd2 == 'srki' and zone == 276  then
+		atc('GET: SR KI.')
+		
+		get_npc_dialogue('17908273',3)
+		windower.send_command('wait 3; setkey down down; wait 0.1; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.0; setkey up down; wait 0.5; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
+		if ipcflag == false then
+			ipcflag = true
+			windower.send_ipc_message('get srki')
+		end
+		ipcflag = false
+	elseif cmd2 == 'srdrops' and zone == 276 then
+		atc('GET: SR Rewards.')
+		
+		get_npc_dialogue('17908273',3)
+		windower.send_command('wait 3; setkey down down; wait 0.1; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
+		if ipcflag == false then
+			ipcflag = true
+			windower.send_ipc_message('get srdrops')
+		end
+		ipcflag = false
+	else
+		atc('GET: Incorrect Zone/Command.')
+	end
+end
+
+function go()
+	atc('GO: TargetNPC + ENTER.')
+	if ipcflag == false then
+		ipcflag = true
+		windower.send_ipc_message('go')
+		get_npc_dialogue('npc',2)
+	elseif ipcflag == true then
+		get_npc_dialogue('npc',2)
+	end
+	ipcflag = false
+end
+
+function ent()
+	atc('ENT: Sending ENTER Key.')
+	windower.send_command('wait 1.5; setkey enter down; wait 0.5; setkey enter up;')
+end
+
+function enter()
+	atc('ENTER: Enter menu.')
+	
+	if ipcflag == false then
+		ipcflag = true
+		windower.send_ipc_message('enter')
+		get_npc_dialogue('npc',3)
+		windower.send_command('setkey up down; wait 0.5; setkey up up; wait 0.7; setkey enter down; wait 0.5; setkey enter up;')
+	elseif ipcflag == true then
+		get_npc_dialogue('npc',3)
+		windower.send_command('setkey up down; wait 0.5; setkey up up; wait 0.7; setkey enter down; wait 0.5; setkey enter up;')
+	end
+	ipcflag = false
+end
+
+
 function endown()
 	if ipcflag == false then
 		ipcflag = true
-		windower.send_command('input /targetnpc; wait 1; input /lockon; wait 2; setkey enter down; wait 0.5; setkey enter up; wait 5; setkey down down; wait 0.5; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
+		windower.send_command('setkey down down; wait 0.5; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
 		windower.send_ipc_message('endown')
 	elseif ipcflag == true then
-		windower.send_command('input /targetnpc; wait 1; input /lockon; wait 2; setkey enter down; wait 0.5; setkey enter up; wait 5; setkey down down; wait 0.5; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
+		windower.send_command('setkey down down; wait 0.5; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
 	end
 	ipcflag = false
 end
@@ -2481,7 +2526,6 @@ function esc()
 end
 
 function cleanstones()
---send @all get pluton case 98; wait 1; send @all get pluton box 98; wait 1; send @all get boulder case 98; wait 1; send @all get boulder box 98; wait 1; send @all get beitetsu parcel 98; wait 1; send @all get beitetsu box 98; put pluton case sack 200; wait 1; send @all put pluton box sack 200; wait 1; send @all put boulder case sack 200; wait 1; send @all put boulder box sack 200; wait 1; send @all put beitetsu parcel sack 200; wait 1; send @all put beitetsu box sack 200;
 	local stone_types = {'Pluton case','Pluton Box','Boulder case','Boulder Box','Beitetsu Parcel','Beitetsu Box'}
 	
 	for count = 1,6 do
@@ -3026,6 +3070,33 @@ local function get_delay()
     end
 end
 
+function get_npc_dialogue(target_id,cycles)
+	npc_dialog = false
+	count = 0
+	if target_id == 'npc' then
+		while npc_dialog == false and count < cycles
+		do
+			count = count + 1
+			if count == 0 then
+				windower.send_command('input /targetnpc; wait 0.5; input /lockon; wait 0.7; setkey enter down; wait 0.5; setkey enter up;')
+			else
+				windower.send_command('setkey escape down; wait 0.5; setkey escape up; wait 0.5; input /targetnpc; wait 0.5; input /lockon; wait 0.7; setkey enter down; wait 0.5; setkey enter up;')
+			end
+			coroutine.sleep(5.2)
+		end
+	else
+		while npc_dialog == false and count < cycles
+		do
+			count = count + 1
+			if count == 0 then
+				windower.send_command('wait 1.5; settarget ' .. target_id .. '; wait 1; input /lockon; wait 1; setkey enter down; wait 0.5; setkey enter up;')
+			else
+				windower.send_command('setkey escape down; wait 0.5; setkey escape up; wait 1.0; settarget ' .. target_id .. '; wait 1; input /lockon; wait 1; setkey enter down; wait 0.5; setkey enter up;')
+			end
+			coroutine.sleep(6.5)
+		end
+	end
+end
 
 
 ------------
@@ -3140,10 +3211,6 @@ windower.register_event('ipc message', function(msg, ...)
 		coroutine.sleep(delay)
 		ipcflag = true
 		get(cmd2)
-	elseif cmd == 'sr' then
-		coroutine.sleep(delay)
-		ipcflag = true
-		sr(cmd2)
 	elseif cmd == 'endown' then
 		coroutine.sleep(delay)
 		ipcflag = true
@@ -3178,4 +3245,19 @@ function loaded()
 end
 
 windower.register_event('load', loaded)
---windower.register_event('zone change', zone_change)
+
+windower.register_event("status change", function(new,old)
+    
+    local target = windower.ffxi.get_mob_by_target('t')
+    
+    if not target or target then
+    
+        if new == 4 then
+            npc_dialog = true
+        elseif old == 4 then
+            npc_dialog = false
+        end
+
+    end
+    
+end)

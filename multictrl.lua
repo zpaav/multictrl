@@ -126,10 +126,6 @@ windower.register_event('addon command', function(input, ...)
 
 	if cmd == nil then
 		windower.add_to_chat(123,"Abort: No command specified")
-
-
-	elseif cmd == 'runic' then
-		runic()
 	elseif cmd == 'done' then
 		done()
 	elseif cmd == 'tag' then
@@ -2565,29 +2561,6 @@ function htmb(cmd2)
 	end
 end
 
-
-function runic()
-	
-	local zone = windower.ffxi.get_info()['zone']
-	local runic_zones = S{50,77,54,52,61,79,72}
-	if runic_zones:contains(zone) then
-	
-		local runic_id = windower.ffxi.get_mob_by_name('Runic Portal').id
-		atc(runic_id)
-		windower.send_command('settarget ' .. runic_id)
-		coroutine.sleep(1)
-		windower.send_command('input /lockon; wait 1; setkey enter down; wait 0.5; setkey enter up; wait 2; setkey up down; wait 0.5; setkey up up; wait 2; setkey enter down; wait 0.5; setkey enter up;')
-	else
-		atc('Not in runic zone!')
-	end
-		
-	if ipcflag == false then
-		ipcflag = true
-		windower.send_ipc_message('runic')
-	end
-	ipcflag = false
-end
-
 function tag()
 
 	local zone = windower.ffxi.get_info()['zone']
@@ -3200,10 +3173,6 @@ windower.register_event('ipc message', function(msg, ...)
 		coroutine.sleep(moredelay)
 		ipcflag = true
 		htmb(cmd2)	
-	elseif cmd == 'runic' then
-		coroutine.sleep(delay)
-		ipcflag = true
-		runic()	
 	elseif cmd == 'done' then
 		coroutine.sleep(delay)
 		ipcflag = true

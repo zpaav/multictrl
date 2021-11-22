@@ -2385,30 +2385,6 @@ function buyalltemps()
 	windower.send_command('escha buyall')
 end
 
-function sr(cmd2)
-	local zone = windower.ffxi.get_info()['zone']
-
-	if cmd2 == 'ki' and zone == 276  then
-		atc('SR: Obtaining KI.')
-		windower.send_command('settarget 17908273; wait 1; input /lockon; wait 1; setkey enter down; wait 0.5; setkey enter up; wait 3; setkey down down; wait 0.1; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.0; setkey up down; wait 0.5; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
-		if ipcflag == false then
-			ipcflag = true
-			windower.send_ipc_message('sr ki')
-		end
-		ipcflag = false
-	elseif cmd2 == 'rw' and zone == 276 then
-		atc('SR: Rewards.')
-		windower.send_command('settarget 17908273; wait 1; input /lockon; wait 1; setkey enter down; wait 0.5; setkey enter up; wait 3; setkey down down; wait 0.1; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
-		if ipcflag == false then
-			ipcflag = true
-			windower.send_ipc_message('sr ki')
-		end
-		ipcflag = false
-	else
-		atc('SR: Incorrect Zone / Command [KI, RW]')
-	end
-end
-
 function get(cmd2)
 	local zone = windower.ffxi.get_info()['zone']
 

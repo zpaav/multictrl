@@ -128,8 +128,6 @@ windower.register_event('addon command', function(input, ...)
 		windower.add_to_chat(123,"Abort: No command specified")
 	elseif cmd == 'done' then
 		done()
-	elseif cmd == 'tag' then
-		tag()
 	elseif cmd == 'ein' then
 		ein(cmd2)
 	elseif cmd == 'htmb' then
@@ -148,8 +146,6 @@ windower.register_event('addon command', function(input, ...)
 		zerg(cmd2)
 	elseif cmd == 'buffall' then
 		buffall(cmd2)
-	elseif cmd == 'haste' then
-		haste()
 	elseif cmd == 'proc' then
 		proc(cmd2)
 	elseif cmd == 'wstype' then
@@ -2397,7 +2393,6 @@ function get(cmd2)
 		atc('GET: Moglophone II.')
 		get_npc_dialogue('17789078',3)
 		windower.send_command('wait 3; setkey down down; wait 0.1; setkey down up; wait 1; setkey down down; wait 0.1; setkey down up; wait 1; setkey down down; wait 0.1; setkey down up; wait 1; setkey down down; wait 0.1; setkey down up; wait 3.5; setkey enter down; wait 0.5; setkey enter up;')
-		
 		if ipcflag == false then
 			ipcflag = true
 			windower.send_ipc_message('get mog2')
@@ -2405,7 +2400,6 @@ function get(cmd2)
 		ipcflag = false
 	elseif cmd2 == 'pot' and zone == 291 then
 		atc('GET: Potpourri KI')
-		
 		get_npc_dialogue('17970037',3)
 		windower.send_command('wait 3; setkey right down; wait 1; setkey right up; wait 2; setkey up down; wait 0.1; setkey up up; wait 2; setkey enter down; wait 0.5; setkey enter up; wait 2; setkey up down; wait 0.1; setkey up up; wait 2; setkey enter down; wait 0.5; setkey enter up;')
 		if ipcflag == false then
@@ -2415,7 +2409,6 @@ function get(cmd2)
 		ipcflag = false
 	elseif cmd2 == 'srki' and zone == 276  then
 		atc('GET: SR KI.')
-		
 		get_npc_dialogue('17908273',3)
 		windower.send_command('wait 3; setkey down down; wait 0.1; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.0; setkey up down; wait 0.5; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
 		if ipcflag == false then
@@ -2425,12 +2418,29 @@ function get(cmd2)
 		ipcflag = false
 	elseif cmd2 == 'srdrops' and zone == 276 then
 		atc('GET: SR Rewards.')
-		
 		get_npc_dialogue('17908273',3)
 		windower.send_command('wait 3; setkey down down; wait 0.1; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
 		if ipcflag == false then
 			ipcflag = true
 			windower.send_ipc_message('get srdrops')
+		end
+		ipcflag = false
+	elseif cmd2 == 'tag' and zone == 50 then
+		atc('GET: Assault tag.')
+		get_npc_dialogue('npc',3)
+		windower.send_command('wait 3; setkey enter down; wait 0.5; setkey enter up;')
+		if ipcflag == false then
+			ipcflag = true
+			windower.send_ipc_message('get tag')
+		end
+		ipcflag = false
+	elseif cmd2 == 'canteen' and zone == 291 then
+		atc('GET: Omen Canteen.')
+		get_npc_dialogue('17970043',3)
+		windower.send_command('wait 3; setkey enter down; wait 0.5; setkey enter up;')
+		if ipcflag == false then
+			ipcflag = true
+			windower.send_ipc_message('get canteen')
 		end
 		ipcflag = false
 	else
@@ -2561,23 +2571,6 @@ function htmb(cmd2)
 	end
 end
 
-function tag()
-
-	local zone = windower.ffxi.get_info()['zone']
-	if zone == 50 then
-		atc('TAG: Getting new ID Tag.')
-		windower.send_command('input /targetnpc; wait 2; setkey enter down; wait 0.5; setkey enter up; wait 2; input /targetnpc; wait 2; setkey enter down; wait 0.5; setkey enter up; wait 2.5; setkey enter down; wait 0.5; setkey enter up;')
-	else
-		atc('TAG: Not in zone.')
-	end
-		
-	if ipcflag == false then
-		ipcflag = true
-		windower.send_ipc_message('tag')
-	end
-	ipcflag = false
-end
-
 function done()
 	local zone = windower.ffxi.get_info()['zone']
 	local assault_zone = S{55,56,63,66,69}
@@ -2699,24 +2692,6 @@ function buffall(cmd2)
 			end
 		end
 		end
-end
-
-function haste()
-	player = windower.ffxi.get_player()
-	for k, v in pairs(windower.ffxi.get_party()) do
-		if type(v) == 'table' then
-			if v.mob == nil then
-				-- Not in zone.
-				atc(v.name .. ' is not in zone!')
-			elseif windower.ffxi.get_mob_by_name(v.name).in_party then
-				if player.main_job == 'RDM' then
-					windower.send_command('hb buff ' .. v.name .. ' haste2')
-				else
-					windower.send_command('hb buff ' .. v.name .. ' haste')
-				end
-			end
-		end
-	end
 end
 
 function rand()
@@ -3177,10 +3152,6 @@ windower.register_event('ipc message', function(msg, ...)
 		coroutine.sleep(delay)
 		ipcflag = true
 		done()	
-	elseif cmd == 'tag' then
-		coroutine.sleep(delay)
-		ipcflag = true
-		tag()	
 	end
 end)
 

@@ -610,8 +610,13 @@ function stage(cmd2)
 		end
 		ipcflag = false
 	elseif cmd2 == 'arebati' then
-		if player_job.main_job == 'SCH' then
-			windower.send_command('hb reload; wait 2; hb enable cure; hb enable na; hb disable erase; hb buff ' ..settings.char1.. ' haste; hb buff ' ..settings.char1.. ' shell5; hb buff ' .. settings.char1 .. ' regen5;')
+		if player_job.main_job == 'SCH' or player_job.main_job == 'WHM' then
+			windower.send_command('gs c set autoapmode off; hb disable erase; hb buff ' ..settings.char1.. ' haste; hb buff ' ..settings.char1.. ' shell5;')
+			if player_job.main_job == 'SCH' then
+				windower.send_command('mc sch heal;  hb buff ' .. settings.char1 .. ' regen5;')
+			else
+				windower.send_command('hb buff ' .. settings.char1 .. ' regen4;')
+			end
 		elseif player_job.main_job == 'RUN' then
 			windower.send_command('gs c set runeelement ignis; hb buff <me> barblizzard')
 		elseif player_job.main_job == 'BRD' then
@@ -619,9 +624,9 @@ function stage(cmd2)
 		elseif player_job.main_job == 'GEO' then
 			windower.send_command('gs c autoindi fury; gs c autogeo agi; gs c autoentrust refresh; gs c set castingmode DT; gs c set idlemode DT;')
 		elseif player_job.main_job == 'RNG' then
-			windower.send_command('gs c set weapons Fomalhaut; gs c autows Last Stand;')
+			windower.send_command('gs c set weapons Fomalhaut; gs c set rnghelper on; wait 2; gs c autows Last Stand;')
 		elseif player_job.main_job == 'COR' then
-			windower.send_command('roll melee; gs c set weapons Fomalhaut; gs c autows Last Stand;')
+			windower.send_command('roll melee; gs c set weapons Fomalhaut; gs c set rnghelper on; wait 2; gs c autows Last Stand;')
 		end
 		
 		if ipcflag == false then
@@ -2443,6 +2448,24 @@ function get(cmd2)
 			windower.send_ipc_message('get canteen')
 		end
 		ipcflag = false
+	elseif cmd2 == 'mgexit' and zone == 280 then
+		atc('GET: Exit Mog Garden.')
+		get_npc_dialogue('17924124',3)
+		windower.send_command('wait 3; setkey right down; wait 0.5; setkey right up; wait 1.0; setkey right down; wait 0.5; setkey right up; wait 1.0; setkey up down; wait 0.1; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.5; setkey right down; wait 0.1; setkey right up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
+		if ipcflag == false then
+			ipcflag = true
+			windower.send_ipc_message('get mgexit')
+		end
+		ipcflag = false
+	elseif cmd2 == 'aby' and zone == 246 then
+		atc('GET: Abyssea Traveler Stone')
+		get_npc_dialogue('17784979',3)
+		windower.send_command('wait 3; setkey enter down; wait 0.5; setkey enter up;')
+		if ipcflag == false then
+			ipcflag = true
+			windower.send_ipc_message('get aby')
+		end
+		ipcflag = false
 	else
 		atc('GET: Incorrect Zone/Command.')
 	end
@@ -2795,6 +2818,29 @@ function wstype(cmd2)
 			end
 		else
 			atc('WS-Type: Last Stand - Skipping')
+		end
+	elseif cmd2 == 'wildfire' then
+		if ipcflag == false then
+			ipcflag = true
+			windower.send_ipc_message('wstype wildfire')
+		end
+		ipcflag = false
+		if WSjobs:contains(player_job.main_job) then
+			if player_job.main_job == 'COR' then
+				if player_job.sub_job == 'NIN' or player_job.sub_job == 'DNC' then
+					atc('WS-Type: Wildfire')
+					windower.send_command('gs c autows Wildfire')
+					windower.send_command('gs c set weapons DualLeaden')
+				else
+					atc('WS-Type: Wildfire')
+					windower.send_command('gs c autows Wildfire')
+					windower.send_command('gs c set weapons DeathPenalty')
+				end
+			else
+				atc('WS-Type: Wildfire - Not COR, no WS change.')
+			end
+		else
+			atc('WS-Type: Wildfire - Skipping')
 		end	
 	elseif cmd2 == 'mace' then
 		if ipcflag == false then
@@ -2891,7 +2937,7 @@ function wstype(cmd2)
 				windower.send_command('gs c set weapons Loxotic; gs c autows tp 1692')
 			elseif player_job.main_job == 'SAM' then
 				atc('WS is Kagero')
-				windower.send_command('gs c set weapons Masamune')
+				windower.send_command('gs c set weapons Dojikiri')
 				windower.send_command('gs c autows Tachi: Kagero')
 			elseif player_job.main_job == 'COR' then
 				atc('WS is WildFire')
@@ -3163,17 +3209,12 @@ end
 windower.register_event('load', loaded)
 
 windower.register_event("status change", function(new,old)
-    
     local target = windower.ffxi.get_mob_by_target('t')
-    
     if not target or target then
-    
         if new == 4 then
             npc_dialog = true
         elseif old == 4 then
             npc_dialog = false
         end
-
     end
-    
 end)

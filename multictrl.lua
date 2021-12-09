@@ -194,6 +194,27 @@ end)
 
 local mprefix = ('[%s] '):format(_addon.name)
 
+function enter()
+	log('Enter')
+	windower.send_command('setkey enter down; wait 0.5; setkey enter up;')
+end
+function down()
+	log('Down')
+	windower.send_command('setkey down down; wait 0.1; setkey down up;')
+end
+function up()
+	log('Up')
+	windower.send_command('setkey up down; wait 0.1; setkey up up;')
+end
+function right()
+	log('Right')
+	windower.send_command('setkey right down; wait 0.5; setkey right up;')
+end
+function left()
+	log('Left')
+	windower.send_command('setkey left down; wait 0.5; setkey left up;')
+end
+
 function atc(...)
     local args = T({...})
 	local msg = table.concat({...}, ' ')
@@ -1084,11 +1105,8 @@ function fon()
 						if v.mob == nil then
 							-- Not in zone.
 							atc('FON: ' .. v.name .. ' is not in zone, not following.')
-							--windower.send_command('send ' .. v.name .. ' hb follow off')
-							--windower.send_command('send ' .. v.name .. ' hb f dist 3')
 						else
-							-- In zone, do distance check
-							if math.sqrt(ptymember.distance) < 49 then
+							if ptymember.valid_target then
 								windower.send_command('send ' .. v.name .. ' hb f dist 2')
 								windower.send_command('send ' .. v.name .. ' hb follow ' .. currentPC.name)
 							else
@@ -2462,24 +2480,37 @@ function get(cmd2)
 			windower.send_ipc_message('get mgexit')
 		end
 		ipcflag = false
-	elseif cmd2 == 'aby2' then
-		atc('GET: Abyssea Visitation')
+	elseif cmd2 == 'aby' then
+		atc('GET: Abyssea Visitation - Remaining time')
 		get_npc_dialogue('npc',3)
 		windower.send_command('wait 3; setkey down down; wait 0.1; setkey down up; wait 1; setkey down down; wait 0.1; setkey down up; wait 1.5; setkey enter down; wait 0.5; setkey enter up; wait 1.5; ' ..
-			'setkey down down; wait 0.1; setkey down up; wait 1.0; setkey down down; wait 0.1; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.5; setkey up down; wait 0.1; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.5; setkey up down; wait 0.1; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
+			'setkey down down; wait 0.1; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.5;' ..
+			'setkey up down; wait 0.1; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.5; setkey up down; wait 0.1; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
 		if ipcflag == false then
 			ipcflag = true
-			windower.send_ipc_message('get aby2')
+			windower.send_ipc_message('get aby')
 		end
 		ipcflag = false
 	elseif cmd2 == 'aby1' then
-		atc('GET: Abyssea Visitation')
+		atc('GET: Abyssea Visitation - 1 Stone')
 		get_npc_dialogue('npc',3)
 		windower.send_command('wait 3; setkey down down; wait 0.1; setkey down up; wait 1; setkey down down; wait 0.1; setkey down up; wait 1.5; setkey enter down; wait 0.5; setkey enter up; wait 1.5; ' ..
-			'setkey down down; wait 0.1; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.5; setkey up down; wait 0.1; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.5; setkey up down; wait 0.1; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
+			'setkey down down; wait 0.1; setkey down up; wait 1.0; setkey down down; wait 0.1; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.5;' ..
+			'setkey up down; wait 0.1; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.5; setkey up down; wait 0.1; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
 		if ipcflag == false then
 			ipcflag = true
 			windower.send_ipc_message('get aby1')
+		end
+		ipcflag = false
+	elseif cmd2 == 'aby2' then
+		atc('GET: Abyssea Visitation - 2 Stone')
+		get_npc_dialogue('npc',3)
+		windower.send_command('wait 3; setkey down down; wait 0.1; setkey down up; wait 1; setkey down down; wait 0.1; setkey down up; wait 1.5; setkey enter down; wait 0.5; setkey enter up; wait 1.5; ' ..
+			'setkey down down; wait 0.1; setkey down up; wait 1.0; setkey down down; wait 0.1; setkey down up; wait 1.0; setkey down down; wait 0.1; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.5;' ..
+			'setkey up down; wait 0.1; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.5; setkey up down; wait 0.1; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
+		if ipcflag == false then
+			ipcflag = true
+			windower.send_ipc_message('get aby2')
 		end
 		ipcflag = false
 	else

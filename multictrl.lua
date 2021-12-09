@@ -856,6 +856,7 @@ end
 
 
 function wsall()
+	atc("WSALL!")
 	local player_job = windower.ffxi.get_player()
 	local MeleeJobs = S{'WAR','SAM','DRG','DRK','NIN','MNK','COR','BLU','PUP','DNC','RUN','BRD','THF','RNG','PLD','GEO','BST'}
 	if MeleeJobs:contains(player_job.main_job) then
@@ -1078,20 +1079,21 @@ function fon()
 			
 				if type(v) == 'table' then
 					if v.name ~= currentPC.name then
-					
-					--coroutine.sleep(1)
-					
 						ptymember = windower.ffxi.get_mob_by_name(v.name)
 						-- check if party member in same zone.
-
 						if v.mob == nil then
 							-- Not in zone.
 							atc('FON: ' .. v.name .. ' is not in zone, not following.')
 							--windower.send_command('send ' .. v.name .. ' hb follow off')
 							--windower.send_command('send ' .. v.name .. ' hb f dist 3')
 						else
-							windower.send_command('send ' .. v.name .. ' hb f dist 2')
-							windower.send_command('send ' .. v.name .. ' hb follow ' .. currentPC.name)
+							-- In zone, do distance check
+							if math.sqrt(ptymember.distance) < 49 then
+								windower.send_command('send ' .. v.name .. ' hb f dist 2')
+								windower.send_command('send ' .. v.name .. ' hb follow ' .. currentPC.name)
+							else
+								atc('FON: ' .. v.name .. ' is not in range, not following.')
+							end
 						end
 					end
 				end
@@ -2451,19 +2453,33 @@ function get(cmd2)
 	elseif cmd2 == 'mgexit' and zone == 280 then
 		atc('GET: Exit Mog Garden.')
 		get_npc_dialogue('17924124',3)
-		windower.send_command('wait 3; setkey right down; wait 0.5; setkey right up; wait 1.0; setkey right down; wait 0.5; setkey right up; wait 1.0; setkey up down; wait 0.1; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.5; setkey right down; wait 0.1; setkey right up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
+		windower.send_command('wait 3; setkey right down; wait 0.5; setkey right up; wait 1.0; ' .. 
+			'setkey right down; wait 0.5; setkey right up; wait 1.0; setkey up down; wait 0.1; setkey up up; wait 1.0; ' ..
+			'setkey enter down; wait 0.5; setkey enter up; wait 1.5; setkey right down; wait 0.1; setkey right up; wait 1.0; ' ..
+			'setkey enter down; wait 0.5; setkey enter up;')
 		if ipcflag == false then
 			ipcflag = true
 			windower.send_ipc_message('get mgexit')
 		end
 		ipcflag = false
-	elseif cmd2 == 'aby' and zone == 246 then
-		atc('GET: Abyssea Traveler Stone')
-		get_npc_dialogue('17784979',3)
-		windower.send_command('wait 3; setkey enter down; wait 0.5; setkey enter up;')
+	elseif cmd2 == 'aby2' then
+		atc('GET: Abyssea Visitation')
+		get_npc_dialogue('npc',3)
+		windower.send_command('wait 3; setkey down down; wait 0.1; setkey down up; wait 1; setkey down down; wait 0.1; setkey down up; wait 1.5; setkey enter down; wait 0.5; setkey enter up; wait 1.5; ' ..
+			'setkey down down; wait 0.1; setkey down up; wait 1.0; setkey down down; wait 0.1; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.5; setkey up down; wait 0.1; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.5; setkey up down; wait 0.1; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
 		if ipcflag == false then
 			ipcflag = true
-			windower.send_ipc_message('get aby')
+			windower.send_ipc_message('get aby2')
+		end
+		ipcflag = false
+	elseif cmd2 == 'aby1' then
+		atc('GET: Abyssea Visitation')
+		get_npc_dialogue('npc',3)
+		windower.send_command('wait 3; setkey down down; wait 0.1; setkey down up; wait 1; setkey down down; wait 0.1; setkey down up; wait 1.5; setkey enter down; wait 0.5; setkey enter up; wait 1.5; ' ..
+			'setkey down down; wait 0.1; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.5; setkey up down; wait 0.1; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.5; setkey up down; wait 0.1; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
+		if ipcflag == false then
+			ipcflag = true
+			windower.send_ipc_message('get aby1')
 		end
 		ipcflag = false
 	else

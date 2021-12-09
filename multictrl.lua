@@ -68,6 +68,8 @@ areas.Cities = S{
 	"Leafallia"
 }
 
+areas.Abyssea = S{15,45,132,215,216,217,218,253,254}
+
 jobnames = {
 	[0] = {job="WHM",name=""},
     [1] = {job="RDM",name=""},
@@ -2480,7 +2482,7 @@ function get(cmd2)
 			windower.send_ipc_message('get mgexit')
 		end
 		ipcflag = false
-	elseif cmd2 == 'aby' then
+	elseif cmd2 == 'aby' and areas.Abyssea:contains(zone) then
 		atc('GET: Abyssea Visitation - Remaining time')
 		get_npc_dialogue('npc',3)
 		windower.send_command('wait 3; setkey down down; wait 0.1; setkey down up; wait 1; setkey down down; wait 0.1; setkey down up; wait 1.5; setkey enter down; wait 0.5; setkey enter up; wait 1.5; ' ..
@@ -2491,7 +2493,7 @@ function get(cmd2)
 			windower.send_ipc_message('get aby')
 		end
 		ipcflag = false
-	elseif cmd2 == 'aby1' then
+	elseif cmd2 == 'aby1' and areas.Abyssea:contains(zone) then
 		atc('GET: Abyssea Visitation - 1 Stone')
 		get_npc_dialogue('npc',3)
 		windower.send_command('wait 3; setkey down down; wait 0.1; setkey down up; wait 1; setkey down down; wait 0.1; setkey down up; wait 1.5; setkey enter down; wait 0.5; setkey enter up; wait 1.5; ' ..
@@ -2502,7 +2504,7 @@ function get(cmd2)
 			windower.send_ipc_message('get aby1')
 		end
 		ipcflag = false
-	elseif cmd2 == 'aby2' then
+	elseif cmd2 == 'aby2' and areas.Abyssea:contains(zone) then
 		atc('GET: Abyssea Visitation - 2 Stone')
 		get_npc_dialogue('npc',3)
 		windower.send_command('wait 3; setkey down down; wait 0.1; setkey down up; wait 1; setkey down down; wait 0.1; setkey down up; wait 1.5; setkey enter down; wait 0.5; setkey enter up; wait 1.5; ' ..

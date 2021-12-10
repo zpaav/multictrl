@@ -2484,10 +2484,12 @@ function get(cmd2)
 		ipcflag = false
 	elseif cmd2 == 'aby' and areas.Abyssea:contains(zone) then
 		atc('GET: Abyssea Visitation - Remaining time')
-		get_npc_dialogue('npc',3)
-		windower.send_command('wait 3; setkey down down; wait 0.1; setkey down up; wait 1; setkey down down; wait 0.1; setkey down up; wait 1.5; setkey enter down; wait 0.5; setkey enter up; wait 1.5; ' ..
-			'setkey down down; wait 0.1; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.5;' ..
-			'setkey up down; wait 0.1; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.5; setkey up down; wait 0.1; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
+		get_poke_check('Conflux Surveyor')
+		if npc_dialog == true then
+			windower.send_command('wait 3; setkey down down; wait 0.1; setkey down up; wait 1; setkey down down; wait 0.1; setkey down up; wait 1.5; setkey enter down; wait 0.5; setkey enter up; wait 1.5; ' ..
+				'setkey down down; wait 0.06; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.5;' ..
+				'setkey up down; wait 0.1; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.5; setkey up down; wait 0.1; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
+		end
 		if ipcflag == false then
 			ipcflag = true
 			windower.send_ipc_message('get aby')
@@ -2495,10 +2497,12 @@ function get(cmd2)
 		ipcflag = false
 	elseif cmd2 == 'aby1' and areas.Abyssea:contains(zone) then
 		atc('GET: Abyssea Visitation - 1 Stone')
-		get_npc_dialogue('npc',3)
-		windower.send_command('wait 3; setkey down down; wait 0.1; setkey down up; wait 1; setkey down down; wait 0.1; setkey down up; wait 1.5; setkey enter down; wait 0.5; setkey enter up; wait 1.5; ' ..
-			'setkey down down; wait 0.1; setkey down up; wait 1.0; setkey down down; wait 0.1; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.5;' ..
-			'setkey up down; wait 0.1; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.5; setkey up down; wait 0.1; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
+		get_poke_check('Conflux Surveyor')
+		if npc_dialog == true then
+			windower.send_command('wait 3; setkey down down; wait 0.1; setkey down up; wait 1; setkey down down; wait 0.1; setkey down up; wait 1.5; setkey enter down; wait 0.5; setkey enter up; wait 1.5; ' ..
+				'setkey down down; wait 0.06; setkey down up; wait 1.0; setkey down down; wait 0.1; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.5;' ..
+				'setkey up down; wait 0.1; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.5; setkey up down; wait 0.1; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
+		end
 		if ipcflag == false then
 			ipcflag = true
 			windower.send_ipc_message('get aby1')
@@ -2506,10 +2510,12 @@ function get(cmd2)
 		ipcflag = false
 	elseif cmd2 == 'aby2' and areas.Abyssea:contains(zone) then
 		atc('GET: Abyssea Visitation - 2 Stone')
-		get_npc_dialogue('npc',3)
-		windower.send_command('wait 3; setkey down down; wait 0.1; setkey down up; wait 1; setkey down down; wait 0.1; setkey down up; wait 1.5; setkey enter down; wait 0.5; setkey enter up; wait 1.5; ' ..
-			'setkey down down; wait 0.1; setkey down up; wait 1.0; setkey down down; wait 0.1; setkey down up; wait 1.0; setkey down down; wait 0.1; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.5;' ..
-			'setkey up down; wait 0.1; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.5; setkey up down; wait 0.1; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
+		get_poke_check('Conflux Surveyor')
+		if npc_dialog == true then
+			windower.send_command('wait 3; setkey down down; wait 0.1; setkey down up; wait 1; setkey down down; wait 0.1; setkey down up; wait 1.5; setkey enter down; wait 0.5; setkey enter up; wait 1.5; ' ..
+				'setkey down down; wait 0.06; setkey down up; wait 1.0; setkey down down; wait 0.1; setkey down up; wait 1.0; setkey down down; wait 0.1; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.5;' ..
+				'setkey up down; wait 0.1; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.5; setkey up down; wait 0.1; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
+		end
 		if ipcflag == false then
 			ipcflag = true
 			windower.send_ipc_message('get aby2')
@@ -3117,6 +3123,24 @@ function get_npc_dialogue(target_id,cycles)
 	end
 end
 
+function get_poke_check(npc_name)
+	npc_dialog = false
+	count = 0
+	npcstats = windower.ffxi.get_mob_by_name(npc_name)
+
+	while npc_dialog == false and count < 3
+	do
+		count = count + 1
+		if math.sqrt(npcstats.distance)<6 and npcstats.valid_target then
+			atc('Poke #: ' ..count.. ' -NPC: ' .. npc_name)
+			poke_npc(npcstats.id,npcstats.index)
+		else
+			atcwarn('POKE: NPC Target is too far!')
+		end
+		coroutine.sleep(4.5)
+	end
+end
+
 
 ------------
 --IPC Stuff
@@ -3267,3 +3291,15 @@ windower.register_event("status change", function(new,old)
         end
     end
 end)
+
+function poke_npc(npc,target_index)
+	if npc and target_index then
+		local packet = packets.new('outgoing', 0x01A, {
+			["Target"]=npc,
+			["Target Index"]=target_index,
+			["Category"]=0,
+			["Param"]=0,
+			["_unknown1"]=0})
+		packets.inject(packet)
+	end
+end

@@ -750,17 +750,17 @@ function stage(cmd2)
 		ipcflag = false
 	elseif cmd2 == 'lil' then
 		if player_job.main_job == 'WHM' then
-			windower.send_command('hb buff <me> barstonra; hb buff <me> barpetra; gs c set castingmode DT; gs c set idlemode DT; hb buff <me> auspice; hb disable erase;')
+			windower.send_command('hb buff <me> boost-str; gs c set castingmode DT; gs c set idlemode DT; hb buff <me> auspice;')
 		elseif player_job.main_job == 'BRD' then
-			windower.send_command('sing pl lil; sing n on; sing p off; sing debuffing off; gs c set idlemode DT; gs c set hybridmode DT;')
-		elseif player_job.main_job == 'THF' then
-			windower.send_command('hb debuff bio')
+			windower.send_command('sing pl melee; sing n on; sing p on; sing debuffing off; hb debuff dia2')
+		elseif player_job.main_job == 'BLU' then
+			windower.send_command('lua l roller; wait 1.5; gs c set weapons MACC; gs c set castingmode resistant; gs c set autobluspam on; gs c set autobuffmode auto; roller roll1 fighters;')
 		elseif player_job.main_job == 'COR' then
-			windower.send_command('roll roll1 sam; roll roll2 allies')
+			windower.send_command('roll roll1 sam; roll roll2 allies; gs c set treasuremode tag')
 		elseif player_job.main_job == 'GEO' then
-			windower.send_command('gs c autogeo str; gs c autoindi fury; gs c autoentrust haste; gs c set castingmode DT; gs c set idlemode DT;')
+			windower.send_command('gs c autogeo frailty; gs c autoindi fury; gs c autoentrust haste; gs c set castingmode DT; gs c set idlemode DT; gs c autonuke absorb-tp; gs c set autonukemode on')
 		end
-		
+	
 		if ipcflag == false then
 			ipcflag = true
 			windower.send_ipc_message('stage lil')
@@ -996,7 +996,7 @@ function on()
 			windower.send_command('gs c set autorunemode on')
 		elseif player_job.main_job == "BRD" then
 			windower.send_command('singer on')
-		elseif player_job.main_job == "COR" then
+		elseif player_job.main_job == "COR" or player_job.sub_job == "COR" then
 			windower.send_command('roller on')
 		elseif player_job.main_job == "SCH" then
 			windower.send_command('gs c set autosubmode on')
@@ -1095,34 +1095,56 @@ function fon()
 	atc('FON: Follow ON.')
 	currentPC=windower.ffxi.get_player()
 	
-		windower.send_command('hb follow off')
-		windower.send_command('hb f dist 2')
-	
-		for k, v in pairs(windower.ffxi.get_party()) do
-			
-				if type(v) == 'table' then
-					if v.name ~= currentPC.name then
-						ptymember = windower.ffxi.get_mob_by_name(v.name)
-						-- check if party member in same zone.
-						if v.mob == nil then
-							-- Not in zone.
-							atc('FON: ' .. v.name .. ' is not in zone, not following.')
-						else
-							if ptymember.valid_target then
-								windower.send_command('send ' .. v.name .. ' hb f dist 2')
-								windower.send_command('send ' .. v.name .. ' hb follow ' .. currentPC.name)
-							else
-								atc('FON: ' .. v.name .. ' is not in range, not following.')
-							end
-						end
+	windower.send_command('hb follow off')
+	windower.send_command('hb f dist 2')
+
+	for k, v in pairs(windower.ffxi.get_party()) do
+		if type(v) == 'table' then
+			if v.name ~= currentPC.name then
+				ptymember = windower.ffxi.get_mob_by_name(v.name)
+				-- check if party member in same zone.
+				if v.mob == nil then
+					-- Not in zone.
+					atc('FON: ' .. v.name .. ' is not in zone, not following.')
+				else
+					if ptymember.valid_target then
+						windower.send_command('send ' .. v.name .. ' hb f dist 2')
+						windower.send_command('send ' .. v.name .. ' hb follow ' .. currentPC.name)
+					else
+						atc('FON: ' .. v.name .. ' is not in range, not following.')
 					end
 				end
+			end
 		end
+	end
 end
 
 function foff()
 	atc('FOFF: Follow OFF')
+	currentPC=windower.ffxi.get_player()
+	
 	windower.send_command('hb follow off')
+	windower.send_command('hb f dist 2')
+
+	for k, v in pairs(windower.ffxi.get_party()) do
+		if type(v) == 'table' then
+			if v.name ~= currentPC.name then
+				ptymember = windower.ffxi.get_mob_by_name(v.name)
+				-- check if party member in same zone.
+				if v.mob == nil then
+					-- Not in zone.
+					atc('FON: ' .. v.name .. ' is not in zone.')
+				else
+					if ptymember.valid_target then
+						windower.send_command('send ' .. v.name .. ' hb f off')
+					else
+						atc('FON: ' .. v.name .. ' is not in range.')
+					end
+				end
+			end
+		end
+	end
+	--windower.send_command('hb follow off')
 end
 
 function unload(addonarg)
@@ -2409,121 +2431,92 @@ function get(cmd2)
 
 	if cmd2 == 'mog' and zone == 247  then
 		atc('GET: Obtaining Moglophone KI.')
-		get_npc_dialogue('17789078',3)
+		get_poke_check_id('17789078')
 		windower.send_command('wait 3; setkey enter down; wait 0.5; setkey enter up; wait 2; setkey escape down; wait 0.3; setkey escape up;')
-		if ipcflag == false then
-			ipcflag = true
-			windower.send_ipc_message('get mog')
-		end
-		ipcflag = false
 	elseif cmd2 == 'mog2' and zone == 247 then
 		atc('GET: Moglophone II.')
-		get_npc_dialogue('17789078',3)
-		windower.send_command('wait 3; setkey down down; wait 0.1; setkey down up; wait 1; setkey down down; wait 0.1; setkey down up; wait 1; setkey down down; wait 0.1; setkey down up; wait 1; setkey down down; wait 0.1; setkey down up; wait 3.5; setkey enter down; wait 0.5; setkey enter up;')
-		if ipcflag == false then
-			ipcflag = true
-			windower.send_ipc_message('get mog2')
-		end
-		ipcflag = false
+		get_poke_check_id('17789078')
+		windower.send_command('wait 3; setkey down down; wait 0.05; setkey down up; wait 1; setkey down down; wait 0.05; setkey down up; wait 1; setkey down down; wait 0.05; setkey down up; wait 1; setkey down down; wait 0.05; setkey down up; wait 3.5; setkey enter down; wait 0.5; setkey enter up;')
 	elseif cmd2 == 'pot' and zone == 291 then
 		atc('GET: Potpourri KI')
-		get_npc_dialogue('17970037',3)
+			get_npc_dialogue('17970037',3)
 		windower.send_command('wait 3; setkey right down; wait 1; setkey right up; wait 2; setkey up down; wait 0.1; setkey up up; wait 2; setkey enter down; wait 0.5; setkey enter up; wait 2; setkey up down; wait 0.1; setkey up up; wait 2; setkey enter down; wait 0.5; setkey enter up;')
-		if ipcflag == false then
-			ipcflag = true
-			windower.send_ipc_message('get pot')
-		end
-		ipcflag = false
 	elseif cmd2 == 'srki' and zone == 276  then
 		atc('GET: SR KI.')
-		get_npc_dialogue('17908273',3)
+			get_npc_dialogue('17908273',3)
 		windower.send_command('wait 3; setkey down down; wait 0.1; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.0; setkey up down; wait 0.5; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
-		if ipcflag == false then
-			ipcflag = true
-			windower.send_ipc_message('get srki')
-		end
-		ipcflag = false
 	elseif cmd2 == 'srdrops' and zone == 276 then
 		atc('GET: SR Rewards.')
-		get_npc_dialogue('17908273',3)
+			get_npc_dialogue('17908273',3)
 		windower.send_command('wait 3; setkey down down; wait 0.1; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
-		if ipcflag == false then
-			ipcflag = true
-			windower.send_ipc_message('get srdrops')
-		end
-		ipcflag = false
 	elseif cmd2 == 'tag' and zone == 50 then
 		atc('GET: Assault tag.')
-		get_npc_dialogue('npc',3)
-		windower.send_command('wait 3; setkey enter down; wait 0.5; setkey enter up;')
-		if ipcflag == false then
-			ipcflag = true
-			windower.send_ipc_message('get tag')
-		end
-		ipcflag = false
+		get_poke_check('Rytaal')
+		windower.send_command('wait 2; setkey enter down; wait 0.5; setkey enter up;')
 	elseif cmd2 == 'canteen' and zone == 291 then
 		atc('GET: Omen Canteen.')
-		get_npc_dialogue('17970043',3)
+			get_npc_dialogue('17970043',3)
 		windower.send_command('wait 3; setkey enter down; wait 0.5; setkey enter up;')
-		if ipcflag == false then
-			ipcflag = true
-			windower.send_ipc_message('get canteen')
+	elseif cmd2 == 'mgenter' and (zone == 257 or zone == 256) then
+		atc('GET: ENTER Mog Garden.')
+		if zone == 257 then
+			get_poke_check_id('17830103')
+			if npc_dialog == true then
+				windower.send_command('wait 3; setkey enter down; wait 0.5; setkey enter up;')
+			end
+		elseif zone == 256 then
+			get_poke_check_id('17826073')
+			if npc_dialog == true then
+				windower.send_command('wait 3; setkey enter down; wait 0.5; setkey enter up;')
+			end
 		end
-		ipcflag = false
 	elseif cmd2 == 'mgexit' and zone == 280 then
 		atc('GET: Exit Mog Garden.')
-		get_npc_dialogue('17924124',3)
-		windower.send_command('wait 3; setkey right down; wait 0.5; setkey right up; wait 1.0; ' .. 
-			'setkey right down; wait 0.5; setkey right up; wait 1.0; setkey up down; wait 0.1; setkey up up; wait 1.0; ' ..
-			'setkey enter down; wait 0.5; setkey enter up; wait 1.5; setkey right down; wait 0.1; setkey right up; wait 1.0; ' ..
-			'setkey enter down; wait 0.5; setkey enter up;')
-		if ipcflag == false then
-			ipcflag = true
-			windower.send_ipc_message('get mgexit')
+		get_poke_check_id('17924124')
+		if npc_dialog == true then
+			windower.send_command('wait 3; setkey right down; wait 0.5; setkey right up; wait 1.0; ' .. 
+				'setkey right down; wait 0.5; setkey right up; wait 1.0; setkey up down; wait 0.1; setkey up up; wait 1.0; ' ..
+				'setkey enter down; wait 0.5; setkey enter up; wait 1.5; setkey right down; wait 0.1; setkey right up; wait 1.0; ' ..
+				'setkey enter down; wait 0.5; setkey enter up;')
 		end
-		ipcflag = false
+	elseif cmd2 == 'abystone' and zone == 246 then
+		atc('GET: Abyssea - Traveler Stone')
+		get_poke_check('Joachim')
+		if npc_dialog == true then
+			windower.send_command('wait 3; setkey enter down; wait 0.5; setkey enter up;')
+		end
 	elseif cmd2 == 'aby' and areas.Abyssea:contains(zone) then
 		atc('GET: Abyssea Visitation - Remaining time')
 		get_poke_check('Conflux Surveyor')
 		if npc_dialog == true then
-			windower.send_command('wait 3; setkey down down; wait 0.1; setkey down up; wait 1; setkey down down; wait 0.1; setkey down up; wait 1.5; setkey enter down; wait 0.5; setkey enter up; wait 1.5; ' ..
-				'setkey down down; wait 0.06; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.5;' ..
-				'setkey up down; wait 0.1; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.5; setkey up down; wait 0.1; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
+			windower.send_command('wait 3; setkey down down; wait 0.05; setkey down up; wait 1; setkey down down; wait 0.05; setkey down up; wait 1.5; setkey enter down; wait 0.5; setkey enter up; wait 1.5; ' ..
+				'setkey down down; wait 0.05; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.5;' ..
+				'setkey up down; wait 0.05; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.5; setkey up down; wait 0.05; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
 		end
-		if ipcflag == false then
-			ipcflag = true
-			windower.send_ipc_message('get aby')
-		end
-		ipcflag = false
 	elseif cmd2 == 'aby1' and areas.Abyssea:contains(zone) then
 		atc('GET: Abyssea Visitation - 1 Stone')
 		get_poke_check('Conflux Surveyor')
 		if npc_dialog == true then
-			windower.send_command('wait 3; setkey down down; wait 0.1; setkey down up; wait 1; setkey down down; wait 0.1; setkey down up; wait 1.5; setkey enter down; wait 0.5; setkey enter up; wait 1.5; ' ..
-				'setkey down down; wait 0.06; setkey down up; wait 1.0; setkey down down; wait 0.1; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.5;' ..
-				'setkey up down; wait 0.1; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.5; setkey up down; wait 0.1; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
+			windower.send_command('wait 3; setkey down down; wait 0.05; setkey down up; wait 1; setkey down down; wait 0.05; setkey down up; wait 1.5; setkey enter down; wait 0.5; setkey enter up; wait 1.5; ' ..
+				'setkey down down; wait 0.05; setkey down up; wait 1.0; setkey down down; wait 0.05; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.5;' ..
+				'setkey up down; wait 0.05; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.5; setkey up down; wait 0.05; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
 		end
-		if ipcflag == false then
-			ipcflag = true
-			windower.send_ipc_message('get aby1')
-		end
-		ipcflag = false
 	elseif cmd2 == 'aby2' and areas.Abyssea:contains(zone) then
 		atc('GET: Abyssea Visitation - 2 Stone')
 		get_poke_check('Conflux Surveyor')
 		if npc_dialog == true then
-			windower.send_command('wait 3; setkey down down; wait 0.1; setkey down up; wait 1; setkey down down; wait 0.1; setkey down up; wait 1.5; setkey enter down; wait 0.5; setkey enter up; wait 1.5; ' ..
-				'setkey down down; wait 0.06; setkey down up; wait 1.0; setkey down down; wait 0.1; setkey down up; wait 1.0; setkey down down; wait 0.1; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.5;' ..
-				'setkey up down; wait 0.1; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.5; setkey up down; wait 0.1; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
+			windower.send_command('wait 3; setkey down down; wait 0.05; setkey down up; wait 1; setkey down down; wait 0.05; setkey down up; wait 1.5; setkey enter down; wait 0.5; setkey enter up; wait 1.5; ' ..
+				'setkey down down; wait 0.05; setkey down up; wait 1.0; setkey down down; wait 0.05; setkey down up; wait 1.0; setkey down down; wait 0.05; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.5;' ..
+				'setkey up down; wait 0.05; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.5; setkey up down; wait 0.05; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
 		end
-		if ipcflag == false then
-			ipcflag = true
-			windower.send_ipc_message('get aby2')
-		end
-		ipcflag = false
 	else
 		atc('GET: Incorrect Zone/Command.')
 	end
+	if ipcflag == false then
+		ipcflag = true
+		windower.send_ipc_message('get ' ..cmd2)
+	end
+	ipcflag = false
 end
 
 function go()
@@ -2609,21 +2602,21 @@ function htmb(cmd2)
 			-- Avatar battles
 			if cloister_zones:contains(zone) then
 				if zone == 201 then
-					targetid = windower.ffxi.get_mob_by_name('Wind Protocrystal')
+					get_poke_check('Wind Protocrystal')
 				elseif zone == 202 then
-					targetid = windower.ffxi.get_mob_by_name('Lightning Protocrystal')
+					get_poke_check('Lightning Protocrystal')
 				elseif zone == 203 then
-					targetid = windower.ffxi.get_mob_by_name('Ice Protocrystal')
+					get_poke_check('Ice Protocrystal')
 				elseif zone == 207 then
-					targetid = windower.ffxi.get_mob_by_name('Fire Protocrystal')
+					get_poke_check('Fire Protocrystal')
 				elseif zone == 209 then
-					targetid = windower.ffxi.get_mob_by_name('Earth Protocrystal')
+					get_poke_check('Earth Protocrystal')
 				elseif zone == 211 then
-					targetid = windower.ffxi.get_mob_by_name('Water Protocrystal')
+					get_poke_check('Water Protocrystal')
 				end
-					atc('Target: ' .. targetid.id)
-					windower.send_command('settarget ' .. targetid.id)
-					windower.send_command('wait 0.5; input /lockon; wait 2; setkey enter down; wait 0.5; setkey enter up; wait 6; setkey down down; wait 0.5; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.0; setkey up down; wait 0.5; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up')
+					--atc('Target: ' .. targetid.id)
+					--windower.send_command('settarget ' .. targetid.id)
+					windower.send_command('wait 6; setkey down down; wait 0.5; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.0; setkey up down; wait 0.5; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up')
 			elseif zone == 31 then -- Monarch
 				windower.send_command('input /targetnpc; wait 1; input /lockon; wait 2; setkey enter down; wait 0.5; setkey enter up; wait 17; setkey down down; wait 0.5; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.0; setkey up down; wait 0.5; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up')
 			else
@@ -3132,12 +3125,30 @@ function get_poke_check(npc_name)
 	do
 		count = count + 1
 		if math.sqrt(npcstats.distance)<6 and npcstats.valid_target then
-			atc('Poke #: ' ..count.. ' -NPC: ' .. npc_name)
+			atc('Poke #: ' ..count.. ' [NPC: ' .. npc_name.. ' ID: ' .. npcstats.id.. ']')
 			poke_npc(npcstats.id,npcstats.index)
 		else
 			atcwarn('POKE: NPC Target is too far!')
 		end
-		coroutine.sleep(4.5)
+		coroutine.sleep(3.5)
+	end
+end
+
+function get_poke_check_id(npc_id)
+	npc_dialog = false
+	count = 0
+	npcstats = windower.ffxi.get_mob_by_id(npc_id)
+
+	while npc_dialog == false and count < 3
+	do
+		count = count + 1
+		if math.sqrt(npcstats.distance)<6 and npcstats.valid_target then
+			atc('Poke #: ' ..count.. ' [NPC: ' .. npcstats.name.. ' ID: ' ..npcstats.id.. ']')
+			poke_npc(npcstats.id,npcstats.index)
+		else
+			atcwarn('POKE: NPC Target is too far!')
+		end
+		coroutine.sleep(3.5)
 	end
 end
 

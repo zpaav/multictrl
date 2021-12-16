@@ -78,7 +78,7 @@ jobnames = {
 }
 
 InternalCMDS = S{
-	'on','off','foff',
+	'on','off',
 	'mnt','dis','reload','unload','fin','sch','ent',
 	'lotall','buff','esc','nitro','sv5','cleanstones','brd',
 	'fight','fightmage','fightsmall','ws','food','sleep','rng','trib','rads','buyalltemps',
@@ -166,6 +166,8 @@ windower.register_event('addon command', function(input, ...)
 		buyshields()
 	elseif cmd == 'fon' then
 		fon(cmd2)
+	elseif cmd == 'foff' then
+		foff(cmd2)
 	elseif cmd == 'buy' then
 		buy(cmd2)
 	elseif cmd == 'as' then
@@ -993,7 +995,7 @@ function on()
 		end
 
 		if player_job.main_job == "RUN" then
-			windower.send_command('gs c set autorunemode on')
+			windower.send_command('gs c set autorunemode on; gs c set autobuffmode auto')
 		elseif player_job.main_job == "BRD" then
 			windower.send_command('singer on')
 		elseif player_job.main_job == "COR" or player_job.sub_job == "COR" then
@@ -1133,12 +1135,13 @@ function foff()
 				-- check if party member in same zone.
 				if v.mob == nil then
 					-- Not in zone.
-					atc('FON: ' .. v.name .. ' is not in zone.')
+					atc('FOFF: ' .. v.name .. ' is not in zone.')
 				else
 					if ptymember.valid_target then
+						atcwarn('FOFF: Setting ' ..v.name.. ' to stop following.')
 						windower.send_command('send ' .. v.name .. ' hb f off')
 					else
-						atc('FON: ' .. v.name .. ' is not in range.')
+						atc('FOFF: ' .. v.name .. ' is not in range.')
 					end
 				end
 			end
@@ -1822,51 +1825,48 @@ function burnset(cmd2,cmd3,cmd4)
 			for k, v in pairs(windower.ffxi.get_party()) do
 				if type(v) == 'table' then
 					if string.lower(v.name) == string.lower(settings.assist) then
-						if v.mob == nil then
-							-- Not in zone.
-							atc(v.name .. ' is not in zone, HB will NOT assist if player is not in zone.  Try again later.')
-						
+						ptymember = windower.ffxi.get_mob_by_name(v.name)
+						if v.mob == nil or not ptymember.valid_target then
+							atcwarn('[BurnSet] ' ..v.name .. ' is not in zone or out of range.')
 						else
-							atc('Initialize HB and assist, and disabled cures')
-							-- if string.lower(v.name) == string.lower(player.name) then
-								-- windower.send_command('hb reload; wait 1.5; hb disable cure; hb disable na')
-							-- else
-								if player.main_job ~= 'WHM' and player.main_job ~= 'RUN' and player.main_job ~= 'COR' and player.main_job ~= 'BRD' then
-									windower.send_command('hb reload; wait 1.5; hb disable cure; hb disable na; hb assist ' ..settings.assist .. '; wait 1.0; hb on')
+							atc('[BurnSet] Initialize HB and assist, and disabled cures')
+							if player.main_job ~= 'WHM' and player.main_job ~= 'RUN' and player.main_job ~= 'BRD' and player.main_job ~= 'THF' then
+								windower.send_command('hb reload; wait 1.5; hb disable cure; hb disable na; hb assist ' ..settings.assist .. '; wait 1.0; hb on')
+							end
+							if player.main_job == 'THF' then
+								windower.send_command('wait 1.0; hb f dist 1.5; hb f ' ..settings.assist)	
+							elseif player.main_job == 'COR' then
+								windower.send_command('hb reload; wait 1.5; hb on')
+								if settings.indi == 'malaise' then
+									windower.send_command('roll roll1 beast; wait 1.0; roll roll2 pup;')
+								else
+									windower.send_command('roll roll1 beast; wait 1.0; roll roll2 drachen;')
 								end
-								if player.main_job == 'COR' then
-									windower.send_command('hb reload; wait 1.5; hb on')
-									if settings.indi == 'malaise' then
-										windower.send_command('roll roll1 beast; wait 1.0; roll roll2 pup;')
-									else
-										windower.send_command('roll roll1 beast; wait 1.0; roll roll2 drachen;')
-									end
+							elseif player.main_job == 'SMN' then
+								if settings.avatar == 'ramuh' then
+									windower.send_command('input /ma "Ramuh" <me>;')
+								elseif settings.avatar == 'ifrit' then
+									windower.send_command('input /ma "Ifrit" <me>;')
+								elseif settings.avatar == 'siren' then
+									windower.send_command('input /ma "Siren" <me>;')
 								end
-								-- Favor
-								if player.main_job == 'SMN' then
-									if settings.avatar == 'ramuh' then
-										windower.send_command('input /ma "Ramuh" <me>; wait 5; input /ja "Avatar\'s Favor" <me>')
-									elseif settings.avatar == 'ifrit' then
-										windower.send_command('input /ma "Ifrit" <me>; wait 5; input /ja "Avatar\'s Favor" <me>')
-									elseif settings.avatar == 'siren' then
-										windower.send_command('input /ma "Siren" <me>; wait 5; input /ja "Avatar\'s Favor" <me>')
-									end
+							elseif player.main_job == 'GEO' then
+									windower.send_command('gs c set autobuffmode off')
+								if settings.indi == 'torpor' then
+									windower.send_command('gs c autogeo frailty; wait 1; gs c autoindi torpor')
+									windower.send_command('input /ma "Indi-Torpor" <me>;')
+								elseif settings.indi == 'malaise' then
+									windower.send_command('gs c autogeo frailty; wait 1; gs c autoindi malaise')
+									windower.send_command('wait 2.0; hb follow ' ..settings.assist .. '; wait 1.0; hb f dist 5')
+									windower.send_command('input /ma "Indi-Malaise" <me>;')
+								elseif settings.indi == 'refresh' then
+									windower.send_command('gs c autogeo frailty; wait 1; gs c autoindi refresh')
+									windower.send_command('input /ma "Indi-Refresh" <me>;')
+								elseif settings.indi == 'fury' then
+									windower.send_command('gs c autogeo frailty; wait 1; gs c autoindi fury')
+									windower.send_command('input /ma "Indi-Fury" <me>;')
 								end
-								if player.main_job == 'GEO' then
-										windower.send_command('gs c set autobuffmode off')
-									if settings.indi == 'torpor' then
-										windower.send_command('gs c autogeo frailty; wait 1; gs c autoindi torpor')
-									elseif settings.indi == 'malaise' then
-										windower.send_command('gs c autogeo frailty; wait 1; gs c autoindi malaise')
-										coroutine.sleep(1.0)
-										windower.send_command('hb follow ' ..settings.assist .. '; wait 1.0; hb f dist 5')
-									elseif settings.indi == 'refresh' then
-										windower.send_command('gs c autogeo frailty; wait 1; gs c autoindi refresh')
-									elseif settings.indi == 'fury' then
-										windower.send_command('gs c autogeo frailty; wait 1; gs c autoindi fury')
-									end
-								end
-							--end
+							end
 						end
 					end
 				end
@@ -1879,9 +1879,9 @@ function burnset(cmd2,cmd3,cmd4)
 		
 				if type(v) == 'table' then
 					if string.lower(v.name) == string.lower(cmd3) then
-						if v.mob == nil then
-							-- Not in zone.
-							atc(v.name .. ' is not in zone, HB will NOT assist if player is not in zone.  Try again later.')
+						ptymember = windower.ffxi.get_mob_by_name(v.name)
+						if v.mob == nil or not ptymember.valid_target then
+							atcwarn('[BurnSet] ' ..v.name .. ' is not in zone or too far away, HB will NOT function correctly.')
 						
 						else
 							atc('You are now assisting ' ..cmd3)
@@ -2382,12 +2382,25 @@ function smnburn()
 				coroutine.sleep(4.2)
 				windower.send_command('input /ja "Astral Conduit" <me>')
 				coroutine.sleep(1.6)
+				-- 9.8s
 				if settings.avatar == 'ramuh' then
-					windower.send_command('exec VoltStrike.txt')
+					if haveBuff('Vorseal') then
+						windower.send_command('exec VoltStrike.txt')
+					else
+						windower.send_command('exec VoltStrikeREG.txt')
+					end
 				elseif settings.avatar == 'ifrit' then
-					windower.send_command('exec FlamingCrush.txt')
+					if haveBuff('Vorseal') then
+						windower.send_command('exec FlamingCrush.txt')
+					else
+						windower.send_command('exec FlamingCrushREG.txt')
+					end
 				elseif settings.avatar == 'siren' then
-					windower.send_command('exec HystericAssault.txt')
+					if haveBuff('Vorseal') then
+						windower.send_command('exec HystericAssault.txt')
+					else
+						windower.send_command('exec HystericAssaultREG.txt')
+					end
 				end
 			else
 				atcwarn('[SMNBurn]: CANCELLING, NO TARGET!')
@@ -3179,6 +3192,19 @@ function get_poke_check_id(npc_id)
 	end
 end
 
+function haveBuff(...)
+	local args = S{...}:map(string.lower)
+	local player = windower.ffxi.get_player()
+	if (player ~= nil) and (player.buffs ~= nil) then
+		for _,bid in pairs(player.buffs) do
+			local buff = res.buffs[bid]
+			if args:contains(buff.en:lower()) then
+				return true
+			end
+		end
+	end
+	return false
+end
 
 ------------
 --IPC Stuff

@@ -1854,7 +1854,6 @@ function burnset(cmd2,cmd3,cmd4)
 								end
 								if player.main_job == 'GEO' then
 										windower.send_command('gs c set autobuffmode off')
-									--windower.send_command('lua r autogeo; wait 1.0; geo off; wait 1.5; geo geo frailty')
 									if settings.indi == 'torpor' then
 										windower.send_command('gs c autogeo frailty; wait 1; gs c autoindi torpor')
 									elseif settings.indi == 'malaise' then
@@ -2305,60 +2304,66 @@ end
 function geoburn()
 	
 	player = windower.ffxi.get_player()
-	
-	if settings.active then
-		atc('Check GEO for burn.')
+	local target = windower.ffxi.get_mob_by_target('t')
+	local world = res.zones[windower.ffxi.get_info().zone].name
+
+	if settings.active and not(areas.Cities:contains(world)) then
 		if ipcflag == false then
 			ipcflag = true
 			windower.send_ipc_message('geoburn')
 		end
 		ipcflag = false
 		if player.main_job == 'GEO' then
-			windower.add_to_chat(123, 'GEO Burn Activated for Bolster!')
-			
-			windower.send_command('gs c set autobuffmode off')
-			windower.send_command('hb disable cure')
-			windower.send_command('hb disable na')
-			windower.send_command('hb on')
-			
-			coroutine.sleep(1.7)
-			windower.send_command('input /ja "Bolster" <me>')
-			coroutine.sleep(1.8)
-			windower.send_command('input /ma "Geo-Frailty" <t>')
-			coroutine.sleep(4.5)
-			if settings.indi == 'torpor' then
-				windower.send_command('input /ma "Indi-Torpor" <me>')
-			elseif settings.indi == 'malaise' then
-				windower.send_command('input /ma "Indi-Malaise" <me>')
-			elseif settings.indi == 'refresh' then
-				windower.send_command('input /ma "Indi-Refresh" <me>')
+			if target.is_npc == true and target.valid_target == true then
+				atcwarn('[GEOBurn]: GEO Burn Activated for Bolster!')
+				
+				windower.send_command('gs c set autobuffmode off')
+				windower.send_command('hb disable cure')
+				windower.send_command('hb disable na')
+				windower.send_command('hb on')
+				
+				coroutine.sleep(1.7)
+				windower.send_command('input /ja "Bolster" <me>')
+				coroutine.sleep(1.8)
+				windower.send_command('input /ma "Geo-Frailty" <t>')
+				coroutine.sleep(4.5)
+				if settings.indi == 'torpor' then
+					windower.send_command('input /ma "Indi-Torpor" <me>')
+				elseif settings.indi == 'malaise' then
+					windower.send_command('input /ma "Indi-Malaise" <me>')
+				elseif settings.indi == 'refresh' then
+					windower.send_command('input /ma "Indi-Refresh" <me>')
+				end
+				coroutine.sleep(4.5)
+				windower.send_command('input /ja "Dematerialize" <me>')
+				coroutine.sleep(0.75)
+				if settings.dia then
+					windower.send_command('hb debuff dia II')
+				elseif not settings.dia then
+					windower.send_command('hb debuff rm dia II')
+				end
+				windower.send_command('hb enable cure')
+				windower.send_command('hb enable na')
+				windower.send_command('hb mincure 3')
+				windower.send_command('gs c set autobuffmode auto')
+			else
+				atcwarn('[GEOBurn]: CANCELLING, NO TARGET!')
 			end
-			coroutine.sleep(4.5)
-			windower.send_command('input /ja "Dematerialize" <me>')
-			coroutine.sleep(0.75)
-			if settings.dia then
-				windower.send_command('hb debuff dia II')
-			elseif not settings.dia then
-				windower.send_command('hb debuff rm dia II')
-			end
-			windower.send_command('hb enable cure')
-			windower.send_command('hb enable na')
-			windower.send_command('hb mincure 3')
-			windower.send_command('gs c set autobuffmode auto')
-
 		else
-			atc('Not GEO job, skipping')
+			atc('[GEOBurn]: Not GEO job.')
 		end
 	else
-		atc('OneHour BURN not active!')
+		atc('[GEOBurn]: Not active or in city zone.')
 	end
 end
 
 function smnburn()
 
 	player = windower.ffxi.get_player()
-	if settings.active then
-		atc('Check SMN for burn.')
+	local target = windower.ffxi.get_mob_by_target('t')
+	local world = res.zones[windower.ffxi.get_info().zone].name
+	
+	if settings.active and not(areas.Cities:contains(world)) then
 		if ipcflag == false then
 			ipcflag = true
 			windower.send_ipc_message('smnburn')
@@ -2366,36 +2371,39 @@ function smnburn()
 		ipcflag = false
 		
 		if player.main_job == 'SMN' then
-			
-			windower.add_to_chat(123, 'SMN Burn INTIATE!')
-			windower.send_command('hb on')
-			-- check distance 21 or less
-			coroutine.sleep(1.5)
-			windower.send_command('input /ja "Astral Flow" <me>')
-			coroutine.sleep(2.5)
-			windower.send_command('input /ja "Assault" <t>')
-			coroutine.sleep(4.2)
-			windower.send_command('input /ja "Astral Conduit" <me>')
-			coroutine.sleep(1.6)
-			if settings.avatar == 'ramuh' then
-				windower.send_command('exec VoltStrike.txt')
-			elseif settings.avatar == 'ifrit' then
-				windower.send_command('exec FlamingCrush.txt')
-			elseif settings.avatar == 'siren' then
-				windower.send_command('exec HystericAssault.txt')
+			if target.is_npc == true and target.valid_target == true then
+				atcwarn('[SMNBurn]: SMN Burn Activated!')
+				windower.send_command('hb on')
+				-- check distance 21 or less
+				coroutine.sleep(1.5)
+				windower.send_command('input /ja "Astral Flow" <me>')
+				coroutine.sleep(2.5)
+				windower.send_command('input /ja "Assault" <t>')
+				coroutine.sleep(4.2)
+				windower.send_command('input /ja "Astral Conduit" <me>')
+				coroutine.sleep(1.6)
+				if settings.avatar == 'ramuh' then
+					windower.send_command('exec VoltStrike.txt')
+				elseif settings.avatar == 'ifrit' then
+					windower.send_command('exec FlamingCrush.txt')
+				elseif settings.avatar == 'siren' then
+					windower.send_command('exec HystericAssault.txt')
+				end
+			else
+				atcwarn('[SMNBurn]: CANCELLING, NO TARGET!')
 			end
 		else
-			atc('Not SMN job, skipping')
+			atc('[SMNBurn]: Not SMN job.')
 		end
 	else
-		atc('OneHour BURN not active!')
+		atc('[SMNBurn]: Not active or in city zone.')
 	end
 end
 
 -- External addons
 
 function warp()
-	local zone = windower.ffxi.get_info()['zone']
+
 	local world = res.zones[windower.ffxi.get_info().zone].name
 	
 	if not(areas.Cities:contains(world)) then
@@ -2439,7 +2447,7 @@ function get(cmd2)
 		windower.send_command('wait 3; setkey down down; wait 0.05; setkey down up; wait 1; setkey down down; wait 0.05; setkey down up; wait 1; setkey down down; wait 0.05; setkey down up; wait 1; setkey down down; wait 0.05; setkey down up; wait 3.5; setkey enter down; wait 0.5; setkey enter up;')
 	elseif cmd2 == 'pot' and zone == 291 then
 		atc('GET: Potpourri KI')
-			get_npc_dialogue('17970037',3)
+		get_poke_check('Emporox')
 		windower.send_command('wait 3; setkey right down; wait 1; setkey right up; wait 2; setkey up down; wait 0.1; setkey up up; wait 2; setkey enter down; wait 0.5; setkey enter up; wait 2; setkey up down; wait 0.1; setkey up up; wait 2; setkey enter down; wait 0.5; setkey enter up;')
 	elseif cmd2 == 'srki' and zone == 276  then
 		atc('GET: SR KI.')
@@ -2457,6 +2465,17 @@ function get(cmd2)
 		atc('GET: Omen Canteen.')
 			get_npc_dialogue('17970043',3)
 		windower.send_command('wait 3; setkey enter down; wait 0.5; setkey enter up;')
+	-- elseif cmd2 == 'npc' then
+		-- local target = windower.ffxi.get_mob_by_target('t')
+		-- if cmd3 == nil then
+			-- cmd3 = target.name
+		-- end
+		-- if target.is_npc == true and target.valid_target == true then
+			-- atc('GET: NPC Target Poke: ' ..target.name)
+			-- get_poke_check(target.name)
+		-- else
+			-- atcwarn('GET: NPC Target Poke - INVALID TARGET')
+		-- end
 	elseif cmd2 == 'mgenter' and (zone == 257 or zone == 256) then
 		atc('GET: ENTER Mog Garden.')
 		if zone == 257 then
@@ -2509,6 +2528,14 @@ function get(cmd2)
 				'setkey down down; wait 0.05; setkey down up; wait 1.0; setkey down down; wait 0.05; setkey down up; wait 1.0; setkey down down; wait 0.05; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.5;' ..
 				'setkey up down; wait 0.05; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.5; setkey up down; wait 0.05; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
 		end
+	elseif cmd2 == 'rads' and zone == 291 then
+		atc('GET: Radialens')
+		get_poke_check('Shiftrix')
+		if npc_dialog == true then
+			windower.send_command('wait 4; setkey down down; wait 0.05; setkey down up; wait 1; setkey down down; wait 0.05; setkey down up; wait 1.5; setkey enter down; wait 0.5; setkey enter up; wait 1.5; ' ..
+				'setkey down down; wait 0.05; setkey down up; wait 1.0; setkey down down; wait 0.05; setkey down up; wait 1.0; setkey down down; wait 0.05; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.5;' ..
+				'setkey up down; wait 0.05; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
+		end
 	else
 		atc('GET: Incorrect Zone/Command.')
 	end
@@ -2555,10 +2582,10 @@ end
 function endown()
 	if ipcflag == false then
 		ipcflag = true
-		windower.send_command('setkey down down; wait 0.5; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
+		windower.send_command('setkey down down; wait 0.05; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
 		windower.send_ipc_message('endown')
 	elseif ipcflag == true then
-		windower.send_command('setkey down down; wait 0.5; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
+		windower.send_command('setkey down down; wait 0.05; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
 	end
 	ipcflag = false
 end
@@ -2566,10 +2593,10 @@ end
 function enup()
 	if ipcflag == false then
 		ipcflag = true
-		windower.send_command('setkey up down; wait 0.5; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
+		windower.send_command('setkey up down; wait 0.05; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
 		windower.send_ipc_message('enup')
 	elseif ipcflag == true then
-		windower.send_command('setkey up down; wait 0.5; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
+		windower.send_command('setkey up down; wait 0.05; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
 	end
 	ipcflag = false
 end

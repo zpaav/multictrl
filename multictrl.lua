@@ -509,7 +509,7 @@ display_box = function()
 			burn_status:append(string.format("\n%s Indi Spell: %s" .. settings.indi, clr.w, clr.h))
 		end
 		
-		if settings.assist ~= nil then
+		if settings.assist then
 			burn_status:append(string.format("\n%s Assiting: %s" .. settings.assist, clr.w, clr.h))
 		else
 			burn_status:append(string.format("\n%s Assiting: %s", clr.w))
@@ -751,16 +751,17 @@ function stage(cmd2)
 		end
 		ipcflag = false
 	elseif cmd2 == 'lil' then
+		atc('[Stage]: Lilith')
 		if player_job.main_job == 'WHM' then
-			windower.send_command('hb buff <me> boost-str; gs c set castingmode DT; gs c set idlemode DT; hb buff <me> auspice;')
+			windower.send_command('hb buff <me> boost-str; gs c set castingmode DT; gs c set idlemode DT; hb buff <me> auspice; hb ignore_debuff all curse;')
 		elseif player_job.main_job == 'BRD' then
-			windower.send_command('sing pl melee; sing n on; sing p on; sing debuffing off; hb debuff dia2')
+			windower.send_command('sing pl melee; sing n on; sing p on; sing debuffing off; sing ballad 1 <me>; gs c set treasuremode tag; hb disable na')
 		elseif player_job.main_job == 'BLU' then
 			windower.send_command('lua l roller; wait 1.5; gs c set weapons MACC; gs c set castingmode resistant; gs c set autobluspam on; gs c set autobuffmode auto; roller roll1 fighters;')
 		elseif player_job.main_job == 'COR' then
-			windower.send_command('roll roll1 sam; roll roll2 allies; gs c set treasuremode tag')
+			windower.send_command('roll roll1 sam; roll roll2 allies; gs c set treasuremode tag; gs c set idlemode refresh;')
 		elseif player_job.main_job == 'GEO' then
-			windower.send_command('gs c autogeo frailty; gs c autoindi fury; gs c autoentrust haste; gs c set castingmode DT; gs c set idlemode DT; gs c autonuke absorb-tp; gs c set autonukemode on')
+			windower.send_command('gs c autogeo frailty; gs c autoindi fury; gs c autoentrust haste; gs c set castingmode DT; gs c set idlemode DT; gs c autonuke Absorb-TP; gs c set autonukemode on;')
 		end
 	
 		if ipcflag == false then
@@ -1711,9 +1712,6 @@ end
 
 function buyshields()
 
-	player = windower.ffxi.get_player()
-	get_spells = windower.ffxi.get_spells()
-	
 	atc('Starting buying SHIELDS!')
 	
 	for k, v in pairs(windower.ffxi.get_party()) do
@@ -1830,12 +1828,24 @@ function burnset(cmd2,cmd3,cmd4)
 							atcwarn('[BurnSet] ' ..v.name .. ' is not in zone or out of range.')
 						else
 							atc('[BurnSet] Initialize HB and assist, and disabled cures')
-							if player.main_job ~= 'WHM' and player.main_job ~= 'RUN' and player.main_job ~= 'BRD' and player.main_job ~= 'THF' then
+							
+							local healers = S{'COR','WHM','RDM','RUN','THF','SCH'}
+							-- Potential healers or /SJ healers don't disable hb.
+							if not (healers:contains(player.main_job)) then
 								windower.send_command('hb reload; wait 1.5; hb disable cure; hb disable na; hb assist ' ..settings.assist .. '; wait 1.0; hb on')
 							end
 							if player.main_job == 'THF' then
-								windower.send_command('wait 1.0; hb f dist 1.5; hb f ' ..settings.assist)	
+								atc('[BurnSet] THF Init')
+								windower.send_command('wait 1.0; hb f dist 1.5; hb f ' ..settings.assist)
+								windower.send_command('hb disable cure; hb disable na; hb assist ' ..settings.assist .. '; wait 1.0; hb on')
+							elseif player.main_job == 'RUN' then
+								atc('[BurnSet] RUN Init')
+								windower.send_command('gs c set autobuffmode off; hb f off; gs c set runeelement tenebrae')
+								if settings.indi == 'malaise' then
+									windower.send_command('gs c set runeelement ignis')
+								end
 							elseif player.main_job == 'COR' then
+								atc('[BurnSet] COR Init')
 								windower.send_command('hb reload; wait 1.5; hb on')
 								if settings.indi == 'malaise' then
 									windower.send_command('roll roll1 beast; wait 1.0; roll roll2 pup;')
@@ -1843,15 +1853,17 @@ function burnset(cmd2,cmd3,cmd4)
 									windower.send_command('roll roll1 beast; wait 1.0; roll roll2 drachen;')
 								end
 							elseif player.main_job == 'SMN' then
+								atc('[BurnSet] SMN Init')
 								if settings.avatar == 'ramuh' then
-									windower.send_command('input /ma "Ramuh" <me>;')
+									windower.send_command('input /ma "Ramuh" <me>; gs c set avatar ramuh;')
 								elseif settings.avatar == 'ifrit' then
-									windower.send_command('input /ma "Ifrit" <me>;')
+									windower.send_command('input /ma "Ifrit" <me>; gs c set avatar ifrit')
 								elseif settings.avatar == 'siren' then
-									windower.send_command('input /ma "Siren" <me>;')
+									windower.send_command('input /ma "Siren" <me>; gs c set avatar siren')
 								end
 							elseif player.main_job == 'GEO' then
-									windower.send_command('gs c set autobuffmode off')
+								atc('[BurnSet] GEO Init')
+								windower.send_command('gs c set autobuffmode off')
 								if settings.indi == 'torpor' then
 									windower.send_command('gs c autogeo frailty; wait 1; gs c autoindi torpor')
 									windower.send_command('input /ma "Indi-Torpor" <me>;')
@@ -2307,14 +2319,14 @@ function geoburn()
 	local target = windower.ffxi.get_mob_by_target('t')
 	local world = res.zones[windower.ffxi.get_info().zone].name
 
-	if settings.active and not(areas.Cities:contains(world)) then
+	if settings.active and settings.assist ~= '' and not(areas.Cities:contains(world)) then
 		if ipcflag == false then
 			ipcflag = true
 			windower.send_ipc_message('geoburn')
 		end
 		ipcflag = false
 		if player.main_job == 'GEO' then
-			if target.is_npc == true and target.valid_target == true then
+			if target and target.is_npc == true and target.valid_target == true then
 				atcwarn('[GEOBurn]: GEO Burn Activated for Bolster!')
 				
 				windower.send_command('gs c set autobuffmode off')
@@ -2363,7 +2375,7 @@ function smnburn()
 	local target = windower.ffxi.get_mob_by_target('t')
 	local world = res.zones[windower.ffxi.get_info().zone].name
 	
-	if settings.active and not(areas.Cities:contains(world)) then
+	if settings.active and settings.assist ~= '' and not(areas.Cities:contains(world)) then
 		if ipcflag == false then
 			ipcflag = true
 			windower.send_ipc_message('smnburn')
@@ -2371,7 +2383,7 @@ function smnburn()
 		ipcflag = false
 		
 		if player.main_job == 'SMN' then
-			if target.is_npc == true and target.valid_target == true then
+			if target and target.is_npc == true and target.valid_target == true then
 				atcwarn('[SMNBurn]: SMN Burn Activated!')
 				windower.send_command('hb on')
 				-- check distance 21 or less
@@ -2476,7 +2488,7 @@ function get(cmd2)
 		windower.send_command('wait 2; setkey enter down; wait 0.5; setkey enter up;')
 	elseif cmd2 == 'canteen' and zone == 291 then
 		atc('GET: Omen Canteen.')
-			get_npc_dialogue('17970043',3)
+		get_poke_check('Incantrix')
 		windower.send_command('wait 3; setkey enter down; wait 0.5; setkey enter up;')
 	-- elseif cmd2 == 'npc' then
 		-- local target = windower.ffxi.get_mob_by_target('t')

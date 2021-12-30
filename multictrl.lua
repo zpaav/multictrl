@@ -11,6 +11,7 @@ packets = require('packets')
 require('coroutine')
 res = require('resources')
 texts = require('texts')
+npc_map = require('npc_map')
 
 default = {
 
@@ -192,32 +193,34 @@ windower.register_event('addon command', function(input, ...)
 		gettarget(term)
 	elseif InternalCMDS:contains(cmd) then
 		send_int_cmd(cmd,cmd2)
+			elseif cmd == 'test' then
+				find_npc_to_poke()
 	end
 
 end)
 
 local mprefix = ('[%s] '):format(_addon.name)
 
-function enter()
-	log('Enter')
-	windower.send_command('setkey enter down; wait 0.5; setkey enter up;')
-end
-function down()
-	log('Down')
-	windower.send_command('setkey down down; wait 0.1; setkey down up;')
-end
-function up()
-	log('Up')
-	windower.send_command('setkey up down; wait 0.1; setkey up up;')
-end
-function right()
-	log('Right')
-	windower.send_command('setkey right down; wait 0.5; setkey right up;')
-end
-function left()
-	log('Left')
-	windower.send_command('setkey left down; wait 0.5; setkey left up;')
-end
+-- function enter()
+	-- log('Enter')
+	-- windower.send_command('setkey enter down; wait 0.5; setkey enter up;')
+-- end
+-- function down()
+	-- log('Down')
+	-- windower.send_command('setkey down down; wait 0.1; setkey down up;')
+-- end
+-- function up()
+	-- log('Up')
+	-- windower.send_command('setkey up down; wait 0.1; setkey up up;')
+-- end
+-- function right()
+	-- log('Right')
+	-- windower.send_command('setkey right down; wait 0.5; setkey right up;')
+-- end
+-- function left()
+	-- log('Left')
+	-- windower.send_command('setkey left down; wait 0.5; setkey left up;')
+-- end
 
 function atc(...)
     local args = T({...})
@@ -587,11 +590,11 @@ function stage(cmd2)
 	elseif cmd2 == 'shin' then
 		-- MNK BLU THF GEO WHM BRD
 		if player_job.main_job == 'WHM' then
-			windower.send_command('gaze ap off; hb buff <me> barfira; gs c set castingmode DT; gs c set idlemode DT; hb buff <me> auspice; hb buff <me> regen4')
+			windower.send_command('gaze ap off; hb buff <me> barfira; gs c set castingmode DT; gs c set idlemode DT; hb buff <me> auspice; hb buff <me> regen4; hb as off; hb buff ' ..settings.char3.. ' haste')
 		elseif player_job.main_job == 'RUN' then
 			windower.send_command('gs c set runeelement lux; gs c set autobuffmode auto; gs c set hybridmode DTLite;')
 		elseif player_job.main_job == 'BRD' then -- sub WHM
-			windower.send_command('gaze ap off; sing pl shin; sing n on; sing p on; hb mincure 5; hb min curaga 2; sing ballad 1 ' ..settings.char3.. '; sing ballad 1 ' ..settings.char4.. '; hb buff ' ..settings.char2.. ' haste')
+			windower.send_command('gaze ap off; sing pl shin; sing n on; sing p on; hb mincure 5; hb mincuraga 2; sing ballad 1 ' ..settings.char6.. '; sing ballad 1 ' ..settings.char5.. '; sing ballad 1 ' ..settings.char4.. '; hb buff ' ..settings.char2.. ' haste')
 		elseif player_job.main_job == 'THF' then
 			windower.send_command('gs c set treasuremode fulltime; gaze ap on')
 		elseif player_job.main_job == 'SAM' or player_job.main_job == 'DRK' or player_job.main_job == 'MNK' then
@@ -601,7 +604,7 @@ function stage(cmd2)
 		elseif player_job.main_job == 'SCH' then -- sub RDM
 			windower.send_command('gs c set elementalmode light; gs c set castingmode DT; gs c set idlemode DT; schheal; hb buff <me> regen5; hb buff ' ..settings.char5.. ' aurorastorm2; hb buff ' ..settings.char4.. ' refresh')
 		elseif player_job.main_job == 'GEO' then -- sub RDM
-			windower.send_command('gs c set castingmode DT; gs c set idlemode DT; gs c autogeo fury; gs c autoindi regen; gs c autoentrust frailty; hb buff ' ..settings.char4.. ' refresh; hb buff ' ..settings.char1.. ' haste')
+			windower.send_command('gs c set castingmode DT; gs c set idlemode DT; gs c autogeo fury; gs c autoindi regen; gs c autoentrust frailty; hb debuff dia2; hb buff ' ..settings.char4.. ' refresh; hb buff ' ..settings.char1.. ' haste')
 		end
 	elseif cmd2 == 'kalunga' then
 		if player_job.main_job == 'WHM' then
@@ -795,7 +798,7 @@ function stage(cmd2)
 			windower.send_command('gs c set weapons Kaja; gs c set jugmode GenerousArthur; gs c toggle AutoCallPet')
 		end
 	else
-		atc('[Stage]: Invalid command.')
+		atc('[Stage]: Invalid option.')
 	end
 	if ipcflag == false then
 		ipcflag = true
@@ -2543,23 +2546,40 @@ end
 
 function enter()
 	atc('ENTER: Enter menu.')
-	
+	local possible_npc = find_npc_to_poke()
+
 	if ipcflag == false then
 		ipcflag = true
-		windower.send_ipc_message('enter')
-		get_npc_dialogue('npc',3)
+	
+		if possible_npc then
+			windower.send_ipc_message('enter')
+			get_poke_check(possible_npc)
+		else
+			windower.send_ipc_message('enter')
+			get_npc_dialogue('npc',3)
+		end
+		
+		-- windower.send_ipc_message('enter')
+		-- get_npc_dialogue('npc',3)
+		
 		if npc_dialog == true then
-			windower.send_command('setkey up down; wait 0.5; setkey up up; wait 0.7; setkey enter down; wait 0.5; setkey enter up;')
+			windower.send_command('wait 0.8; setkey up down; wait 0.5; setkey up up; wait 0.7; setkey enter down; wait 0.5; setkey enter up;')
 		end
 	elseif ipcflag == true then
-		get_npc_dialogue('npc',3)
+	
+		if possible_npc then
+			get_poke_check(possible_npc)
+		else
+			get_npc_dialogue('npc',3)
+		end
+	
+		--get_npc_dialogue('npc',3)
 		if npc_dialog == true then
-			windower.send_command('setkey up down; wait 0.5; setkey up up; wait 0.7; setkey enter down; wait 0.5; setkey enter up;')
+			windower.send_command('wait 0.8; setkey up down; wait 0.5; setkey up up; wait 0.7; setkey enter down; wait 0.5; setkey enter up;')
 		end
 	end
 	ipcflag = false
 end
-
 
 function endown()
 	if ipcflag == false then
@@ -3083,6 +3103,18 @@ end
 ---------------------------------
 --Helper functions--
 ---------------------------------
+function find_npc_to_poke()
+	local zone = windower.ffxi.get_info()['zone']
+	for index, npc_table in pairs(npc_map) do
+		if zone == npc_table.zone then
+			npcstats = windower.ffxi.get_mob_by_name(npc_table.name)
+			if npcstats and (math.sqrt(npcstats.distance)<6 and npcstats.valid_target) then
+					atc(npc_table.name)
+				return npcstats.name
+			end
+		end
+	end
+end
 
 function check_party()
 

@@ -3109,7 +3109,6 @@ function find_npc_to_poke()
 		if zone == npc_table.zone then
 			npcstats = windower.ffxi.get_mob_by_name(npc_table.name)
 			if npcstats and (math.sqrt(npcstats.distance)<6 and npcstats.valid_target) then
-					atc(npc_table.name)
 				return npcstats.name
 			end
 		end

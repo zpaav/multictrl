@@ -1,6 +1,11 @@
 return {
-    [0] = {id=0,name="Transcendental Radiance",zone=126},
-    [1] = {id=1,name="Vertical Conflux",zone=137},
-	[2] = {id=2,name="Cavernous Maw",zone=255},
-}, {"id", "name", "zone"}
+	[126] = {'Transcendental Radiance'},
+    [137] = {'Vertical Conflux'},
+    --[255] = {'Cavernous Maw'},
+	[255] = {'Transcendental Radiance'},
+	[279] = {'Veridical Conflux #1','Veridical Conflux #2','Veridical Conflux #3','Veridical Conflux #4','Veridical Conflux #5','Veridical Conflux #6'},
+	[298] = {'Veridical Conflux #1','Veridical Conflux #2','Veridical Conflux #3','Veridical Conflux #4','Veridical Conflux #5','Veridical Conflux #6'},
+	[231] = {'Home Point #1','Home Point #2','Home Point #3','Home Point #4'},
+	-- [] = {'Eschan Portal #1'},
+}
 

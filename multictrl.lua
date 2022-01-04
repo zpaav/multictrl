@@ -1,7 +1,7 @@
 _addon.name = 'MC'
 _addon.author = 'Kate'
-_addon.version = '1.8.0'
-_addon.commands = {'multi','mc'}
+_addon.version = '3.0.1'
+_addon.commands = {'mc'}
 
 require('functions')
 require('logger')
@@ -22,6 +22,7 @@ default = {
 	assist='',
 	smnhelp=false,
 	smnsc=false,
+	smnauto=false,
 	buy=false,
 	autows=false,
 	rangedmode=false,
@@ -80,23 +81,19 @@ jobnames = {
 
 InternalCMDS = S{
 
-	'on','off','fight','fightmage','fightsmall','ws','food','sleep','rng','fin','wsall','cc',
-
-	'trib','rads','buyalltemps',
-	
-	'brd','sch',
-	
-	'mnt','dis','lotall','cleanstones','warp','omen','drop',
-	'ent','esc',
-	
-	'stage','zerg','smnburn','geoburn','wstype','burn','proc','enup','endown',
-	'go','enter','get','fps','buffup','reload','unload',
-	
+	--Battle
+	'on','off','stage','fight','fightmage','fightsmall','ws','food','sleep','fin','wsall','cc','zerg','wstype','buffup',
+	--Job
+	'brd','sch','smnburn','geoburn','burn','rng','proc',
+	--Travel
+	'mnt','dis','warp','omen','enup','endown','ent','esc','go','enter','get',
+	--Misc
+	'reload','unload','fps','lotall','cleanstones','drop','rand','buyalltemps',	
 	--Inactive
 	--'jc',
 }
 
-DelayCMDS = S{'trib','rads','buyalltemps','get','enter','go'}
+DelayCMDS = S{'buyalltemps','get','enter','go'}
 	
 isCasting = false
 ipcflag = false
@@ -146,36 +143,35 @@ windower.register_event('addon command', function(input, ...)
 		ein(cmd2)
 	elseif cmd == 'htmb' then
 		htmb(cmd2)
-	elseif cmd == 'rand' then
-		rand()
-	elseif cmd == 'buffall' then	-- No IPC
-		buffall(cmd2)
-	elseif cmd == 'd2' then			-- No IPC
-		d2()
-	elseif cmd == 'fon' then		-- No IPC
-		fon(cmd2)
-	elseif cmd == 'foff' then		-- No IPC
-		foff(cmd2)
 	elseif cmd == 'buy' then
 		buy(cmd2)
 	elseif cmd == 'buyshields' then
 		buyshields()
-	elseif cmd == 'as' then			-- Leader
+-- done
+	elseif cmd == 'buffall' then					-- No IPC
+		buffall(cmd2)
+	elseif cmd == 'd2' then							-- No IPC
+		d2()
+	elseif cmd == 'fon' then						-- No IPC
+		fon(cmd2)
+	elseif cmd == 'foff' then						-- No IPC
+		foff(cmd2)
+	elseif cmd == 'as' then							-- Leader
 		local leader = windower.ffxi.get_player()
 		as:schedule(0, cmd2,leader.name)
 		send_to_IPC:schedule(0, cmd,cmd2,leader.name)
-	elseif cmd == 'smnhelp' then	-- Leader
+	elseif cmd == 'smnhelp' then					-- Leader
 		local leader = windower.ffxi.get_player()
 		smnhelp:schedule(0, cmd2, leader.name)
 		send_to_IPC:schedule(0, cmd, cmd2, leader.name)
-	elseif cmd == 'rngsc' then		-- Leader
+	elseif cmd == 'rngsc' then						-- Leader
 		local leader = windower.ffxi.get_player()
 		rngsc:schedule(0, cmd2, leader.name)
 		send_to_IPC:schedule(0, cmd, cmd2, leader.name)
-	elseif cmd == 'send' then		-- Special parameter
+	elseif cmd == 'send' then						-- Special parameter
 		send:schedule(0, term)
 		send_to_IPC:schedule(0.95, cmd, term)
-	elseif cmd == 'gt' then			-- Special parameter
+	elseif cmd == 'gt' then							-- Special parameter
 		gt:schedule(0,term)
 		send_to_IPC:schedule(0.95, cmd, term)
 	elseif InternalCMDS:contains(cmd) then
@@ -186,11 +182,6 @@ windower.register_event('addon command', function(input, ...)
 			_G[cmd]:schedule(0, cmd2,cmd3)
 			send_to_IPC:schedule(0, cmd,cmd2,cmd3)
 		end
-		
-	-- TEST
-		elseif cmd == 'test' then
-		find_npc_to_poke()
-	-- TEST
 	end
 
 end)
@@ -1775,7 +1766,7 @@ function smnhelp(cmd2,leader_smn)
 	end
 	if settings.smnhelp then
 		
-		if cmd2 == 'SC' then
+		if cmd2 and cmd2:lower() == 'sc' then
 			if settings.smnsc then
 				atc('SMN Skillchain DISABLED')
 				settings.smnsc = false
@@ -1783,89 +1774,85 @@ function smnhelp(cmd2,leader_smn)
 				atc('SMN Skillchain ACTIVE')
 				settings.smnsc = true
 			end
+		elseif cmd2 and cmd2:lower() == 'auto' then
+			if settings.smnauto then
+				atc('SMN Auto DISABLED')
+				settings.smnauto = false
+			else
+				atc('SMN Auto ACTIVE')
+				settings.smnauto = true
+			end
 		end
 		
 		if currentPC.main_job == 'SMN' then
 
-			if cmd2 == 'assault' then
+			if cmd2:lower() == 'assault' then
 				windower.send_command('input /ja "Assault" <t>')
-			elseif cmd2 == 'release' then
+			elseif cmd2:lower() == 'release' then
 				windower.send_command('input /ja "Release" <me>')
-			elseif cmd2 == 'retreat' then
+			elseif cmd2:lower() == 'retreat' then
 				windower.send_command('input /ja "Retreat" <me>')
-			elseif cmd2 == 'VS' then
+			elseif cmd2:lower() == 'vs' then
 				if settings.smnsc then
-					if currentPC.name == leader_smn then
-						--windower.send_command('input /ja "Volt Strike" <t>')
-					else
+					if currentPC.name ~= leader_smn then
 						windower.send_command('wait 3.7; input /ja "Flaming Crush" <t>')
 					end
 				else
 					windower.send_command('input /ja "Volt Strike" <t>')
 				end
-			elseif cmd2 == 'FC' then
+			elseif cmd2:lower() == 'fc' then
 				if settings.smnsc then
-					if currentPC.name == leader_smn then
-						--windower.send_command('input /ja "Flaming Crush" <t>')
-					else
+					if currentPC.name ~= leader_smn then
 						windower.send_command('wait 3.7; input /ja "Volt Strike" <t>')
 					end
 				else
 					windower.send_command('input /ja "Flaming Crush" <t>')
 				end
-			elseif cmd2 == 'HA' then
+			elseif cmd2:lower() == 'ha' then
 				if settings.smnsc then
-					if currentPC.name == leader_smn then
-						--windower.send_command('input /ja "Hysteric Assault" <t>')
-					else
+					if currentPC.name ~= leader_smn then
 						windower.send_command('wait 3.7; input /ja "Flaming Crush" <t>')
 					end
 				else
 					windower.send_command('input /ja "Hysteric Assault" <t>')
 				end				
-			elseif cmd2 == 'ramuh' then
+			elseif cmd2:lower() == 'ramuh' then
 				if settings.smnsc then
-					if currentPC.name == leader_smn then
-						--windower.send_command('input /ma "Ramuh" <me>')
-					else
+					if currentPC.name ~= leader_smn then
 						windower.send_command('input /ma "Ifrit" <me>')
 					end
 				else
 					windower.send_command('input /ma "Ramuh" <me>')
 				end
-			elseif cmd2 == 'ifrit' then
+			elseif cmd2:lower() == 'ifrit' then
 				if settings.smnsc then
-					if currentPC.name == leader_smn then
-						--windower.send_command('input /ma "Ifrit" <me>')
-					else
+					if currentPC.name ~= leader_smn then
 						windower.send_command('input /ma "Ramuh" <me>')
 					end
 				else
 					windower.send_command('input /ma "Ifrit" <me>')
 				end
-			elseif cmd2 == 'siren' then
+			elseif cmd2:lower() == 'siren' then
 				if settings.smnsc then
-					if currentPC.name == leader_smn then
-						--windower.send_command('input /ma "Siren" <me>')
-					else
+					if currentPC.name ~= leader_smn then
 						windower.send_command('input /ma "Ifrit" <me>')
 					end
 				else
 					windower.send_command('input /ma "Siren" <me>')
 				end
-			elseif cmd2 == 'apogee' then
+			elseif cmd2:lower() == 'apogee' then
 				windower.send_command('input /ja "Apogee" <me>')
-			elseif cmd2 == 'thunderspark' then
+			elseif cmd2:lower() == 'thunderspark' then
 				windower.send_command('input /ja "Thunderspark" <t>')
-			elseif cmd2 == 'thunderstorm' then
+			elseif cmd2:lower() == 'thunderstorm' then
 				windower.send_command('input /ja "thunderstorm" <t>')
-			elseif cmd2 == 'NB' then
+			elseif cmd2:lower() == 'NB' then
 				windower.send_command('input /ja "Nether Blast" <t>')
-			elseif cmd2 == 'diabolos' then
+			elseif cmd2:lower() == 'diabolos' then
 				windower.send_command('input /ma "Diabolos" <me>')
-			elseif cmd2 == 'super' then
+			elseif cmd2:lower() == 'super' then
 				windower.send_command('input /item "Super Revitalizer" <me>')
-			elseif cmd2 == 'elixir' then
+			elseif cmd2:lower() == 'elixir' then
 				windower.send_command('input /item "Lucid Elixir II" <me>')
 				windower.send_command('input /item "Lucid Elixir I" <me>')
 			end
@@ -2057,16 +2044,6 @@ function omen()
 	windower.send_command('myomen')
 end
 
-function trib()
-	atc('Getting Tribulens')
-	windower.send_command('escha trib')
-end
-
-function rads()
-	atc('Getting Radialens')
-	windower.send_command('escha rads')
-end
-
 function buyalltemps()
 	atc('Getting ALL TEMPS!')
 	windower.send_command('escha buyall')
@@ -2074,6 +2051,7 @@ end
 
 function get(cmd2)
 	local zone = windower.ffxi.get_info()['zone']
+	local EschaZones = S{288,289,291}
 
 	if cmd2 == 'mog' and zone == 247  then
 		atc('GET: Obtaining Moglophone KI.')
@@ -2155,13 +2133,65 @@ function get(cmd2)
 				'setkey down down; wait 0.05; setkey down up; wait 1.0; setkey down down; wait 0.05; setkey down up; wait 1.0; setkey down down; wait 0.05; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.5;' ..
 				'setkey up down; wait 0.05; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.5; setkey up down; wait 0.05; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
 		end
-	elseif cmd2 == 'rads' and zone == 291 then
+	elseif cmd2 == 'moll' and EschaZones:contains(zone) then
+		atc('GET: Mollifier')
+		if not find_missing_ki(cmd2) then
+			if zone == 288 then
+				get_poke_check('Affi')
+			elseif zone == 289 then
+				get_poke_check('Dremi')
+			elseif zone == 291 then
+				get_poke_check('Shiftrix')
+			end
+			if npc_dialog == true then
+				windower.send_command('wait 4.7; setkey down down; wait 0.05; setkey down up; wait 1; setkey down down; wait 0.05; setkey down up; wait 1.5; setkey enter down; wait 0.5; setkey enter up; wait 1.5; ' ..
+					'setkey right down; wait 1.2; setkey right up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.5; ' ..
+					'setkey up down; wait 0.05; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 2.5; setkey escape down; wait 0.05; setkey escape up;')
+			end
+		else
+			atc('GET: Already have Mollifier!')
+		end
+	elseif cmd2 == 'trib' and EschaZones:contains(zone) then
+		atc('GET: Tribulens')
+		if not find_missing_ki(cmd2) then
+			if zone == 288 then
+				get_poke_check('Affi')
+			elseif zone == 289 then
+				get_poke_check('Dremi')
+			elseif zone == 291 then
+				get_poke_check('Shiftrix')
+			end
+			if npc_dialog == true then
+				windower.send_command('wait 4.7; setkey down down; wait 0.05; setkey down up; wait 1; setkey down down; wait 0.05; setkey down up; wait 1.5; setkey enter down; wait 0.5; setkey enter up; wait 1.5; ' ..
+					'setkey down down; wait 0.05; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.5; ' ..
+					'setkey up down; wait 0.05; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 2.5; setkey escape down; wait 0.05; setkey escape up;')
+			end
+		else
+			atc('GET: Already have Tribulens!')
+		end
+	elseif cmd2 == 'rads' and EschaZones:contains(zone) then
 		atc('GET: Radialens')
-		get_poke_check('Shiftrix')
-		if npc_dialog == true then
-			windower.send_command('wait 4; setkey down down; wait 0.05; setkey down up; wait 1; setkey down down; wait 0.05; setkey down up; wait 1.5; setkey enter down; wait 0.5; setkey enter up; wait 1.5; ' ..
-				'setkey down down; wait 0.05; setkey down up; wait 1.0; setkey down down; wait 0.05; setkey down up; wait 1.0; setkey down down; wait 0.05; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.5;' ..
-				'setkey up down; wait 0.05; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
+		if not find_missing_ki(cmd2) then
+			if zone == 288 then
+				get_poke_check('Affi')
+			elseif zone == 289 then
+				get_poke_check('Dremi')
+			elseif zone == 291 then
+				get_poke_check('Shiftrix')
+			end
+			if npc_dialog == true then
+				if find_missing_ki('moll') then
+					windower.send_command('wait 4.7; setkey down down; wait 0.05; setkey down up; wait 1; setkey down down; wait 0.05; setkey down up; wait 1.5; setkey enter down; wait 0.5; setkey enter up; wait 1.5; ' ..
+						'setkey right down; wait 1.2; setkey right up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.5; ' ..
+						'setkey up down; wait 0.05; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 2.5; setkey escape down; wait 0.05; setkey escape up;')
+				else
+					windower.send_command('wait 4.7; setkey down down; wait 0.05; setkey down up; wait 1; setkey down down; wait 0.05; setkey down up; wait 1.5; setkey enter down; wait 0.5; setkey enter up; wait 1.5; ' ..
+						'setkey right down; wait 1.2; setkey right up; wait 1.0; setkey up down; wait 0.05; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.5; ' ..
+						'setkey up down; wait 0.05; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 2.5; setkey escape down; wait 0.05; setkey escape up;')
+				end
+			end
+		else
+			atc('GET: Already have Radialens!')
 		end
 	else
 		atc('GET: Incorrect Zone/Command.')
@@ -2174,12 +2204,12 @@ function go()
 end
 
 function ent()
-	atc('ENT: Sending ENTER Key.')
+	atc('[ENT] Sending ENTER Key.')
 	windower.send_command('wait 1.5; setkey enter down; wait 0.5; setkey enter up;')
 end
 
 function enter()
-	atc('[ENTER]: Enter menu.')
+	atc('[ENTER] Enter menu.')
 	local zone = windower.ffxi.get_info()['zone']
 	
 	local possible_npc = find_npc_to_poke()
@@ -2203,14 +2233,17 @@ function enter()
 end
 
 function endown()
+	atc('[EnterDOWN]')
 	windower.send_command('setkey down down; wait 0.05; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
 end
 
 function enup()
+	atc('[EnterUP]')
 	windower.send_command('setkey up down; wait 0.05; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
 end
 
 function esc()
+	atc('[ESC]')
 	windower.send_command('setkey escape down; wait 0.5; setkey escape up;')
 end
 
@@ -2265,13 +2298,6 @@ function htmb(cmd2)
 			end
 		end
 		ipcflag = false
-	elseif cmd2 == 'buy' then
-		windower.send_command('htmb; wait 8; findall avatar phantom')
-		if ipcflag == false then
-			ipcflag = true
-			windower.send_ipc_message('htmb buy')
-		end
-		ipcflag = false
 	elseif cmd2 == 'woe' then
 		if ipcflag == false then
 			ipcflag = true
@@ -2313,30 +2339,34 @@ function drop(cmd2)
 	local cells = S{5365,5366,5367,5368,5369,5370,5371,5372,5373,5374,5375,5376,5377,5378,5379,5380,5381,5382,5383,5384}
 
 	if cmd2 == 'rem' then
+		atc('[Drop] Rem Chapters 6-10')
 		local items = windower.ffxi.get_items()
 		for index, item in pairs(items.inventory) do
 			if type(item) == 'table' and rem:contains(item.id) then
-				atc('Dropping: ' .. cmd2 .. ' ' .. item.id)
+				atc('[Drop] ' .. cmd2 .. ' ' .. item.id)
 				windower.ffxi.drop_item(index, item.count)
 			end
 		end
 	elseif cmd2 == 'cells' then
+		atc('[Drop] Salvage cells.')
 		local items = windower.ffxi.get_items()
 		for index, item in pairs(items.inventory) do
 			if type(item) == 'table' and cells:contains(item.id) then
-				atc('Dropping: ' .. cmd2 .. ' ' .. item.id)
+				atc('[Drop] ' .. cmd2 .. ' ' .. item.id)
 				windower.ffxi.drop_item(index, item.count)
 			end
 		end
 	else
-		atc('Nothing specified')
+		atc('[Drop] Nothing specified.')
 	end
 end
 
 function zerg(cmd2)
 	if cmd2 == 'on' then
+		atc('[Zerg] ON')
 		windower.send_command('gs c set AutoZergMode on')
 	elseif cmd2 == 'off' then
+		atc('[Zerg] OFF')
 		windower.send_command('gs c set AutoZergMode off')
 	end
 end
@@ -2396,31 +2426,15 @@ function buffall(cmd2)
 end
 
 function rand()
-	
-
-	if ipcflag == false then
-		windower.send_ipc_message('rand')
-	elseif ipcflag == true then
-		windower.send_command('hb f dist 20')
-		pivot = math.random(-5,5)
-		windower.ffxi.turn(pivot)
-		coroutine.sleep(1.2)
-		windower.ffxi.run(true)
-		runtime = math.random(5.1,8.3)
-		coroutine.sleep(runtime)
-		windower.ffxi.run(false)
-		coroutine.sleep(1.2 +runtime)
-		
-		pivot = math.random(-5,5)
-		windower.ffxi.turn(pivot)
-		coroutine.sleep(1.2)
-		windower.ffxi.run(true)
-		runtime = math.random(3.8,7.9)
-		coroutine.sleep(runtime)
-		windower.ffxi.run(false)
-	end
-	ipcflag = false
-
+	atc('[Rand] Randomize party position')
+	windower.send_command('hb f off')
+	pivot = math.random(-5.27,8.39)
+	windower.ffxi.turn(pivot)
+	coroutine.sleep(0.5)
+	windower.ffxi.run(true)
+	runtime = math.random(0.82,1.83)
+	coroutine.sleep(runtime)
+	windower.ffxi.run(false)
 end
 
 
@@ -2669,50 +2683,8 @@ function find_npc_to_poke()
 		atc('[Found]: ' ..closest_npc.name.. ' [Distance]: ' .. math.sqrt(closest_npc.distance))
         return closest_npc
     end
-	
-    -- closest_npc = npcs:reduce(function(current, npc_of_interest)
-        -- return npc_of_interest.distance < current.distance and npc_of_interest or current
-    -- end)
-    -- if closest_npc and closest_npc.distance < 6*6 then
-		-- atc('[Found]: ' ..closest_npc.name.. ' [Distance]: ' .. math.sqrt(closest_npc.distance))
-        -- return closest_npc
-    -- end
+
 end
-
-----
-
--- function find_npc()
-    -- local npc_list = table_of_npcs_to_care_about[windower.ffxi.get_info()['zone']]
-    
-    -- if not npc_list or #npc_list == 0 then
-        -- return nil
-    -- end
-    -- local player = windower.ffxi.get_mob_by_target('me')
-    -- npc_list = S(npc_list)
-    -- npcs = T(T(windower.ffxi.get_mob_list()):filter(table.contains+{npc_list}):keyset()):map(windower.ffxi.get_mob_by_index):filter(table.get-{'valid_target'})
-    -- closest_npc = npcs:reduce(function(current, conflux)
-        -- local conflux_dist = calc_lazy_distance(player, conflux)
-    -- local current_disy = calc_lazy_distance(player, current)
-        -- return conflux_dist < current_dist and conflux or current
-    -- end)
-    -- if closest_npc and calc_lazy_distance(player, closest_npc) < 6^2 then
-        -- return closest_npc
-    -- end
--- end
-
--- function find_npc_to_poke()
-	-- local zone = windower.ffxi.get_info()['zone']
-	-- for index, npc_table in pairs(npc_map) do
-		-- if zone == npc_table.zone then
-			-- atc(zone)
-			-- npcstats = windower.ffxi.get_mob_by_name(npc_table.name)
-			-- if npcstats and (math.sqrt(npcstats.distance)<6 and npcstats.valid_target) then
-				-- atc('[Found]: ' ..npcstats.name.. ' [Distance]: ' .. math.sqrt(npcstats.distance))
-				-- return npcstats.name
-			-- end
-		-- end
-	-- end
--- end
 
 function check_party()
 
@@ -2859,13 +2831,30 @@ function haveBuff(...)
 	return false
 end
 
+function find_missing_ki(escha_ki_to_find)
+	local keyitems = windower.ffxi.get_key_items()
+	local match_ki
+
+	if escha_ki_to_find == 'rads' then
+		match_ki = 3031
+	elseif escha_ki_to_find == 'trib' then
+		match_ki = 2894
+	elseif escha_ki_to_find == 'moll' then
+		match_ki = 3032
+	end
+	
+	for id,ki in pairs(keyitems) do
+		if ki == match_ki then 
+			atc('Found: ' ..ki)
+			return ki
+		end
+	end
+end
 ------------
 --IPC Stuff
 ------------
 
 function send_to_IPC(cmd,cmd2,cmd3)
-	-- if cmd4 and cmd3 and cmd2 and cmd then
-		-- windower.send_ipc_message(cmd .. ' '..cmd2.. ' ' ..cmd3.. ' ' ..cmd4)
 	if cmd3 and cmd2 and cmd then
 		windower.send_ipc_message(cmd .. ' '..cmd2.. ' ' ..cmd3)
 	elseif cmd2 and cmd then
@@ -2893,10 +2882,6 @@ windower.register_event('ipc message', function(msg, ...)
 		if(DelayCMDS:contains(cmd)) then
 			 coroutine.sleep(delay)
 		end
-		if cmd == 'jc' then
-			local moredelay = delay + 6.5	
-			coroutine.sleep(moredelay)
-		end
 		_G[cmd](cmd2,cmd3)
 	elseif cmd == 'as' then
 		as(cmd2, cmd3)
@@ -2916,10 +2901,6 @@ windower.register_event('ipc message', function(msg, ...)
 		coroutine.sleep(delay)
 		ipcflag = true
 		buy(cmd2)	
-	elseif cmd == 'rand' then
-		ipcflag = true
-		rand()	
-	-- Might move these to separate addon
 	elseif cmd == 'ein' then
 		coroutine.sleep(delay)
 		ipcflag = true

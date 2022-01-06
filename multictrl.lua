@@ -23,6 +23,7 @@ default = {
 	smnhelp=false,
 	smnsc=false,
 	smnauto=false,
+	smnlead='',
 	buy=false,
 	autows=false,
 	rangedmode=false,
@@ -82,7 +83,7 @@ jobnames = {
 InternalCMDS = S{
 
 	--Battle
-	'on','off','stage','fight','fightmage','fightsmall','ws','food','sleep','fin','wsall','cc','zerg','wstype','buffup',
+	'on','off','stage','fight','fightmage','fightsmall','ws','food','sleep','fin','wsall','cc','zerg','wstype','buffup','dd',
 	--Job
 	'brd','sch','smnburn','geoburn','burn','rng','proc',
 	--Travel
@@ -160,10 +161,10 @@ windower.register_event('addon command', function(input, ...)
 		local leader = windower.ffxi.get_player()
 		as:schedule(0, cmd2,leader.name)
 		send_to_IPC:schedule(0, cmd,cmd2,leader.name)
-	elseif cmd == 'smnhelp' then					-- Leader
+	elseif cmd == 'smn' then						-- Leader
 		local leader = windower.ffxi.get_player()
-		smnhelp:schedule(0, cmd2, leader.name)
-		send_to_IPC:schedule(0, cmd, cmd2, leader.name)
+		smn:schedule(0, cmd2, leader.name, cmd3)
+		send_to_IPC:schedule(0, cmd, cmd2, leader.name, cmd3)
 	elseif cmd == 'rngsc' then						-- Leader
 		local leader = windower.ffxi.get_player()
 		rngsc:schedule(0, cmd2, leader.name)
@@ -386,6 +387,19 @@ display_box = function()
 		else
 			smn_help:append(string.format("%sSMN: %sON", clr.w, clr.r))
 		end 
+		
+		if settings.smnauto then
+			smn_help:append(string.format("\n%sAutoBP: %sON", clr.w, clr.r))
+		else
+			smn_help:append(string.format("\n%sAutoBP: %sOFF", clr.w, clr.r))
+		end
+		
+		if settings.smnlead then
+			smn_help:append(string.format("\n%sLeader: %s" .. settings.smnlead , clr.w, clr.r))
+		else
+			smn_help:append(string.format("\n%sLeader: %s", clr.w, clr.r))
+		end
+		
 	else
 		smn_help:clear()
 	end
@@ -987,7 +1001,7 @@ function fon()
 	currentPC=windower.ffxi.get_player()
 	
 	windower.send_command('hb follow off')
-	windower.send_command('hb f dist 2')
+	windower.send_command('hb f dist 1.8')
 
 	for k, v in pairs(windower.ffxi.get_party()) do
 		if type(v) == 'table' then
@@ -999,7 +1013,7 @@ function fon()
 					atc('FON: ' .. v.name .. ' is not in zone, not following.')
 				else
 					if ptymember.valid_target then
-						windower.send_command('send ' .. v.name .. ' hb f dist 2')
+						windower.send_command('send ' .. v.name .. ' hb f dist 1.8')
 						windower.send_command('send ' .. v.name .. ' hb follow ' .. currentPC.name)
 					else
 						atc('FON: ' .. v.name .. ' is not in range, not following.')
@@ -1752,112 +1766,159 @@ function burn(cmd2,cmd3)
 	display_box()
 end
 
-function smnhelp(cmd2,leader_smn)
+function smn(cmd2,leader_smn,cmd3)
 	currentPC=windower.ffxi.get_player()
 
-	if cmd2 == nil then
+	if cmd2 and cmd2:lower() == 'on' then
+		atc('[SMN] Helper for SMN ON')
+		settings.smnhelp = true
+	elseif cmd2 and cmd2:lower() == 'off' then
+		atc('[SMN] Helper for SMN OFF')
+		settings.smnhelp = false
+	elseif cmd2 == nil then
 		if settings.smnhelp then
-			atc('Helper for SMN BPing DISABLED')
+			atc('[SMN] Helper for SMN OFF')
 			settings.smnhelp = false
 		else
-			atc('Helper for SMN BPing ACTIVE')
+			atc('[SMN] Helper for SMN ON')
 			settings.smnhelp = true
 		end
 	end
+	
+	--Active
 	if settings.smnhelp then
 		
 		if cmd2 and cmd2:lower() == 'sc' then
-			if settings.smnsc then
-				atc('SMN Skillchain DISABLED')
-				settings.smnsc = false
-			else
-				atc('SMN Skillchain ACTIVE')
+			if cmd3 and cmd3:lower() == 'on' then
+				atc('[SMN] SC ON')
 				settings.smnsc = true
+			elseif cmd3 and cmd3:lower() == 'off' then
+				atc('[SMN] SC OFF')
+				settings.smnsc = false
 			end
+			-- if settings.smnsc then
+				-- atc('SMN Skillchain DISABLED')
+				-- settings.smnsc = false
+			-- else
+				-- atc('SMN Skillchain ACTIVE')
+				-- settings.smnsc = true
+			-- end
 		elseif cmd2 and cmd2:lower() == 'auto' then
-			if settings.smnauto then
-				atc('SMN Auto DISABLED')
+			if cmd3 and cmd3:lower() == 'off' then
+				atc('[SMN] Auto OFF')
 				settings.smnauto = false
-			else
-				atc('SMN Auto ACTIVE')
-				settings.smnauto = true
+				if currentPC.main_job == 'SMN' then
+					windower.send_command('gs c set AutoAvatarMode off; gs c set AutoBPMode off; gs c set AutoSMNSCMode off;')
+				end
+			-- if settings.smnauto then
+				-- atc('SMN Auto DISABLED')
+				-- settings.smnauto = false
+				-- if currentPC.main_job == 'SMN' then
+					-- windower.send_command('gs c set AutoAvatarMode off; gs c set AutoBPMode off')
+				-- end
+			elseif cmd3 and cmd3:lower() == 'on' then
+				--Auto SC
+				if settings.smnsc then
+					if settings.smnlead ~= nil then
+						atc('[SMN] Auto ON')
+						settings.smnauto = true
+						-- Leader does AutoBP and Ramuh
+						if currentPC.name:lower() == settings.smnlead and currentPC.main_job == 'SMN' then
+							windower.send_command('gs c set avatar Ramuh; gs c set AutoBPMode on; gs c set AutoSMNSCMode on;')
+						-- Other SMN's use Ifrit and just autoavatar
+						else
+							if currentPC.main_job == 'SMN' then
+								windower.send_command('gs c set avatar Ifrit; gs c set AutoBPMode off; gs c set AutoAvatarMode on')
+							end
+						end
+					else
+						atcwarn('[SMN] No leader, cannot start Auto BP SC')
+					end
+				--BP Spam
+				else
+					if currentPC.main_job == 'SMN'  then
+						windower.send_command('gs c set avatar Ramuh; gs c set AutoBPMode on')
+					end
+					settings.smnauto = true
+				end
 			end
+		elseif cmd2 and cmd2:lower() == 'lead' and cmd3 ~= nil then
+			settings.smnlead = cmd3
 		end
-		
+		-- SMN Auto/manual logic
 		if currentPC.main_job == 'SMN' then
-
-			if cmd2:lower() == 'assault' then
-				windower.send_command('input /ja "Assault" <t>')
-			elseif cmd2:lower() == 'release' then
-				windower.send_command('input /ja "Release" <me>')
-			elseif cmd2:lower() == 'retreat' then
-				windower.send_command('input /ja "Retreat" <me>')
-			elseif cmd2:lower() == 'vs' then
-				if settings.smnsc then
-					if currentPC.name ~= leader_smn then
-						windower.send_command('wait 3.7; input /ja "Flaming Crush" <t>')
+			if cmd2 then
+				if cmd2:lower() == 'assault' then
+					windower.send_command('input /ja "Assault" <t>')
+				elseif cmd2:lower() == 'release' then
+					windower.send_command('input /ja "Release" <me>')
+				elseif cmd2:lower() == 'retreat' then
+					windower.send_command('input /ja "Retreat" <me>')
+				elseif cmd2:lower() == 'vs' then
+					if settings.smnsc then
+						if currentPC.name ~= leader_smn then
+							windower.send_command('wait 3.7; input /ja "Flaming Crush" <t>')
+						end
+					else
+						windower.send_command('input /ja "Volt Strike" <t>')
 					end
-				else
-					windower.send_command('input /ja "Volt Strike" <t>')
-				end
-			elseif cmd2:lower() == 'fc' then
-				if settings.smnsc then
-					if currentPC.name ~= leader_smn then
-						windower.send_command('wait 3.7; input /ja "Volt Strike" <t>')
+				elseif cmd2:lower() == 'fc' then
+					if settings.smnsc then
+						if currentPC.name ~= leader_smn then
+							windower.send_command('wait 3.7; input /ja "Volt Strike" <t>')
+						end
+					else
+						windower.send_command('input /ja "Flaming Crush" <t>')
 					end
-				else
-					windower.send_command('input /ja "Flaming Crush" <t>')
-				end
-			elseif cmd2:lower() == 'ha' then
-				if settings.smnsc then
-					if currentPC.name ~= leader_smn then
-						windower.send_command('wait 3.7; input /ja "Flaming Crush" <t>')
-					end
-				else
-					windower.send_command('input /ja "Hysteric Assault" <t>')
-				end				
-			elseif cmd2:lower() == 'ramuh' then
-				if settings.smnsc then
-					if currentPC.name ~= leader_smn then
-						windower.send_command('input /ma "Ifrit" <me>')
-					end
-				else
-					windower.send_command('input /ma "Ramuh" <me>')
-				end
-			elseif cmd2:lower() == 'ifrit' then
-				if settings.smnsc then
-					if currentPC.name ~= leader_smn then
+				elseif cmd2:lower() == 'ha' then
+					if settings.smnsc then
+						if currentPC.name ~= leader_smn then
+							windower.send_command('wait 3.7; input /ja "Flaming Crush" <t>')
+						end
+					else
+						windower.send_command('input /ja "Hysteric Assault" <t>')
+					end				
+				elseif cmd2:lower() == 'ramuh' then
+					if settings.smnsc then
+						if currentPC.name ~= leader_smn then
+							windower.send_command('input /ma "Ifrit" <me>')
+						end
+					else
 						windower.send_command('input /ma "Ramuh" <me>')
 					end
-				else
-					windower.send_command('input /ma "Ifrit" <me>')
-				end
-			elseif cmd2:lower() == 'siren' then
-				if settings.smnsc then
-					if currentPC.name ~= leader_smn then
+				elseif cmd2:lower() == 'ifrit' then
+					if settings.smnsc then
+						if currentPC.name ~= leader_smn then
+							windower.send_command('input /ma "Ramuh" <me>')
+						end
+					else
 						windower.send_command('input /ma "Ifrit" <me>')
 					end
-				else
-					windower.send_command('input /ma "Siren" <me>')
+				elseif cmd2:lower() == 'siren' then
+					if settings.smnsc then
+						if currentPC.name ~= leader_smn then
+							windower.send_command('input /ma "Ifrit" <me>')
+						end
+					else
+						windower.send_command('input /ma "Siren" <me>')
+					end
+				elseif cmd2:lower() == 'apogee' then
+					windower.send_command('input /ja "Apogee" <me>')
+				elseif cmd2:lower() == 'thunderspark' then
+					windower.send_command('input /ja "Thunderspark" <t>')
+				elseif cmd2:lower() == 'thunderstorm' then
+					windower.send_command('input /ja "thunderstorm" <t>')
+				elseif cmd2:lower() == 'NB' then
+					windower.send_command('input /ja "Nether Blast" <t>')
+				elseif cmd2:lower() == 'diabolos' then
+					windower.send_command('input /ma "Diabolos" <me>')
+				elseif cmd2:lower() == 'super' then
+					windower.send_command('input /item "Super Revitalizer" <me>')
+				elseif cmd2:lower() == 'elixir' then
+					windower.send_command('input /item "Lucid Elixir II" <me>')
+					windower.send_command('input /item "Lucid Elixir I" <me>')
 				end
-			elseif cmd2:lower() == 'apogee' then
-				windower.send_command('input /ja "Apogee" <me>')
-			elseif cmd2:lower() == 'thunderspark' then
-				windower.send_command('input /ja "Thunderspark" <t>')
-			elseif cmd2:lower() == 'thunderstorm' then
-				windower.send_command('input /ja "thunderstorm" <t>')
-			elseif cmd2:lower() == 'NB' then
-				windower.send_command('input /ja "Nether Blast" <t>')
-			elseif cmd2:lower() == 'diabolos' then
-				windower.send_command('input /ma "Diabolos" <me>')
-			elseif cmd2:lower() == 'super' then
-				windower.send_command('input /item "Super Revitalizer" <me>')
-			elseif cmd2:lower() == 'elixir' then
-				windower.send_command('input /item "Lucid Elixir II" <me>')
-				windower.send_command('input /item "Lucid Elixir I" <me>')
 			end
-		else
-			atc('[SMNHelp] Not SMN job, skipping.')
 		end
 	end
 	display_box()
@@ -2144,9 +2205,9 @@ function get(cmd2)
 				get_poke_check('Shiftrix')
 			end
 			if npc_dialog == true then
-				windower.send_command('wait 4.7; setkey down down; wait 0.05; setkey down up; wait 1; setkey down down; wait 0.05; setkey down up; wait 1.5; setkey enter down; wait 0.5; setkey enter up; wait 1.5; ' ..
-					'setkey right down; wait 1.2; setkey right up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.5; ' ..
-					'setkey up down; wait 0.05; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 2.5; setkey escape down; wait 0.05; setkey escape up;')
+				windower.send_command('wait 4.7; setkey right down; wait 1.5; setkey right up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey enter down; wait 0.5; setkey enter up; wait 1.0; ' ..
+					'setkey right down; wait 1.2; setkey right up; wait 0.5; setkey enter down; wait 0.5; setkey enter up; wait 1.0; ' ..
+					'setkey up down; wait 0.05; setkey up up; wait 0.5; setkey enter down; wait 0.5; setkey enter up; wait 2.5; setkey escape down; wait 0.05; setkey escape up;')
 			end
 		else
 			atc('GET: Already have Mollifier!')
@@ -2211,6 +2272,7 @@ end
 function enter()
 	atc('[ENTER] Enter menu.')
 	local zone = windower.ffxi.get_info()['zone']
+	local cloister_zones = S{201,202,203,207,209,211}
 	
 	local possible_npc = find_npc_to_poke()
 	
@@ -2221,12 +2283,17 @@ function enter()
 	end
 	
 	if npc_dialog == true then
-		--test htmb combined (shinryu)
-		-- do key item check first?
+		--Shinryu
 		if zone == 255 then
-			windower.send_command('wait 5; setkey right down; wait 0.5; setkey right up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.0; setkey left down; wait 0.5; setkey left up; wait 1.0; setkey enter down; wait 0.5; setkey enter up')
+			windower.send_command('wait 5; setkey right down; wait 0.75; setkey right up; wait 0.6; setkey enter down; wait 0.25; setkey enter up; wait 0.75; setkey left down; wait 0.5; setkey left up; wait 0.6; setkey enter down; wait 0.25; setkey enter up')
+		--Ouryu
+		elseif zone == 31 then 
+			windower.send_command('wait 17; setkey down down; wait 0.75; setkey down up; wait 0.6; setkey enter down; wait 0.25; setkey enter up; wait 0.75; setkey up down; wait 0.5; setkey up up; wait 0.6; setkey enter down; wait 0.25; setkey enter up')
+		--6 Avatars
+		elseif cloister_zones:contains(zone) then
+			windower.send_command('wait 6; setkey down down; wait 0.75; setkey down up; wait 0.6; setkey enter down; wait 0.25; setkey enter up; wait 0.75; setkey up down; wait 0.5; setkey up up; wait 0.6; setkey enter down; wait 0.25; setkey enter up')
 		else
-			windower.send_command('wait 0.8; setkey up down; wait 0.5; setkey up up; wait 0.7; setkey enter down; wait 0.5; setkey enter up;')
+			windower.send_command('wait 0.8; setkey up down; wait 0.25; setkey up up; wait 0.7; setkey enter down; wait 0.25; setkey enter up;')
 		end
 	end
 	
@@ -2411,6 +2478,18 @@ function ein(cmd2)
 end
 
 -- Beta functions
+function dd()
+	player = windower.ffxi.get_player()
+	if player.main_job == 'BLU' then
+		windower.send_command('input /ma "Tenebral Crush" <t>')
+	elseif player.main_job == 'WHM' or player.main_job == 'RDM' or player.sub_job == 'RDM' or player.sub_job == 'WHM' and not haveBuff('SJ Restriction') then
+		if player.main_job == 'RDM' then
+			windower.send_command('input /ma "Dia III" <t>')
+		else
+			windower.send_command('input /ma "Dia II" <t>')
+		end
+	end
+end
 
 function buffall(cmd2)
 	player = windower.ffxi.get_player()
@@ -2854,8 +2933,10 @@ end
 --IPC Stuff
 ------------
 
-function send_to_IPC(cmd,cmd2,cmd3)
-	if cmd3 and cmd2 and cmd then
+function send_to_IPC(cmd,cmd2,cmd3,cmd4)
+	if cmd4 and cmd3 and cmd2 and cmd then
+		windower.send_ipc_message(cmd .. ' '..cmd2.. ' ' ..cmd3.. ' ' ..cmd4)
+	elseif cmd3 and cmd2 and cmd then
 		windower.send_ipc_message(cmd .. ' '..cmd2.. ' ' ..cmd3)
 	elseif cmd2 and cmd then
 		windower.send_ipc_message(cmd .. ' '..cmd2)
@@ -2891,8 +2972,8 @@ windower.register_event('ipc message', function(msg, ...)
 	elseif cmd == 'gt' then
 		coroutine.sleep(delay)
 		gt(send_cmd)
-	elseif cmd == 'smnhelp' then
-		smnhelp(cmd2, cmd3)
+	elseif cmd == 'smn' then
+		smn(cmd2, cmd3, cmd4)
 	elseif cmd == 'rngsc' then
 		rngsc(cmd2, cmd3)
 		
@@ -2932,6 +3013,12 @@ windower.register_event("status change", function(new,old)
         elseif old == 4 then
             npc_dialog = false
         end
+    end
+end)
+
+windower.register_event("lose buff", function(buff_id)
+	if buff_id == 254 then
+		off()
     end
 end)
 

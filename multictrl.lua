@@ -501,7 +501,7 @@ function stage(cmd2)
 
 	-- Iron giants month - BRD/WHM, GEO/RDM, PLD/RUN, COR/NINx2, RNG/WAR
 	if cmd2 == 'ambu' then
-		atc('Stage : ' .. cmd2)
+		atc('[Stage]: Ambu')
 		windower.send_command('input /autotarget off')
 		if player_job.main_job == 'BRD' then
 			windower.send_command('sing pl ambu; sing n off; sing p on; gaze ap off; sing ballad 2 <me>; sing ballad 2 <me>; sing ballad 2 ' ..settings.char5.. '; hb mincure 3; sing sirvente ' ..settings.char1.. '; wait 2.5; mc brd reset')
@@ -519,6 +519,7 @@ function stage(cmd2)
 			windower.send_command('hb f off; hb as off; hb off')
 		end
 	elseif cmd2 == 'ody' then
+		atc('[Stage]: Odyssey A B C')
 		windower.send_command('lua r gazecheck')
 		windower.send_command('input /autotarget on')
 		if player_job.main_job == 'WHM' then
@@ -535,7 +536,7 @@ function stage(cmd2)
 			windower.send_command('wait 1.5; gaze ap on; gs c set weapons Naegling;')
 		end
 	elseif cmd2 == 'cleave' then
-		-- MNK BLU THF GEO WHM BRD
+		atc('[Stage]: Cleaving')
 		if player_job.main_job == 'BRD' then
 			windower.send_command('sing n off; sing pl mage')
 		elseif player_job.main_job == 'BLU' then
@@ -545,6 +546,7 @@ function stage(cmd2)
 		end
 	elseif cmd2 == 'shin' then
 		-- MNK BLU THF GEO WHM BRD
+		atc('[Stage]: Shinryu')
 		if player_job.main_job == 'WHM' then
 			windower.send_command('gaze ap off; hb buff <me> barfira; gs c set castingmode DT; gs c set idlemode DT; hb buff <me> auspice; hb buff <me> regen4; hb as off; hb buff ' ..settings.char3.. ' haste')
 		elseif player_job.main_job == 'RUN' then

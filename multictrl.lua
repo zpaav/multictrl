@@ -142,8 +142,6 @@ windower.register_event('addon command', function(input, ...)
 		done()
 	elseif cmd == 'ein' then
 		ein(cmd2)
-	elseif cmd == 'htmb' then
-		htmb(cmd2)
 	elseif cmd == 'buy' then
 		buy(cmd2)
 	elseif cmd == 'buyshields' then
@@ -2225,7 +2223,8 @@ function get(cmd2)
 				get_poke_check('Shiftrix')
 			end
 			if npc_dialog == true then
-				windower.send_command('wait 4.7; setkey down down; wait 0.05; setkey down up; wait 1; setkey down down; wait 0.05; setkey down up; wait 1.5; setkey enter down; wait 0.5; setkey enter up; wait 1.5; ' ..
+				windower.send_command('wait 4.7; setkey right down; wait 1.5; setkey right up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey enter down; wait 0.5; setkey enter up; wait 1.0; ' ..
+			--	windower.send_command('wait 4.7; setkey down down; wait 0.05; setkey down up; wait 1; setkey down down; wait 0.05; setkey down up; wait 1.5; setkey enter down; wait 0.5; setkey enter up; wait 1.5; ' ..
 					'setkey down down; wait 0.05; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.5; ' ..
 					'setkey up down; wait 0.05; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 2.5; setkey escape down; wait 0.05; setkey escape up;')
 			end
@@ -2244,11 +2243,13 @@ function get(cmd2)
 			end
 			if npc_dialog == true then
 				if find_missing_ki('moll') then
-					windower.send_command('wait 4.7; setkey down down; wait 0.05; setkey down up; wait 1; setkey down down; wait 0.05; setkey down up; wait 1.5; setkey enter down; wait 0.5; setkey enter up; wait 1.5; ' ..
+					windower.send_command('wait 4.7; setkey right down; wait 1.5; setkey right up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey enter down; wait 0.5; setkey enter up; wait 1.0; ' ..
+--					windower.send_command('wait 4.7; setkey down down; wait 0.05; setkey down up; wait 1; setkey down down; wait 0.05; setkey down up; wait 1.5; setkey enter down; wait 0.5; setkey enter up; wait 1.5; ' ..
 						'setkey right down; wait 1.2; setkey right up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.5; ' ..
 						'setkey up down; wait 0.05; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 2.5; setkey escape down; wait 0.05; setkey escape up;')
 				else
-					windower.send_command('wait 4.7; setkey down down; wait 0.05; setkey down up; wait 1; setkey down down; wait 0.05; setkey down up; wait 1.5; setkey enter down; wait 0.5; setkey enter up; wait 1.5; ' ..
+					windower.send_command('wait 4.7; setkey right down; wait 1.5; setkey right up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey enter down; wait 0.5; setkey enter up; wait 1.0; ' ..
+	--				windower.send_command('wait 4.7; setkey down down; wait 0.05; setkey down up; wait 1; setkey down down; wait 0.05; setkey down up; wait 1.5; setkey enter down; wait 0.5; setkey enter up; wait 1.5; ' ..
 						'setkey right down; wait 1.2; setkey right up; wait 1.0; setkey up down; wait 0.05; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.5; ' ..
 						'setkey up down; wait 0.05; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 2.5; setkey escape down; wait 0.05; setkey escape up;')
 				end
@@ -2291,11 +2292,20 @@ function enter()
 		--Ouryu
 		elseif zone == 31 then 
 			windower.send_command('wait 17; setkey down down; wait 0.75; setkey down up; wait 0.6; setkey enter down; wait 0.25; setkey enter up; wait 0.75; setkey up down; wait 0.5; setkey up up; wait 0.6; setkey enter down; wait 0.25; setkey enter up')
+		--Walk of Echos
+		elseif zone == 137 then
+			windower.send_command('wait 2.0; setkey up down; wait 0.25; setkey up up; wait 0.7; setkey enter down; wait 0.25; setkey enter up;')
+		elseif zone == 182 then
+			if possible_npc.name == "Veridical Conflux" then
+				windower.send_command('wait 1.8; setkey enter down; wait 0.25; setkey enter up;')
+			else
+				windower.send_command('wait 3.5; setkey right down; wait 0.5; setkey right up; wait 0.6; setkey enter down; wait 0.25; setkey enter up;')
+			end
 		--6 Avatars
 		elseif cloister_zones:contains(zone) then
 			windower.send_command('wait 6; setkey down down; wait 0.75; setkey down up; wait 0.6; setkey enter down; wait 0.25; setkey enter up; wait 0.75; setkey up down; wait 0.5; setkey up up; wait 0.6; setkey enter down; wait 0.25; setkey enter up')
 		else
-			windower.send_command('wait 0.8; setkey up down; wait 0.25; setkey up up; wait 0.7; setkey enter down; wait 0.25; setkey enter up;')
+			windower.send_command('wait 1.5; setkey up down; wait 0.25; setkey up up; wait 0.7; setkey enter down; wait 0.25; setkey enter up;')
 		end
 	end
 	
@@ -2326,56 +2336,6 @@ function cleanstones()
 		coroutine.sleep(1.2)
 	end
 
-end
-
-function htmb(cmd2)
-	local world = res.zones[windower.ffxi.get_info().zone].name
-	
-	if cmd2 == 'enter' then
-		if ipcflag == false then
-			ipcflag = true
-			windower.send_ipc_message('htmb enter')
-		elseif ipcflag == true then
-			local zone = windower.ffxi.get_info()['zone']
-			local cloister_zones = S{201,202,203,207,209,211}
-			local targetid = 0
-			-- Avatar battles
-			if cloister_zones:contains(zone) then
-				if zone == 201 then
-					get_poke_check('Wind Protocrystal')
-				elseif zone == 202 then
-					get_poke_check('Lightning Protocrystal')
-				elseif zone == 203 then
-					get_poke_check('Ice Protocrystal')
-				elseif zone == 207 then
-					get_poke_check('Fire Protocrystal')
-				elseif zone == 209 then
-					get_poke_check('Earth Protocrystal')
-				elseif zone == 211 then
-					get_poke_check('Water Protocrystal')
-				end
-					--atc('Target: ' .. targetid.id)
-					--windower.send_command('settarget ' .. targetid.id)
-					windower.send_command('wait 6; setkey down down; wait 0.5; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.0; setkey up down; wait 0.5; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up')
-			elseif zone == 31 then -- Monarch Linn (Ouryu)
-				windower.send_command('input /targetnpc; wait 1; input /lockon; wait 2; setkey enter down; wait 0.5; setkey enter up; wait 17; setkey down down; wait 0.5; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.0; setkey up down; wait 0.5; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up')
-			elseif not(areas.Cities:contains(world)) then
-
-				windower.send_command('input /targetnpc; wait 1; input /lockon; wait 2; setkey enter down; wait 0.5; setkey enter up; wait 7; setkey down down; wait 0.5; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.0; setkey up down; wait 0.5; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up')
-			else
-				atc('Not in proper zone')
-			end
-		end
-		ipcflag = false
-	elseif cmd2 == 'woe' then
-		if ipcflag == false then
-			ipcflag = true
-			windower.send_ipc_message('htmb woe')
-		elseif ipcflag == true then
-			windower.send_command('input /targetnpc; wait 1; input /lockon; wait 2; setkey enter down; wait 0.5; setkey enter up; wait 7; setkey down down; wait 0.5; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
-		end
-		ipcflag = false
-	end
 end
 
 function done()
@@ -2988,11 +2948,6 @@ windower.register_event('ipc message', function(msg, ...)
 		coroutine.sleep(delay)
 		ipcflag = true
 		ein(cmd2)
-	elseif cmd == 'htmb' then
-		local moredelay = delay + 0.3
-		coroutine.sleep(moredelay)
-		ipcflag = true
-		htmb(cmd2)	
 	elseif cmd == 'done' then
 		coroutine.sleep(delay)
 		ipcflag = true
@@ -3023,6 +2978,7 @@ windower.register_event("lose buff", function(buff_id)
 		off()
     end
 end)
+--276 - confrontation EschaZones
 
 function poke_npc(npc,target_index)
 	if npc and target_index then

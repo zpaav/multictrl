@@ -89,12 +89,12 @@ InternalCMDS = S{
 	--Travel
 	'mnt','dis','warp','omen','enup','endown','ent','esc','go','enter','get',
 	--Misc
-	'reload','unload','fps','lotall','cleanstones','drop','rand','buyalltemps',	
+	'reload','unload','fps','lotall','cleanstones','drop','rand','buyalltemps','book'
 	--Inactive
 	--'jc',
 }
 
-DelayCMDS = S{'buyalltemps','get','enter','go'}
+DelayCMDS = S{'buyalltemps','get','enter','go','book'}
 	
 isCasting = false
 ipcflag = false
@@ -138,15 +138,17 @@ windower.register_event('addon command', function(input, ...)
 
 	if cmd == nil then
 		windower.add_to_chat(123,"Abort: No command specified")
-	elseif cmd == 'done' then
-		done()
-	elseif cmd == 'ein' then
-		ein(cmd2)
-	elseif cmd == 'buy' then
-		buy(cmd2)
-	elseif cmd == 'buyshields' then
-		buyshields()
--- done
+	elseif cmd == 'buy' then						-- Leader
+		local leader = windower.ffxi.get_player()
+		buy:schedule(0, cmd2,leader.name)
+		send_to_IPC:schedule(1, cmd,cmd2,leader.name)
+	elseif cmd == 'ein' then						-- Long delay
+		ein:schedule(0, cmd2)
+		if cmd2 == 'enter' then
+			send_to_IPC:schedule(10, cmd, cmd2)
+		else
+			send_to_IPC:schedule(1, cmd, cmd2)
+		end
 	elseif cmd == 'buffall' then					-- No IPC
 		buffall(cmd2)
 	elseif cmd == 'd2' then							-- No IPC
@@ -533,6 +535,7 @@ function stage(cmd2)
 		elseif player_job.main_job == 'WAR' or player_job.main_job == 'DRG' then
 			windower.send_command('wait 1.5; gaze ap on; gs c set weapons Naegling;')
 		end
+		settings.autows = true
 	elseif cmd2 == 'cleave' then
 		atc('[Stage]: Cleaving')
 		if player_job.main_job == 'BRD' then
@@ -541,10 +544,12 @@ function stage(cmd2)
 			windower.send_command('gaze ap off; gs c set weapons Magic; azuresets set solo;')
 		elseif player_job.main_job == 'COR' then
 			windower.send_command('roll exp')
+		elseif player_job.main_job == 'GEO' then
+			windower.send_command('gs c autoindi refresh; gs c autogeo haste')
 		end
 	elseif cmd2 == 'shin' then
 		-- MNK BLU THF GEO WHM BRD
-		atc('[Stage]: Shinryu')
+		atc('[Stage] Shinryu')
 		if player_job.main_job == 'WHM' then
 			windower.send_command('gaze ap off; hb buff <me> barfira; gs c set castingmode DT; gs c set idlemode DT; hb buff <me> auspice; hb buff <me> regen4; hb as off; hb buff ' ..settings.char3.. ' haste')
 		elseif player_job.main_job == 'RUN' then
@@ -562,6 +567,7 @@ function stage(cmd2)
 		elseif player_job.main_job == 'GEO' then -- sub RDM
 			windower.send_command('gs c set castingmode DT; gs c set idlemode DT; gs c autogeo fury; gs c autoindi regen; gs c autoentrust frailty; hb debuff dia2; hb buff ' ..settings.char4.. ' refresh; hb buff ' ..settings.char1.. ' haste')
 		end
+		settings.autows = true
 	elseif cmd2 == 'kalunga' then
 		if player_job.main_job == 'WHM' then
 			windower.send_command('hb buff <me> barfira; gs c set castingmode DT; gs c set idlemode DT; hb debuff dia2; hb disable erase; hb buff ' ..settings.char1.. ' haste; hb buff ' ..settings.char1.. ' shell5; hb buff ' .. settings.char2 .. ' haste; hb buff ' .. settings.char3 .. ' haste;')
@@ -628,6 +634,7 @@ function stage(cmd2)
 			windower.send_command('roll roll1 sam; roll roll2 fighter')
 			windower.send_command('gs c set weapons Naegling;')
 		end
+		settings.autows = true
 	elseif cmd2 == 'mboze' then
 		windower.send_command('gaze ap off')
 		if player_job.main_job == 'WHM' then
@@ -1197,81 +1204,74 @@ function rng(cmd2)
 end
 
 
-function buy(cmd2)
-
+function buy(cmd2,leader_buy)
+	local player=windower.ffxi.get_player()
+	
 	if cmd2 == 'on' then
-		atc('Turning on BUY function, loading addons')
+		atc('[BUY] ON, loading addons.')
 		settings.buy = true
 		windower.send_command('lua r powder; wait 1; lua r sparks; wait 1; lua r sellnpc')
-		if ipcflag == false then
-			ipcflag = true
-			windower.send_ipc_message('buy on')
-		end
-		ipcflag = false
 	elseif cmd2 == 'off' then
-		atc('Shutting off BUY function, unloading addons')
+		atc('[BUY] OFF, unloading addons.')
 		settings.buy = false
 		windower.send_command('lua u powder; wait 1; lua u sparks; wait 1')
-		if ipcflag == false then
-			ipcflag = true
-			windower.send_ipc_message('buy off')
-		end
-		ipcflag = false
 	end
-	
+
+	-- ACTIVE	
 	if settings.buy then
-	-- ACTIVE
-		if (cmd2 == 'shield') then
-			atc('Buying SINGLE CHAR SHIELD!')
-			--coroutine.sleep(5)
+		if (cmd2 == 'shield' and player.name == leader_buy) then
+			atc('[BUY] Single character shields.')
 			windower.send_command('sparks buyall acheron shield')		
-		elseif (cmd2 == 'powder' and settings.buy == true) then
-			atc('Buying powders!')
-			windower.send_command('powder buy 3315; wait 10; fa prize powder')
-			if ipcflag == false then
-				ipcflag = true
-				windower.send_ipc_message('buy powder')
-			end
-			ipcflag = false
-		elseif (cmd2 == 'ss' and settings.buy == true) then
+		elseif cmd2 == 'powder' then
+			atc('[BUY] Powder.')
+			windower.send_command('powder buy 3315; wait 15; fa prize powder')
+		elseif cmd2 == 'ss' then
 			windower.send_command('sellnpc s')
 			local targetid = windower.ffxi.get_mob_by_name('Corua')
-			
 			windower.send_command('settarget ' .. targetid.id)
-			coroutine.sleep(1)
-			windower.send_command('input /lockon; wait 1; setkey enter down; wait 0.5; setkey enter up;')
-			if ipcflag == false then
-				ipcflag = true
-				windower.send_ipc_message('buy ss')
-			end
-			ipcflag = false
-		elseif (cmd2 == 'sp' and settings.buy == true) then
+			windower.send_command('wait 2.1; input /lockon; wait 1; setkey enter down; wait 0.5; setkey enter up;')
+		elseif cmd2 == 'sp' then
 			windower.send_command('sellnpc p')
 			local targetid = windower.ffxi.get_mob_by_name('Corua')
-			
 			windower.send_command('settarget ' .. targetid.id)
-			coroutine.sleep(1)
-			windower.send_command('input /lockon; wait 1; setkey enter down; wait 0.5; setkey enter up; wait 10; fa prize powder')
-			if ipcflag == false then
-				ipcflag = true
-				windower.send_ipc_message('buy sp')
-			end
-			ipcflag = false	
-		elseif (cmd2 == 're' and settings.buy == true) then
-			windower.send_command('buy re')
+			windower.send_command('wait 2.1; input /lockon; wait 1; setkey enter down; wait 0.5; setkey enter up; wait 15; fa prize powder')
+		elseif cmd2 == 're' then
+			windower.send_command('lua r sparks; wait 0.5; lua r powder;')
+		elseif cmd2 == 'allshields' and player.name == leader_buy then
+			atc('[BUY] All characters buy shields.')
 			
-			windower.send_command('lua r sparks; wait 0.5; lua r powder; wait 10; fa acheron shield')
+			for k, v in pairs(windower.ffxi.get_party()) do
+				if type(v) == 'table' then
+					if v.name ~= player.name then
+						coroutine.sleep(2)
+						ptymember = windower.ffxi.get_mob_by_name(v.name)
+						-- check if party member in same zone.
 
-			if ipcflag == false then
-				ipcflag = true
-				windower.send_ipc_message('buy re')
+						if v.mob == nil then
+							-- Not in zone.
+							atc('[BUY] ' ..v.name .. ' is not in zone, skipping buying shields.')
+							coroutine.sleep(0.5)
+						else
+							-- In zone, do distance check
+							if math.sqrt(ptymember.distance) < 8  and windower.ffxi.get_mob_by_name(v.name).in_party then
+								coroutine.sleep(1.63)
+								windower.send_command('send ' .. v.name .. ' sparks buyall acheron shield')
+								atc('[BUY] Buying shields for: ' .. v.name)
+								coroutine.sleep(47)
+							else
+								atc('[BUY] ' ..v.name .. ' is too far to buy shields with sparks, skipping')
+								coroutine.sleep(0.5)
+							end
+						end
+					end
+				end
 			end
-			ipcflag = false	
-		
+			-- Buy shield for self
+			windower.send_command('sparks buyall acheron shield')
+			coroutine.sleep(47)
+			atc('[BUY] All done buying shields.')
 		end
-	
 	end
-	
 	display_box()
 end
 
@@ -1564,47 +1564,6 @@ function d2()
 		atc('Not BLM main or sub or no warp spells!')
 	end
 	
-end
-
-
-function buyshields()
-
-	atc('Starting buying SHIELDS!')
-	
-	for k, v in pairs(windower.ffxi.get_party()) do
-	
-		if type(v) == 'table' then
-			if v.name ~= currentPC.name then
-			
-				coroutine.sleep(2)
-			
-				ptymember = windower.ffxi.get_mob_by_name(v.name)
-				-- check if party member in same zone.
-
-				if v.mob == nil then
-					-- Not in zone.
-					atc(v.name .. ' is not in zone, skipping buying shields.')
-					coroutine.sleep(0.5)
-				else
-					-- In zone, do distance check
-					if math.sqrt(ptymember.distance) < 8  and windower.ffxi.get_mob_by_name(v.name).in_party then
-						coroutine.sleep(1.63)
-						windower.send_command('send ' .. v.name .. ' sparks buyall acheron shield')
-						atc('Buying shields for: ' .. v.name)
-						coroutine.sleep(45)
-					else
-						atc(v.name .. ' is too far to buy shields with sparks, skipping')
-						coroutine.sleep(0.5)
-					end
-				end
-			end
-		end
-	end
-
-	-- Buy shield for self
-	windower.send_command('sparks buyall acheron shield')
-	coroutine.sleep(42)
-	atc('DONE!')
 end
 
 
@@ -2128,11 +2087,11 @@ function get(cmd2)
 		windower.send_command('wait 3; setkey right down; wait 1; setkey right up; wait 2; setkey up down; wait 0.1; setkey up up; wait 2; setkey enter down; wait 0.5; setkey enter up; wait 2; setkey up down; wait 0.1; setkey up up; wait 2; setkey enter down; wait 0.5; setkey enter up;')
 	elseif cmd2 == 'srki' and zone == 276  then
 		atc('GET: SR KI.')
-			get_npc_dialogue('17908273',3)
+		get_poke_check('Malobra')
 		windower.send_command('wait 3; setkey down down; wait 0.1; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.0; setkey up down; wait 0.5; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
 	elseif cmd2 == 'srdrops' and zone == 276 then
 		atc('GET: SR Rewards.')
-			get_npc_dialogue('17908273',3)
+		get_poke_check('Malobra')
 		windower.send_command('wait 3; setkey down down; wait 0.1; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
 	elseif cmd2 == 'tag' and zone == 50 then
 		atc('GET: Assault tag.')
@@ -2288,7 +2247,11 @@ function enter()
 	if npc_dialog == true then
 		--Shinryu
 		if zone == 255 then
-			windower.send_command('wait 5; setkey right down; wait 0.75; setkey right up; wait 0.6; setkey enter down; wait 0.25; setkey enter up; wait 0.75; setkey left down; wait 0.5; setkey left up; wait 0.6; setkey enter down; wait 0.25; setkey enter up')
+			if possible_npc.name == "Transcendental Radiance" then
+				windower.send_command('wait 2.3; setkey right down; wait 0.75; setkey right up; wait 0.6; setkey enter down; wait 0.25; setkey enter up; wait 0.75; setkey left down; wait 0.5; setkey left up; wait 0.6; setkey enter down; wait 0.25; setkey enter up')
+			else
+				windower.send_command('wait 0.85; setkey up down; wait 0.25; setkey up up; wait 0.7; setkey enter down; wait 0.25; setkey enter up;')
+			end
 		--Ouryu
 		elseif zone == 31 then 
 			windower.send_command('wait 17; setkey down down; wait 0.75; setkey down up; wait 0.6; setkey enter down; wait 0.25; setkey enter up; wait 0.75; setkey up down; wait 0.5; setkey up up; wait 0.6; setkey enter down; wait 0.25; setkey enter up')
@@ -2304,8 +2267,9 @@ function enter()
 		--6 Avatars
 		elseif cloister_zones:contains(zone) then
 			windower.send_command('wait 6; setkey down down; wait 0.75; setkey down up; wait 0.6; setkey enter down; wait 0.25; setkey enter up; wait 0.75; setkey up down; wait 0.5; setkey up up; wait 0.6; setkey enter down; wait 0.25; setkey enter up')
+		--General
 		else
-			windower.send_command('wait 1.5; setkey up down; wait 0.25; setkey up up; wait 0.7; setkey enter down; wait 0.25; setkey enter up;')
+			windower.send_command('wait 0.85; setkey up down; wait 0.25; setkey up up; wait 0.7; setkey enter down; wait 0.25; setkey enter up;')
 		end
 	end
 	
@@ -2338,29 +2302,31 @@ function cleanstones()
 
 end
 
-function done()
+function book()
 	local zone = windower.ffxi.get_info()['zone']
 	local assault_zone = S{55,56,63,66,69}
 	
 	if assault_zone:contains(zone) then
+		if zone == 55 then
+			windower.send_command('get Ilrusi Ledger; wait 1.7; tradenpc 1 "Ilrusi Ledger" "Rune of Release"')
+		elseif zone == 56 then
+			windower.send_command('get Periqia Diary; wait 1.7; tradenpc 1 "Periqia Diary" "Rune of Release"')
+		elseif zone == 63 then
+			windower.send_command('get Lebros Chronicle; wait 1.7; tradenpc 1 "Lebros Chronicle" "Rune of Release"')
+		elseif zone == 66 then
+			windower.send_command('get Mamool Ja Journal; wait 1.7; tradenpc 1 "Mamool Ja Journal" "Rune of Release"')
+		elseif zone == 69 then
+			windower.send_command('get Leujaoam Log; wait 1.7; tradenpc 1 "Leujaoam Log" "Rune of Release"')
+		end
 
-		local ror = windower.ffxi.get_mob_by_name('Rune of Release').id
-		--local book = 'Ilrusi Ledger'
-		--local book = 'Leujaoam Log'
-		local book = 'Mamool Ja Journal'
-		--local book = 'Lebros Chronicle'
-		--local book = 'Periqia Diary'
-			windower.send_command('settarget ' .. ror)
-			coroutine.sleep(1)
-			windower.send_command('input /lockon; wait 1; input /item \"' .. book .. '\" <t>')
+		-- local ror = windower.ffxi.get_mob_by_name('Rune of Release').id
+		-- local book = 'Mamool Ja Journal'
+		-- windower.send_command('settarget ' .. ror)
+		-- windower.send_command('wait 1.5; input /lockon; wait 1; input /item \"' .. book .. '\" <t>')
+
 	else
-		atc('Assault Book: Not in zone.')
+		atc('[Book] Not in zone.')
 	end
-	if ipcflag == false then
-		ipcflag = true
-		windower.send_ipc_message('done')
-	end
-	ipcflag = false
 end
 
 function drop(cmd2)
@@ -2404,42 +2370,30 @@ function ein(cmd2)
 	local zone = windower.ffxi.get_info()['zone']
 	if zone == 78 then
 		if (cmd2 == 'enter') then
-			atc("Ein: Entering Einherjar.")
-			if ipcflag == false then
-				windower.send_command('input /targetnpc; wait 1; input /lockon; wait 1; input /item \'glowing lamp\' <t>; wait 3; setkey up down; wait 0.5; setkey up up; wait 1; setkey enter down; wait 0.5; setkey enter up')
-				ipcflag = true
-				windower.send_ipc_message('ein enter')
-			else
-				windower.send_command('input /targetnpc; wait 1; input /lockon; wait 10; input /item \'glowing lamp\' <t>; wait 3; setkey up down; wait 0.5; setkey up up; wait 1; setkey enter down; wait 0.5; setkey enter up')
-			end
-			ipcflag = false
+			atc("[Ein] Entering Einherjar.")
+			windower.send_command('wait 1; tradenpc 1 "glowing lamp" "entry gate"')
+			windower.send_command('wait 4.5; setkey up down; wait 0.25; setkey up up; wait 0.7; setkey enter down; wait 0.25; setkey enter up')
 		elseif (cmd2 == 'exit') then
 			local items = windower.ffxi.get_items()
 			local exitflag = false
 			for index, item in pairs(items.inventory) do
 				if type(item) == 'table' and item.id == 5414 then
-					atc('Ein: Dropping lamp to exit.')
+					atc('[Ein] Dropping lamp to exit.')
 					windower.ffxi.drop_item(index, item.count)
 					exitflag = true
 				end
 			end
 			if exitflag == false then
-				atc('Ein: No lamp in inventory!')
+				atc('[Ein] No lamp in inventory!')
 			end
-			if ipcflag == false then
-				ipcflag = true
-				windower.send_ipc_message('ein exit')
-			end
-			ipcflag = false
 		else
-			atc('Ein: No sub command specified')
+			atc('[Ein] No sub command specified')
 		end
 	else
-		atcwarn("Ein: Not in proper zone, skipping.")
+		atcwarn("[Ein] Not in proper zone, skipping.")
 	end
 end
 
--- Beta functions
 function dd()
 	player = windower.ffxi.get_player()
 	if player.main_job == 'BLU' then
@@ -2938,26 +2892,19 @@ windower.register_event('ipc message', function(msg, ...)
 		smn(cmd2, cmd3, cmd4)
 	elseif cmd == 'rngsc' then
 		rngsc(cmd2, cmd3)
-		
-		--not checked
-	elseif cmd == 'buy' then
-		coroutine.sleep(delay)
-		ipcflag = true
-		buy(cmd2)	
 	elseif cmd == 'ein' then
 		coroutine.sleep(delay)
-		ipcflag = true
 		ein(cmd2)
-	elseif cmd == 'done' then
-		coroutine.sleep(delay)
-		ipcflag = true
-		done()	
+	elseif cmd == 'buy' then
+		coroutine.sleep(delay+delay)
+		buy(cmd2, cmd3)	
 	end
 end)
 
 function loaded()
 	settings = config.load(default)
 	init_box_pos()
+	atcwarn('Required addons: Selindrile\'s GearSwap, HealBot, FastCS, Organizer, TradeNPC, Send, MAA, Roller, Singer, Sparks, Powder, SellNPC')
 end
 
 windower.register_event('load', loaded)

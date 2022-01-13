@@ -32,6 +32,7 @@ default = {
 	rngsc=false,
 	autoarts='',
 	npc_dialog=false,
+	battletarget='Raskovniche',
 }
 
 areas = {}
@@ -1886,7 +1887,7 @@ end
 function rngsc(cmd2, leader_rng)
 	currentPC=windower.ffxi.get_player()
 	
-	local rangedjobs = S{'RNG','COR'}
+	local rangedjobs = S{'RNG','COR','RNG','SCH','BLM','RUN'}
 
 	if cmd2 == nil then
 		if settings.rngsc then
@@ -1897,29 +1898,74 @@ function rngsc(cmd2, leader_rng)
 			settings.rngsc = true
 		end
 	end
+	
+	
 	if settings.rngsc then
 		if rangedjobs:contains(currentPC.main_job) then
-			if cmd2 == 'Wildfire' then
-				if not (currentPC.main_job == 'RUN') then				
-					windower.add_to_chat(123, 'ENDING SC Wildfire')
-					windower.send_command('input /ws "Wildfire" <t>')
-					coroutine.sleep(3.8)
-					windower.send_command('wait 1.6; autora start')
+			if cmd2 and cmd2:lower() == 'freezebite' then
+				if currentPC.main_job == 'SCH' then				
+					atc('[RNGSC] ENDING SCH - Water [Fragmentation]')
+					windower.send_command('input /ja "Immanence" <me>')
+					windower.send_command:schedule(3.4, 'gs c elemental tier1 Raskovniche')
+				elseif currentPC.main_job == 'COR' then
+					atc('[RNGSC] COR Last Stand')
+					local abil_recasts = windower.ffxi.get_ability_recasts()
+					local latency = 0.7
+					if abil_recasts[195] < latency then
+						windower.send_command:schedule(3.7, 'input /ja "Wind Shot" <t>')
+					end
+					windower.send_command:schedule(10.1, 'input /ws "Last Stand" <t>')
+					windower.send_command:schedule(13.5, 'autora start')
+				elseif currentPC.main_job == 'BLM' then
+					atc('[RNGSC] BLM PreNuke')
+					windower.send_command:schedule(3.9, 'gs c elemental aja Raskovniche')
+				elseif currentPC.main_job == 'RUN' then
+					local abil_recasts = windower.ffxi.get_ability_recasts()
+					local latency = 0.7
+					atc('[RNGSC] Rayke/Gambit')
+					--windower.send_command:schedule(3.2, 'gs c set autowsmode off')
+					if abil_recasts[116] < latency then
+						windower.send_command('gs c set autotankmode off; gs c set autobuffmode off; gs c set autorunemode off')
+						windower.send_command:schedule(3.1, 'input /ja "Gambit" <t>')
+						windower.send_command:schedule(4.2, 'gs c set autotankmode on; gs c set autorunemode on')
+					elseif abil_recasts[119] < latency then
+						windower.send_command('gs c set autotankmode off; gs c set autobuffmode off; gs c set autorunemode off')
+						windower.send_command:schedule(3.1, 'input /ja "Rayke" <t>')
+						windower.send_command:schedule(4.2, 'gs c set autotankmode on; gs c set autorunemode on')
+					end
 				end
-			elseif cmd2 == 'Laststand' then
-				if not (currentPC.main_job == 'RUN') then				
-					windower.add_to_chat(123, 'ENDING SC Last Stand')
-					windower.send_command('input /ws "Last Stand" <t>')
-					coroutine.sleep(3.8)
-					windower.send_command('wait 1.6; autora start')
+			elseif cmd2 and cmd2:lower() == 'frostbite' then
+				if currentPC.main_job == 'SCH' then				
+					atc('[RNGSC] ENDING SCH - Water [Fragmentation]')
+					windower.send_command('input /ja "Immanence" <me>')
+					windower.send_command:schedule(3.4, 'gs c elemental tier1 Marmorkrebs')
+				elseif currentPC.main_job == 'COR' then
+					atc('[RNGSC] COR Last Stand')
+					local abil_recasts = windower.ffxi.get_ability_recasts()
+					local latency = 0.7
+					if abil_recasts[195] < latency then
+						windower.send_command:schedule(3.7, 'input /ja "Thunder Shot" <t>')
+					end
+					windower.send_command:schedule(10.1, 'input /ws "Last Stand" <t>')
+					windower.send_command:schedule(13.5, 'autora start')
+				elseif currentPC.main_job == 'BLM' then
+					atc('[RNGSC] BLM PreNuke')
+					windower.send_command:schedule(3.9, 'gs c elemental aja Marmorkrebs')
+				elseif currentPC.main_job == 'RUN' then
+					local abil_recasts = windower.ffxi.get_ability_recasts()
+					local latency = 0.7
+					atc('[RNGSC] Rayke/Gambit')
+					--windower.send_command:schedule(3.2, 'gs c set autowsmode off')
+					if abil_recasts[116] < latency then
+						windower.send_command('gs c set autotankmode off; gs c set autobuffmode off; gs c set autorunemode off')
+						windower.send_command:schedule(3.1, 'input /ja "Gambit" <t>')
+						windower.send_command:schedule(4.2, 'gs c set autotankmode on; gs c set autorunemode on')
+					elseif abil_recasts[119] < latency then
+						windower.send_command('gs c set autotankmode off; gs c set autobuffmode off; gs c set autorunemode off')
+						windower.send_command:schedule(3.1, 'input /ja "Rayke" <t>')
+						windower.send_command:schedule(4.2, 'gs c set autotankmode on; gs c set autorunemode on')
+					end
 				end
-			elseif cmd2 == 'GroundStrike' then
-				windower.add_to_chat(123, 'ENDING SC Ground Strike')
-				windower.send_command('input /ja "Earth Shot" <t>')
-				coroutine.sleep(1.2)
-				windower.send_command('input /ws "Leaden Salute" <t>')
-				coroutine.sleep(3.4)
-				windower.send_command('wait 1.6; autora start')
 			elseif cmd2 == 'Jishnu' then
 				windower.add_to_chat(123, 'Second step Leaden Salute + Earth shot!')
 				windower.send_command('input /ja "Earth Shot" <t>')
@@ -1937,7 +1983,7 @@ function rngsc(cmd2, leader_rng)
 				end
 			end
 		else
-			atc('[RNGSC] Not RNG/COR/RUN job, skipping.')
+			atc('[RNGSC] Not RNG/COR/RUN/SCH/BLM job, skipping.')
 		end
 	end
 	display_box()
@@ -2247,7 +2293,7 @@ function enter()
 	if npc_dialog == true then
 		--Shinryu
 		if zone == 255 then
-			if possible_npc.name == "Transcendental Radiance" then
+			if possible_npc and possible_npc.name == "Transcendental Radiance" then
 				windower.send_command('wait 2.3; setkey right down; wait 0.75; setkey right up; wait 0.6; setkey enter down; wait 0.25; setkey enter up; wait 0.75; setkey left down; wait 0.5; setkey left up; wait 0.6; setkey enter down; wait 0.25; setkey enter up')
 			else
 				windower.send_command('wait 0.85; setkey up down; wait 0.25; setkey up up; wait 0.7; setkey enter down; wait 0.25; setkey enter up;')
@@ -2259,7 +2305,7 @@ function enter()
 		elseif zone == 137 then
 			windower.send_command('wait 2.0; setkey up down; wait 0.25; setkey up up; wait 0.7; setkey enter down; wait 0.25; setkey enter up;')
 		elseif zone == 182 then
-			if possible_npc.name == "Veridical Conflux" then
+			if possible_npc and possible_npc.name == "Veridical Conflux" then
 				windower.send_command('wait 1.8; setkey enter down; wait 0.25; setkey enter up;')
 			else
 				windower.send_command('wait 3.5; setkey right down; wait 0.5; setkey right up; wait 0.6; setkey enter down; wait 0.25; setkey enter up;')
@@ -2318,11 +2364,6 @@ function book()
 		elseif zone == 69 then
 			windower.send_command('get Leujaoam Log; wait 1.7; tradenpc 1 "Leujaoam Log" "Rune of Release"')
 		end
-
-		-- local ror = windower.ffxi.get_mob_by_name('Rune of Release').id
-		-- local book = 'Mamool Ja Journal'
-		-- windower.send_command('settarget ' .. ror)
-		-- windower.send_command('wait 1.5; input /lockon; wait 1; input /item \"' .. book .. '\" <t>')
 
 	else
 		atc('[Book] Not in zone.')

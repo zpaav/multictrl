@@ -84,7 +84,9 @@ jobnames = {
 InternalCMDS = S{
 
 	--Battle
-	'on','off','stage','fight','fightmage','fightsmall','ws','food','sleep','fin','wsall','cc','zerg','wstype','buffup','dd',
+	'on','off','stage','fight','fightmage','fightsmall','ws','food','sleep','fin',
+	'wsall','cc','zerg','wstype','buffup','dd','attackon',
+	
 	--Job
 	'brd','sch','smnburn','geoburn','burn','rng','proc',
 	--Travel
@@ -500,20 +502,20 @@ function stage(cmd2)
 
 	settings = settings.load('data/settings.xml')
 
-	-- Iron giants month - BRD/WHM, GEO/RDM, PLD/RUN, COR/NINx2, RNG/WAR
+	-- Goblin month - BRD/NIN, GEO/WHM, WHM/SCH, PLD/RUN, RUN/DRK, SAM/WAR
 	if cmd2 == 'ambu' then
 		atc('[Stage]: Ambu')
 		windower.send_command('input /autotarget off')
 		if player_job.main_job == 'BRD' then
-			windower.send_command('sing pl ambu; sing n off; sing p on; gaze ap off; sing ballad 2 <me>; sing ballad 2 <me>; sing ballad 2 ' ..settings.char5.. '; hb mincure 3; sing sirvente ' ..settings.char1.. '; wait 2.5; mc brd reset')
-		elseif player_job.main_job == 'COR' then
-			windower.send_command('gaze ap off; gs c autows Leaden Salute; gs c set weapons DualLeadenRanged')
-		elseif player_job.main_job == 'RNG' then
-			windower.send_command('gaze ap off; gs c autows coronach; gs c set weapons Annihilator')
+			windower.send_command('hb f dist 18; sing pl melee; sing n off; sing p on; gaze ap on; gs c set weapons dualcarn; sing ballad 1 ' ..settings.char1)
+		elseif player_job.main_job == 'RUN' then
+			windower.send_command('gaze ap on; gs c set runeelement unda; gs c set HybridMode DTLite')
 		elseif player_job.main_job == 'PLD' then
-			windower.send_command('lua r react; gs c set runeelement ignis; hb buff <me> barblizzard; gaze ap off; gs c set weapons Aegis')
+			windower.send_command('gs c set runeelement unda; hb buff <me> barfire; gaze ap on; hb as off; hb f off;')
+		elseif player_job.main_job == 'SAM' then
+			windower.send_command('gaze ap on;')
 		elseif player_job.main_job == 'GEO' then
-			windower.send_command('hb mincure 3; gs c autogeo acumen; gs c autoindi fury; gs c autoentrust refresh; hb buff ' ..settings.char1.. ' haste; hb buff ' ..settings.char1.. ' refresh; hb buff ' ..settings.char4.. ' refresh')
+			windower.send_command('hb mincure 3; gs c autogeo frailty; gs c autoindi fury; gs c autoentrust refresh;')
 		end
 	elseif cmd2 == 'ambu2' then
 		if player_job.main_job == 'RDM' then
@@ -1094,6 +1096,7 @@ function brd(cmd2)
 		elseif cmd2 == 'ody' then
 			atc('[BRD] Odyssey')
 			windower.send_command("hb buff " ..settings.char1.. " sentinel's scherzo; hb buff " ..settings.char1.. " foe sirvente; hb buff " ..settings.char1.. " scop's operetta; hb buff " ..settings.char1.. " victory march")
+--			windower.send_command("hb buff " ..settings.char5.. " sentinel's scherzo; hb buff " ..settings.char5.. " foe sirvente; hb buff " ..settings.char5.. " scop's operetta; hb buff " ..settings.char5.. " victory march")
 		elseif cmd2 == 'reset' then
 			atc('[BRD] Reset')
 			windower.send_command("hb cancelbuff " ..settings.char1.. " mage's ballad III; hb cancelbuff " ..settings.char1.. " mage's ballad II; hb cancelbuff " ..settings.char1.. " sentinel's scherzo; hb cancelbuff " ..settings.char1.. " foe sirvente; hb cancelbuff " ..settings.char1.. " scop's operetta; hb cancelbuff " ..settings.char1.. " victory march")
@@ -1926,10 +1929,12 @@ function rngsc(cmd2, leader_rng)
 					--windower.send_command:schedule(3.2, 'gs c set autowsmode off')
 					if abil_recasts[116] < latency then
 						windower.send_command('gs c set autotankmode off; gs c set autobuffmode off; gs c set autorunemode off')
+						windower.send_command:schedule(2.5, 'input /p Gambit - 86s duration; wait 86; input /p Gambit OFF! <scall20>')
 						windower.send_command:schedule(3.1, 'input /ja "Gambit" <t>')
 						windower.send_command:schedule(4.2, 'gs c set autotankmode on; gs c set autorunemode on')
 					elseif abil_recasts[119] < latency then
 						windower.send_command('gs c set autotankmode off; gs c set autobuffmode off; gs c set autorunemode off')
+						windower.send_command:schedule(2.5, 'input /p Rayke - 44s duration; wait 44; input /p Rayke OFF! <scall20>')
 						windower.send_command:schedule(3.1, 'input /ja "Rayke" <t>')
 						windower.send_command:schedule(4.2, 'gs c set autotankmode on; gs c set autorunemode on')
 					end
@@ -1958,12 +1963,50 @@ function rngsc(cmd2, leader_rng)
 					--windower.send_command:schedule(3.2, 'gs c set autowsmode off')
 					if abil_recasts[116] < latency then
 						windower.send_command('gs c set autotankmode off; gs c set autobuffmode off; gs c set autorunemode off')
+						windower.send_command:schedule(2.5, 'input /p Gambit - 86s duration; wait 86; input /p Gambit OFF! <scall20>')
 						windower.send_command:schedule(3.1, 'input /ja "Gambit" <t>')
 						windower.send_command:schedule(4.2, 'gs c set autotankmode on; gs c set autorunemode on')
 					elseif abil_recasts[119] < latency then
 						windower.send_command('gs c set autotankmode off; gs c set autobuffmode off; gs c set autorunemode off')
+						windower.send_command:schedule(2.5, 'input /p Rayke - 44s duration; wait 44; input /p Rayke OFF! <scall20>')
 						windower.send_command:schedule(3.1, 'input /ja "Rayke" <t>')
 						windower.send_command:schedule(4.2, 'gs c set autotankmode on; gs c set autorunemode on')
+					end
+				end
+				
+			--Aero(Open Gravitation) > Nocthelix(Closing Gravitation) > Earth Shot + Rayke > Steel Cyclone or Full break(GeoHelix) > Wild fire.
+			elseif cmd2 and cmd2:lower() == 'ongosch' then
+				if currentPC.main_job == 'SCH' then
+				--check if have 2 gems?
+				--if 2 gems then do SC
+					--mc rungsc ongoruncor ???
+				end
+			elseif cmd2 and cmd2:lower() == 'ongoruncor' then
+				if currentPC.main_job == 'COR' then
+					atc('[RNGSC] COR Wildfire and Earth Shot')
+					local abil_recasts = windower.ffxi.get_ability_recasts()
+					local latency = 0.7
+					if abil_recasts[195] < latency then
+						windower.send_command:schedule(1.7, 'input /ja "Earth Shot" <t>')
+					end
+					windower.send_command:schedule(10.1, 'input /ws "Wildfire" <t>')
+					windower.send_command:schedule(13.5, 'autora start')
+				elseif currentPC.main_job == 'RUN' then
+					local abil_recasts = windower.ffxi.get_ability_recasts()
+					local latency = 0.7
+					atc('[RNGSC] Rayke/Gambit')
+					if abil_recasts[116] < latency then
+						windower.send_command('gs c set autotankmode off; gs c set autobuffmode off; gs c set autorunemode off')
+						windower.send_command('input /ja "Gambit" <t>')
+						windower.send_command:schedule(1.5, 'input /p Gambit - 86s duration; wait 86; input /p Gambit OFF! <scall20>')
+						windower.send_command:schedule(4.2, 'input /ws "Steel Cyclone" <t>')
+						windower.send_command:schedule(6.2, 'gs c set autotankmode on; gs c set autorunemode on')
+					elseif abil_recasts[119] < latency then
+						windower.send_command('gs c set autotankmode off; gs c set autobuffmode off; gs c set autorunemode off')
+						windower.send_command('input /ja "Rayke" <t>')
+						windower.send_command:schedule(1.5, 'input /p Rayke - 44s duration; wait 44; input /p Rayke OFF! <scall20>')
+						windower.send_command:schedule(4.2, 'input /ws "Steel Cyclone" <t>')
+						windower.send_command:schedule(6.2, 'gs c set autotankmode on; gs c set autorunemode on')
 					end
 				end
 			elseif cmd2 == 'Jishnu' then
@@ -2094,9 +2137,7 @@ end
 -- External addons
 
 function warp()
-
 	local world = res.zones[windower.ffxi.get_info().zone].name
-	
 	if not(areas.Cities:contains(world)) then
 		atc('WARP: Warping.')
 		windower.send_command('myhome')
@@ -2115,6 +2156,16 @@ function buyalltemps()
 	windower.send_command('escha buyall')
 end
 
+function attackon()
+	atc('[ATTACK ON]')
+	local player = windower.ffxi.get_player()
+	local MeleeJobs = S{'WAR','SAM','DRG','DRK','NIN','MNK','COR','BLU','PUP','DNC','RUN','PLD','THF','BST','RNG','BRD'}
+	if MeleeJobs:contains(player.main_job) then
+		windower.send_command('input /attack on')
+	end
+	
+end
+
 function get(cmd2)
 	local zone = windower.ffxi.get_info()['zone']
 	local EschaZones = S{288,289,291}
@@ -2126,7 +2177,7 @@ function get(cmd2)
 	elseif cmd2 == 'mog2' and zone == 247 then
 		atc('GET: Moglophone II.')
 		get_poke_check_id('17789078')
-		windower.send_command('wait 3; setkey down down; wait 0.05; setkey down up; wait 1; setkey down down; wait 0.05; setkey down up; wait 1; setkey down down; wait 0.05; setkey down up; wait 1; setkey down down; wait 0.05; setkey down up; wait 3.5; setkey enter down; wait 0.5; setkey enter up;')
+		windower.send_command('wait 3; setkey down down; wait 0.05; setkey down up; wait 1; setkey down down; wait 0.05; setkey down up; wait 1; setkey down down; wait 0.05; setkey down up; wait 1; setkey down down; wait 0.05; setkey down up; wait 3.5; setkey enter down; wait 0.5; setkey enter up; wait 2.0; setkey enter down; wait 0.5; setkey enter up; wait 1.3; ')
 	elseif cmd2 == 'pot' and zone == 291 then
 		atc('GET: Potpourri KI')
 		get_poke_check('Emporox')

@@ -88,7 +88,7 @@ InternalCMDS = S{
 	'wsall','cc','zerg','wstype','buffup','dd','attackon',
 	
 	--Job
-	'brd','sch','smnburn','geoburn','burn','rng','proc',
+	'brd','sch','smnburn','geoburn','burn','rng','proc','crit',
 	--Travel
 	'mnt','dis','warp','omen','enup','endown','ent','esc','go','enter','get',
 	--Misc
@@ -507,7 +507,7 @@ function stage(cmd2)
 		atc('[Stage]: Ambu')
 		windower.send_command('input /autotarget off')
 		if player_job.main_job == 'BRD' then
-			windower.send_command('hb f dist 18; sing pl melee; sing n off; sing p on; gaze ap on; gs c set weapons dualcarn; sing ballad 1 ' ..settings.char1)
+			windower.send_command('hb f dist 16; sing pl melee; sing n off; sing p on; gaze ap on; gs c set weapons dualcarn; sing ballad 1 ' ..settings.char1)
 		elseif player_job.main_job == 'RUN' then
 			windower.send_command('gaze ap on; gs c set runeelement unda; gs c set HybridMode DTLite')
 		elseif player_job.main_job == 'PLD' then
@@ -515,8 +515,11 @@ function stage(cmd2)
 		elseif player_job.main_job == 'SAM' then
 			windower.send_command('gaze ap on;')
 		elseif player_job.main_job == 'GEO' then
-			windower.send_command('hb mincure 3; gs c autogeo frailty; gs c autoindi fury; gs c autoentrust refresh;')
+			windower.send_command('hb disable erase; hb mincure 3; gs c autogeo frailty; gs c autoindi fury; gs c autoentrust refresh;')
+		elseif player_job.main_job == 'WHM' then
+			windower.send_command('hb disable erase; hb as off; hb f dist 19')
 		end
+		settings.autows = true
 	elseif cmd2 == 'ambu2' then
 		if player_job.main_job == 'RDM' then
 			windower.send_command('hb f off; hb as off; hb off')
@@ -644,7 +647,7 @@ function stage(cmd2)
 			windower.send_command('hb buff <me> barstonra; hb buff <me> barpetra; gs c set castingmode DT; gs c set idlemode DT; hb debuff dia2; hb buff <me> auspice')
 			windower.send_command('input /p Haste DRK')
 		elseif player_job.main_job == 'DRK' then
-			windower.send_command('gs c set weapons KajaChopper; gs c set hybridmode SubtleBlow; gs c set weaponskillmode SubtleBlow')
+			windower.send_command('gs c set weapons KajaChopper; gs c set hybridmode SubtleBlow; ')--gs c set weaponskillmode SubtleBlow
 		elseif player_job.main_job == 'BRD' then
 			windower.send_command('sing pl sv5; sing n off; sing p off; sing debuffing off; gs c set idlemode DT; sing debuff wind threnody 2')
 			windower.send_command('input /p Piano WHM BLU SMN')
@@ -766,6 +769,7 @@ function stage(cmd2)
 	else
 		atc('[Stage]: Invalid option.')
 	end
+	display_box()
 end
 
 function jc(cmd2)
@@ -1820,7 +1824,7 @@ function smn(cmd2,leader_smn,cmd3)
 				elseif cmd2:lower() == 'vs' then
 					if settings.smnsc then
 						if currentPC.name ~= leader_smn then
-							windower.send_command('wait 3.7; input /ja "Flaming Crush" <t>')
+							windower.send_command('wait 4.0; input /ja "Flaming Crush" <t>')
 						end
 					else
 						windower.send_command('input /ja "Volt Strike" <t>')
@@ -1828,7 +1832,7 @@ function smn(cmd2,leader_smn,cmd3)
 				elseif cmd2:lower() == 'fc' then
 					if settings.smnsc then
 						if currentPC.name ~= leader_smn then
-							windower.send_command('wait 3.7; input /ja "Volt Strike" <t>')
+							windower.send_command('wait 4.0; input /ja "Volt Strike" <t>')
 						end
 					else
 						windower.send_command('input /ja "Flaming Crush" <t>')
@@ -1836,7 +1840,7 @@ function smn(cmd2,leader_smn,cmd3)
 				elseif cmd2:lower() == 'ha' then
 					if settings.smnsc then
 						if currentPC.name ~= leader_smn then
-							windower.send_command('wait 3.7; input /ja "Flaming Crush" <t>')
+							windower.send_command('wait 4.0; input /ja "Flaming Crush" <t>')
 						end
 					else
 						windower.send_command('input /ja "Hysteric Assault" <t>')
@@ -2163,7 +2167,23 @@ function attackon()
 	if MeleeJobs:contains(player.main_job) then
 		windower.send_command('input /attack on')
 	end
-	
+end
+
+function crit(cmd2)
+	if cmd2 then
+		atc('[CRIT]: ' .. cmd2)
+	else
+		atc('[CRIT] No parameter')
+	end
+	local player = windower.ffxi.get_player()
+	local MeleeJobs = S{'RNG','COR'}
+	if MeleeJobs:contains(player.main_job) then
+		if cmd2 and cmd2:lower() == 'on' then
+			windower.send_command('gs c set rangedmode Crit')
+		elseif cmd2 and cmd2:lower() == 'off' then
+			windower.send_command('gs c set rangedmode Normal')
+		end
+	end
 end
 
 function get(cmd2)
@@ -2332,14 +2352,23 @@ function enter()
 	atc('[ENTER] Enter menu.')
 	local zone = windower.ffxi.get_info()['zone']
 	local cloister_zones = S{201,202,203,207,209,211}
-	
+	local adoulin_beam_zones = S{265,269}
+
+	if haveBuff('Invisible') then
+		windower.send_command('cancel invisible')
+		coroutine.sleep(2.0)
+	elseif haveBuff('Mounted') then
+		windower.send_command('input /dismount')
+		coroutine.sleep(2.0)
+	end
+
 	local possible_npc = find_npc_to_poke()
 	
 	if possible_npc then
 		get_poke_check_index(possible_npc.index)
 	else
 		get_npc_dialogue('npc',3)
-	end
+	end	
 	
 	if npc_dialog == true then
 		--Shinryu
@@ -2364,6 +2393,9 @@ function enter()
 		--6 Avatars
 		elseif cloister_zones:contains(zone) then
 			windower.send_command('wait 6; setkey down down; wait 0.75; setkey down up; wait 0.6; setkey enter down; wait 0.25; setkey enter up; wait 0.75; setkey up down; wait 0.5; setkey up up; wait 0.6; setkey enter down; wait 0.25; setkey enter up')
+		--Adoulin beam up
+		elseif adoulin_beam_zones:contains(zone) then
+			windower.send_command('wait 0.85; setkey down down; wait 0.25; setkey down up; wait 0.7; setkey enter down; wait 0.25; setkey enter up;')
 		--General
 		else
 			windower.send_command('wait 0.85; setkey up down; wait 0.25; setkey up up; wait 0.7; setkey enter down; wait 0.25; setkey enter up;')
@@ -2519,7 +2551,7 @@ function rand()
 	windower.ffxi.turn(pivot)
 	coroutine.sleep(0.5)
 	windower.ffxi.run(true)
-	runtime = math.random(0.82,1.83)
+	runtime = math.random(0.56,1.31)
 	coroutine.sleep(runtime)
 	windower.ffxi.run(false)
 end

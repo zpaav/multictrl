@@ -13,5 +13,10 @@ return {
 	[211] = {'Water Protocrystal'},
 	[31] = {'Spatial Displacement'},
 	[182] = {'Veridical Conflux','Veridical Conflux #01','Veridical Conflux #02','Veridical Conflux #03','Veridical Conflux #04','Veridical Conflux #05','Veridical Conflux #06','Veridical Conflux #07','Veridical Conflux #08','Veridical Conflux #09','Veridical Conflux #10','Veridical Conflux #11','Veridical Conflux #12','Veridical Conflux #13','Veridical Conflux #14','Veridical Conflux #15'},
+	[265] = {'???'},
+	[268] = {'???'},
+	[269] = {'???'},
+	[272] = {'???'},
+	[273] = {'???'},
 }
 

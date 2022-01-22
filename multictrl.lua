@@ -92,7 +92,7 @@ InternalCMDS = S{
 	--Travel
 	'mnt','dis','warp','omen','enup','endown','ent','esc','go','enter','get',
 	--Misc
-	'reload','unload','fps','lotall','cleanstones','drop','rand','buyalltemps','book'
+	'reload','unload','fps','lotall','cleanstones','drop','buyalltemps','book'
 	--Inactive
 	--'jc',
 }
@@ -141,6 +141,10 @@ windower.register_event('addon command', function(input, ...)
 
 	if cmd == nil then
 		windower.add_to_chat(123,"Abort: No command specified")
+	elseif cmd == 'rand' then
+		local leader = windower.ffxi.get_player()
+		rand(leader.name)
+		send_to_IPC(cmd,leader.name)
 	elseif cmd == 'buy' then						-- Leader
 		local leader = windower.ffxi.get_player()
 		buy:schedule(0, cmd2,leader.name)
@@ -474,7 +478,7 @@ display_box = function()
 		if settings.assist then
 			burn_status:append(string.format("\n%s Assiting: %s" .. settings.assist, clr.w, clr.h))
 		else
-			burn_status:append(string.format("\n%s Assiting: %s", clr.w))
+			burn_status:append(string.format("\n%s Assiting: ", clr.w))
 		end
 		
 		
@@ -591,23 +595,36 @@ function stage(cmd2)
 		end
 	elseif cmd2 == 'arebati' then
 		if player_job.main_job == 'SCH' or player_job.main_job == 'WHM' then
-			windower.send_command('gs c set autoapmode off; hb disable erase; hb buff ' ..settings.char1.. ' haste; hb buff ' ..settings.char1.. ' shell5;')
+			windower.send_command(' hb disable erase; hb buff ' ..settings.char1.. ' haste;') --hb buff ' ..settings.char1.. ' shell5;')
+			windower.send_command('gs c set castingmode DT; gs c set idlemode DT;')
 			if player_job.main_job == 'SCH' then
-				windower.send_command('mc sch heal;  hb buff ' .. settings.char1 .. ' regen5;')
-			else
-				windower.send_command('hb buff ' .. settings.char1 .. ' regen4;')
+				windower.send_command('mc sch heal; gs c set autoapmode off; hb buff ' .. settings.char1 .. ' regen5;')
 			end
 		elseif player_job.main_job == 'RUN' then
-			windower.send_command('gs c set runeelement ignis; hb buff <me> barblizzard')
+			windower.send_command('gs c set runeelement ignis; hb buff <me> barblizzard; lua r react')
 		elseif player_job.main_job == 'BRD' then
-			windower.send_command('sing pl arebati; sing n on; sing p on; gs c set idlemode DT; sing sirvente ' ..settings.char1)
+			windower.send_command('mc brd reset; sing pl arebati; sing n on; sing p on; gs c set idlemode DT; sing sirvente ' ..settings.char1.. '; sing ice 1 ' ..settings.char1)
 		elseif player_job.main_job == 'GEO' then
-			windower.send_command('gs c autoindi fury; gs c autogeo agi; gs c autoentrust refresh; gs c set castingmode DT; gs c set idlemode DT;')
+			windower.send_command('gs c autoindi fury; gs c autogeo agi; gs c autoentrust attunement; gs c set castingmode DT; gs c set idlemode DT; gs c autoentrustee ' ..settings.char1)
 		elseif player_job.main_job == 'RNG' then
 			windower.send_command('gs c set weapons Fomalhaut; gs c set rnghelper on; wait 2; gs c autows Last Stand;')
 		elseif player_job.main_job == 'COR' then
-			windower.send_command('roll melee; gs c set weapons Fomalhaut; gs c set rnghelper on; wait 2; gs c autows Last Stand;')
+			windower.send_command('roll roll1 sam; wait 1; roll roll2 chaos; gs c set weapons Fomalhaut; gs c set rnghelper on; wait 2; gs c autows Last Stand;')
 		end
+		settings.autows = true
+		settings.rangedmode = true
+	elseif cmd2 == 'are2' then
+		if player_job.main_job == 'GEO' then
+			windower.send_command('gs c autoindi fury; gs c autogeo barrier; gs c autoentrust attunement; gs c set castingmode DT; gs c set idlemode DT; gs c autoentrustee ' ..settings.char1)
+		elseif player_job.main_job == 'COR' then
+			--windower.send_command('roll roll1 gallant;')
+		elseif player_job.main_job == 'RNG' then
+			windower.send_command('gs c set rangedmode DT;')
+		elseif player_job.main_job == 'BRD' then
+			windower.send_command('mc brd arebati')
+		end
+		settings.autows = true
+		settings.rangedmode = true
 	elseif cmd2 == 'xev' then
 		windower.send_command('autoitem on')
 		if player_job.main_job == 'WHM' then
@@ -650,9 +667,9 @@ function stage(cmd2)
 			windower.send_command('gs c set weapons KajaChopper; gs c set hybridmode SubtleBlow; ')--gs c set weaponskillmode SubtleBlow
 		elseif player_job.main_job == 'BRD' then
 			windower.send_command('sing pl sv5; sing n off; sing p off; sing debuffing off; gs c set idlemode DT; sing debuff wind threnody 2')
-			windower.send_command('input /p Piano WHM BLU SMN')
+			windower.send_command('input /p Piano WHM BLU SMN - backline diff songs')
 		elseif player_job.main_job == 'BLU' then
-			windower.send_command('gs c set autobuffmode auto; gs c set AutoBLUSpam on; gs c set weapons MACC;')
+			windower.send_command('gs c set castingmode resistant; gs c set autobuffmode auto; gs c set AutoBLUSpam on; gs c set weapons MACC;')
 			windower.send_command('input /p Check buff+spam modes')
 		elseif player_job.main_job == 'COR' then
 			windower.send_command('roll melee')
@@ -1101,9 +1118,11 @@ function brd(cmd2)
 			atc('[BRD] Odyssey')
 			windower.send_command("hb buff " ..settings.char1.. " sentinel's scherzo; hb buff " ..settings.char1.. " foe sirvente; hb buff " ..settings.char1.. " scop's operetta; hb buff " ..settings.char1.. " victory march")
 --			windower.send_command("hb buff " ..settings.char5.. " sentinel's scherzo; hb buff " ..settings.char5.. " foe sirvente; hb buff " ..settings.char5.. " scop's operetta; hb buff " ..settings.char5.. " victory march")
+		elseif cmd2 == 'arebati' then
+			windower.send_command("hb buff " ..settings.char1.. " ice carol; hb buff " ..settings.char1.. " foe sirvente; hb buff " ..settings.char1.. " scop's operetta; hb buff " ..settings.char1.. " ice carol II")
 		elseif cmd2 == 'reset' then
 			atc('[BRD] Reset')
-			windower.send_command("hb cancelbuff " ..settings.char1.. " mage's ballad III; hb cancelbuff " ..settings.char1.. " mage's ballad II; hb cancelbuff " ..settings.char1.. " sentinel's scherzo; hb cancelbuff " ..settings.char1.. " foe sirvente; hb cancelbuff " ..settings.char1.. " scop's operetta; hb cancelbuff " ..settings.char1.. " victory march")
+			windower.send_command("hb cancelbuff " ..settings.char1.. " mage's ballad III; hb cancelbuff " ..settings.char1.. " mage's ballad II; hb cancelbuff " ..settings.char1.. " sentinel's scherzo; hb cancelbuff " ..settings.char1.. " foe sirvente; hb cancelbuff " ..settings.char1.. " scop's operetta; hb cancelbuff " ..settings.char1.. " victory march; hb cancelbuff " ..settings.char1.. " ice carol; hb cancelbuff " ..settings.char1.. " ice carol II")
 		elseif cmd2 == 'sv5' then
 			atc('[BRD] SV5')
 			windower.send_command('sing off; sing pl sv5; gs c set autozergmode on')
@@ -2352,7 +2371,8 @@ function enter()
 	atc('[ENTER] Enter menu.')
 	local zone = windower.ffxi.get_info()['zone']
 	local cloister_zones = S{201,202,203,207,209,211}
-	local adoulin_beam_zones = S{265,269}
+	local adoulin_beam_zones = S{265,268,269,272,273}
+	local wkr_zones = S{261,262,263,265,266,267}
 
 	if haveBuff('Invisible') then
 		windower.send_command('cancel invisible')
@@ -2396,6 +2416,9 @@ function enter()
 		--Adoulin beam up
 		elseif adoulin_beam_zones:contains(zone) then
 			windower.send_command('wait 0.85; setkey down down; wait 0.25; setkey down up; wait 0.7; setkey enter down; wait 0.25; setkey enter up;')
+		--WKR
+		elseif wkr_zones:contains(zone) then
+			windower.send_command('wait 1.3; setkey down down; wait 0.15; setkey down up; wait 0.7; setkey enter down; wait 0.25; setkey enter up; wait 1.1; setkey up down; wait 0.25; setkey up up; wait 0.7; setkey enter down; wait 0.25; setkey enter up;')
 		--General
 		else
 			windower.send_command('wait 0.85; setkey up down; wait 0.25; setkey up up; wait 0.7; setkey enter down; wait 0.25; setkey enter up;')
@@ -2544,16 +2567,20 @@ function buffall(cmd2)
 	end
 end
 
-function rand()
+function rand(leader)
 	atc('[Rand] Randomize party position')
-	windower.send_command('hb f off')
-	pivot = math.random(-5.27,8.39)
-	windower.ffxi.turn(pivot)
-	coroutine.sleep(0.5)
-	windower.ffxi.run(true)
-	runtime = math.random(0.56,1.31)
-	coroutine.sleep(runtime)
-	windower.ffxi.run(false)
+	player = windower.ffxi.get_player()
+	if player.name:lower() ~= leader:lower() then
+		windower.send_command('hb f off; gaze ap off')
+		pivot = math.random(-5.27,8.39)
+		windower.ffxi.turn(pivot)
+		coroutine.sleep(0.5)
+		--windower.ffxi.run(true)
+		runtime = math.random(0.59,0.91)
+		windower.send_command('setkey numpad8 down; wait ' ..runtime.. '; setkey numpad8 up; setkey numpad4 down; wait ' ..runtime.. '; setkey numpad4 up; setkey numpad8 down; wait ' ..runtime.. '; setkey numpad8 up;')
+	end
+	--coroutine.sleep(runtime)
+	--windower.ffxi.run(false)
 end
 
 
@@ -3004,6 +3031,9 @@ windower.register_event('ipc message', function(msg, ...)
 			 coroutine.sleep(delay)
 		end
 		_G[cmd](cmd2,cmd3)
+	elseif cmd == 'rand' then
+		coroutine.sleep(delay)
+		rand(cmd2)
 	elseif cmd == 'as' then
 		as(cmd2, cmd3)
 	elseif cmd == 'send' then

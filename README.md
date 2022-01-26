@@ -118,3 +118,41 @@ buy:  Buy sparks/acc, requires sparks and powder addons.
 rand: Randomize char positions
  
 send: Send all chars with delay (like send addon)
+
+# Burn
+
+This section is designed for AFAC burns. There are several steps. They can be entered from a single player instance to control all.
+
+1. `mc burn on` starts the process and presents an on screen HUD
+2. You need to set a few things before moving forward. You can either pre-set these settings in the multictrl.lua file defaults or via console commands. Some may be preset
+     * `mc burn assist #CHARNAME#` should be set on your tank. This allows all characters to lock onto the tank's target
+     * `mc burn avatar #AVATAR#` should be set as needed for your target. Default is Ramuh. Ifrit is supported, as is Siren.
+     * `mc burn dia #ON/OFF#` should be set as needed for your target. Default is on. You may wish to not use Dia on someone like Vinipata
+     * `mc burn indi #spell#` should be set as needed for your target. Default is refresh. But if you wish to use something like Torpor or Malaise, you can.
+3. `mc burn init` will begin the prepatory process, based on the settings chosen.
+    * All jobs except COR/WHM/RDM/RUN/THF/SCH: Reloads healbot, disables cure and -na, sets assist as denoted, enables healbot.
+    * SMN: Summons chosen Avatar and sets Selindrile Avatar setting to said avatar.
+    * COR: Sets Roller to use Beast Roll and Drachen Roll. If Indi-Malaise was set, rolls Beast and Puppet Rolls.
+    * GEO: Sets Selindrile Autogeo to Frailty, and Autoindi to chosen Indicolure.
+    * RUN: Disables Selindrile Autobuff mode, disables any follow commands, sets Selindrile autorune element to Tenebrae (or Ignis if using Indi-Malaise)
+    * THF: Disables curing and -na, sets the assist target and a follow distance of 1.5 on the assist target (this is for Larceny strats)
+4. At this point, you can buff up and prepare for the fight, and pop the NM. You must target and engage the NM to make assist work.
+5. `mc geoburn` will disable Selindrile autogeo controls and take manual control and do the following:
+    * Temporarily disables autogeo/indi functionality and healbot curing and -na.
+    * Bolsters
+    * Casts Geo-Frailty on target NM, as determined by the assist setting
+    * Casts the appropriate Indocolute spell
+    * Uses the Dematerialize JA
+    * Queues up Dia II to be used by healbot
+    * Enables autogeo/indi functionality as well as healbot curing and -na.
+ 6. `mc smnburn` will perform the following:
+    * Enables healbot
+    * Enables Astral Flow
+    * Engages Assault on target NM, as determined by the assist setting.
+    * Waits 4 seconds for the Avatars to reach the target NM (assuming you were 20' away from the NM, this covers the travel time)
+    * Executes the Avatar's moveset as defined by the required scripted text files. There are two sets, one for with Vorseal (Reisen/Escha), and one without (REG).
+    * Ramuh: Voltstrike.txt, VoltStrikeREG.txt
+    * Ifrit: FlamingCrush.txt, FlamingCrushREG.txt
+    * Siren: HystericAssault.txt, HystericAssaultREG.txt
+    * Note that inside the files Convert is done, as well as Apogee at the end. This should allow for 18-20 BPs to go off.
+ 7. At the end of this process, either you've beaten the NM using AFAC, or you are dead or soon to be. Good Luck!

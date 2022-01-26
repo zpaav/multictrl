@@ -156,9 +156,10 @@ This section is designed for AFAC burns. There are several steps. They can be en
     * Enables Astral Flow
     * Engages Assault on target NM, as determined by the assist setting.
     * Waits 4 seconds for the Avatars to reach the target NM (assuming you were 20' away from the NM, this covers the travel time)
-    * Executes the Avatar's moveset as defined by the required scripted text files. There are two sets, one for with Vorseal (Reisen/Escha), and one without (REG).
-    * Ramuh: Voltstrike.txt, VoltStrikeREG.txt
-    * Ifrit: FlamingCrush.txt, FlamingCrushREG.txt
-    * Siren: HystericAssault.txt, HystericAssaultREG.txt
-    * Note that inside the files Convert is done, as well as Apogee at the end. This should allow for 18-20 BPs to go off.
+    * Executes the Avatar's moveset as defined by the required scripted text files. There are Vorseal and non-Vorseal versions, but they are the same.
+    * Ramuh: Voltstrike.txt
+    * Ifrit: FlamingCrush.txt
+    * Siren: HystericAssault.txt
+    * The scripts use Apogee at the end. This should allow for 18-20 BPs to go off. 
+    * The scripts will try to use Apogee again at the very end, if you happen to Wild Card/Random Deal'd.
  7. At the end of this process, either you've beaten the NM using AFAC, or you are dead or soon to be. Good Luck!

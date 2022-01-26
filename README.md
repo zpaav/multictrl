@@ -124,6 +124,9 @@ send: Send all chars with delay (like send addon)
 This section is designed for AFAC burns. There are several steps. They can be entered from a single player instance to control all.
 
 1. `mc burn on` starts the process and presents an on screen HUD
+
+      ![image](https://user-images.githubusercontent.com/8727407/151236727-9b78bf86-acab-47d0-8271-f2efcc258bf0.png)
+
 2. You need to set a few things before moving forward. You can either pre-set these settings in the multictrl.lua file defaults or via console commands. Some may be preset
      * `mc burn assist #CHARNAME#` should be set on your tank. This allows all characters to lock onto the tank's target
      * `mc burn avatar #AVATAR#` should be set as needed for your target. Default is Ramuh. Ifrit is supported, as is Siren.

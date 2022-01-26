@@ -3,7 +3,7 @@
 Current commands:  Use //mc
 
 ================================================================================
-[Battle Related]
+#### Battle Related ####
 on: turns on all addons/auto functions from gearswap.  Disabled in town areas.
 
 off: turns off everything.
@@ -48,8 +48,9 @@ rngsc:  Custom RNGSC code, requires custom code.
  
 gt:  Get target with settarget addon.
  
-[Job Related]
-brd: Functions related to custom BRD code with healbot/Selindrile's GS
+#### Job Related ####
+
+ brd: Functions related to custom BRD code with healbot/Selindrile's GS
  
 sch: Functions related to custom SCH code with Selindrile's GS
  
@@ -65,7 +66,7 @@ proc: Custom toggle for BLM/SCH/GEO proc/MB/autonuke casting sets (mostly vagary
  
 crit: Custome toggle for crit ranged mode for Selindrile's GS
 
-[Travel Related]
+#### Travel Related ####
 fon:  All chars in range to follow current char.  Ignores out of range or out of zone. Uses healbot
  
 foff:  All chars to stop following.  Ignores out of range or out of zone. Uses healbot

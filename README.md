@@ -140,16 +140,18 @@ This section is designed for AFAC burns. There are several steps. They can be en
     * GEO: Sets Selindrile Autogeo to Frailty, and Autoindi to chosen Indicolure.
     * RUN: Disables Selindrile Autobuff mode, disables any follow commands, sets Selindrile autorune element to Tenebrae (or Ignis if using Indi-Malaise)
     * THF: Disables curing and -na, sets the assist target and a follow distance of 1.5 on the assist target (this is for Larceny strats)
-4. At this point, you can buff up and prepare for the fight, and pop the NM. You must target and engage the NM to make assist work.
+4. At this point, you can buff up and prepare for the fight, and pop the NM. 
+    * You **must** target and engage the NM to make assist work.
+    * One way of feeling like you are "safe" to move forward is when you see the other characters lock onto the NM.
 5. `mc geoburn` will disable Selindrile autogeo controls and take manual control and do the following:
     * Temporarily disables autogeo/indi functionality and healbot curing and -na.
     * Bolsters
     * Casts Geo-Frailty on target NM, as determined by the assist setting
-    * Casts the appropriate Indocolute spell
+    * Casts the appropriate Indocolure spell
     * Uses the Dematerialize JA
     * Queues up Dia II to be used by healbot
-    * Enables autogeo/indi functionality as well as healbot curing and -na.
- 6. `mc smnburn` will perform the following:
+    * Enables autogeo/indi functionality as well as healbot curing and -na. 
+ 6. `mc smnburn` is usually almost immediately performed after geoburn has started and will perform the following:
     * Enables healbot
     * Enables Astral Flow
     * Engages Assault on target NM, as determined by the assist setting.

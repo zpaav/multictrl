@@ -836,7 +836,7 @@ function wsall()
 			elseif player_job.main_job == "RNG" then
 				windower.send_command('input /ws \'Last Stand\' <t>')
 			elseif player_job.main_job == "BLU" then
-				windower.send_command('input /ws \'Expaciation\' <t>')
+				windower.send_command('input /ws \'Expiacion\' <t>')
 			elseif player_job.main_job == "BRD" then
 				windower.send_command('input /ws \'Rudra\'s Storm\' <t>')
 			elseif player_job.main_job == "RUN" then

@@ -95,7 +95,7 @@ get:  Get certain KI's from different NPC's, using poke + setkey sequences.
  
 d2: Warp everyone in party using warp II from current char.
  
-[Misc]
+#### Misc #### 
 reload: Reloads a certain addon specified
  
 unload: Unloads a certain addon specified

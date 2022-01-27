@@ -88,7 +88,7 @@ InternalCMDS = S{
 	'wsall','cc','zerg','wstype','buffup','dd','attackon',
 	
 	--Job
-	'brd','sch','smnburn','geoburn','burn','rng','proc','crit',
+	'brd','bst','sch','smnburn','geoburn','burn','rng','proc','crit',
 	--Travel
 	'mnt','dis','warp','omen','enup','endown','ent','esc','go','enter','get',
 	--Misc
@@ -619,9 +619,26 @@ function stage(cmd2)
 		elseif player_job.main_job == 'COR' then
 			--windower.send_command('roll roll1 gallant;')
 		elseif player_job.main_job == 'RNG' then
-			windower.send_command('gs c set rangedmode DT;')
+			--windower.send_command('gs c set rangedmode DT;')
 		elseif player_job.main_job == 'BRD' then
 			windower.send_command('mc brd arebati')
+		end
+		settings.autows = true
+		settings.rangedmode = true
+	elseif cmd2 == 'arepre' then
+		if player_job.main_job == 'SCH' then
+			windower.send_command('gs c set castingmode DT; gs c set idlemode DT;')
+			windower.send_command('mc sch heal; gs c set autoapmode off; hb buff ' .. settings.char1 .. ' regen5;')
+		elseif player_job.main_job == 'PLD' then
+			windower.send_command('gs c set weapons aegis')
+		elseif player_job.main_job == 'THF' then
+			windower.send_command('gs c set weapons KajaBow; gs c set rnghelper on; wait 2; gs c autows Empyreal Arrow;')
+		elseif player_job.main_job == 'SAM' then
+			windower.send_command('gs c weapons Yoichinoyumi; gs c set rnghelper on; wait 2; gs c autows Namas Arrow;')
+		elseif player_job.main_job == 'WAR' then
+			windower.send_command('gs c set weapons KajaBow; gs c set rnghelper on; wait 2; gs c autows Empyreal Arrow;')
+		elseif player_job.main_job == 'RDM' then
+			windower.send_command('dsmall;')
 		end
 		settings.autows = true
 		settings.rangedmode = true
@@ -1136,6 +1153,23 @@ function brd(cmd2)
 		atc('[BRD] Incorrect job, skipping.')
 	end
 end
+
+function bst(cmd2)
+	local player_job = windower.ffxi.get_player()
+	if player_job.main_job == "BST" then
+		if cmd2 == 'killer' then
+			atc('[BST] Killer Toggle')
+			windower.send_command('gs c set AutoCallPet off; gs c set AutoFightMode off; gs c set AutoReadyMode off; gs c set JugMode ScissorlegXerin; wait 2.7; input /ja "Leave" <me>; wait 2.7; gs c set AutoCallPet on')
+			windower.send_command:schedule(9, 'gs c set AutoCallPet off; wait 1.0; input /ja "Killer Instinct" <me>;')
+			windower.send_command:schedule(13.3, 'input /ja "Leave" <me>; wait 2.7; gs c set JugMode FatsoFargann; gs c set AutoCallPet on; gs c set AutoFightMode on; gs c set AutoReadyMode on;')
+		else
+			atc('[BST] Invalid command')
+		end
+	else
+		atc('[BST] Incorrect job, skipping.')
+	end
+end
+
 
 function sch(cmd2)
 	local player_job = windower.ffxi.get_player()
@@ -2233,6 +2267,10 @@ function get(cmd2)
 		atc('GET: Assault tag.')
 		get_poke_check('Rytaal')
 		windower.send_command('wait 2; setkey enter down; wait 0.5; setkey enter up;')
+	elseif cmd2 == 'nyzul' and zone == 50 then
+		atc('GET: Assault tag.')
+		get_poke_check('Sorrowful Sage')
+		windower.send_command('wait 2; setkey enter down; wait 0.5; setkey enter up; wait 0.75; setkey enter down; wait 0.5; setkey enter up; wait 0.75; setkey up down; wait 0.3; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
 	elseif cmd2 == 'canteen' and zone == 291 then
 		atc('GET: Omen Canteen.')
 		get_poke_check('Incantrix')

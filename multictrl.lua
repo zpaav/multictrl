@@ -88,7 +88,7 @@ InternalCMDS = S{
 	'wsall','cc','zerg','wstype','buffup','dd','attackon',
 	
 	--Job
-	'brd','bst','sch','smnburn','geoburn','burn','rng','proc','crit',
+	'brd','bst','cor','sch','smnburn','geoburn','burn','rng','proc','crit',
 	--Travel
 	'mnt','dis','warp','omen','enup','endown','ent','esc','go','enter','get',
 	--Misc
@@ -595,10 +595,10 @@ function stage(cmd2)
 		end
 	elseif cmd2 == 'arebati' then
 		if player_job.main_job == 'SCH' or player_job.main_job == 'WHM' then
-			windower.send_command(' hb disable erase; hb buff ' ..settings.char1.. ' haste;') --hb buff ' ..settings.char1.. ' shell5;')
+			windower.send_command(' hb disable erase; hb buff ' ..settings.char1.. ' haste;')
 			windower.send_command('gs c set castingmode DT; gs c set idlemode DT;')
 			if player_job.main_job == 'SCH' then
-				windower.send_command('mc sch heal; gs c set autoapmode off; hb buff ' .. settings.char1 .. ' regen5;')
+				windower.send_command('mc sch heal; gs c set autoapmode on;')
 			end
 		elseif player_job.main_job == 'RUN' then
 			windower.send_command('gs c set runeelement ignis; hb buff <me> barblizzard; lua r react')
@@ -632,13 +632,13 @@ function stage(cmd2)
 		elseif player_job.main_job == 'PLD' then
 			windower.send_command('gs c set weapons aegis')
 		elseif player_job.main_job == 'THF' then
-			windower.send_command('gs c set weapons KajaBow; gs c set rnghelper on; wait 2; gs c autows Empyreal Arrow;')
+			--windower.send_command('')
 		elseif player_job.main_job == 'SAM' then
-			windower.send_command('gs c weapons Yoichinoyumi; gs c set rnghelper on; wait 2; gs c autows Namas Arrow;')
+			windower.send_command('gs c weapons ShiningOne;')
 		elseif player_job.main_job == 'WAR' then
-			windower.send_command('gs c set weapons KajaBow; gs c set rnghelper on; wait 2; gs c autows Empyreal Arrow;')
+			windower.send_command('gs c weapons ShiningOne;')
 		elseif player_job.main_job == 'RDM' then
-			windower.send_command('dsmall;')
+			--windower.send_command('dsmall;')
 		end
 		settings.autows = true
 		settings.rangedmode = true
@@ -680,19 +680,19 @@ function stage(cmd2)
 		if player_job.main_job == 'WHM' then
 			windower.send_command('hb buff <me> barstonra; hb buff <me> barpetra; gs c set castingmode DT; gs c set idlemode DT; hb debuff dia2; hb buff <me> auspice')
 			windower.send_command('input /p Haste DRK')
-		elseif player_job.main_job == 'DRK' then
-			windower.send_command('gs c set weapons KajaChopper; gs c set hybridmode SubtleBlow; ')--gs c set weaponskillmode SubtleBlow
+		elseif player_job.main_job == 'DRK' or player_job.main_job == 'SAM' then
+			windower.send_command('gs c set weapons KajaChopper; gs c set hybridmode SubtleBlow; ')
 		elseif player_job.main_job == 'BRD' then
-			windower.send_command('sing pl sv5; sing n off; sing p off; sing debuffing off; gs c set idlemode DT; sing debuff wind threnody 2')
+			windower.send_command('sing pl mboze; sing n off; sing p off; sing debuffing off; gs c set idlemode DT; sing debuff wind threnody 2')
 			windower.send_command('input /p Piano WHM BLU SMN - backline diff songs')
 		elseif player_job.main_job == 'BLU' then
 			windower.send_command('gs c set castingmode resistant; gs c set autobuffmode auto; gs c set AutoBLUSpam on; gs c set weapons MACC;')
 			windower.send_command('input /p Check buff+spam modes')
 		elseif player_job.main_job == 'COR' then
 			windower.send_command('roll melee')
-			windower.send_command('gs c set CompensatorMode always')
-		elseif player_job.main_job == 'SMN' then
-			windower.send_command('input /p Ifrit, Garuda, Shiva, toggle automodes')
+			--windower.send_command('gs c set CompensatorMode always')
+		elseif player_job.main_job == 'BST' then
+			windower.send_command('gs c set JugMode ScissorlegXerin')
 		end
 	elseif cmd2 == 'ngai' then
 		windower.send_command('gaze ap off')
@@ -957,6 +957,8 @@ function on()
 			windower.send_command('input /ja composure <me>')
 		elseif player_job.main_job == "WHM" then
 			windower.send_command('gs c set autoarts on;')
+		elseif player_job.main_job == "BLU" then
+			windower.send_command('gs c set autobuffmode auto;')
 		elseif player_job.main_job == "DNC" then
 			windower.send_command('gs c toggle autosambamode')
 			windower.send_command('gs c set autobuffmode auto')
@@ -1170,6 +1172,25 @@ function bst(cmd2)
 	end
 end
 
+function cor(cmd2)
+	local player_job = windower.ffxi.get_player()
+	if player_job.main_job == "COR" then
+		if cmd2 == 'melee' then
+			atc('[COR] Melee rolls + lower radius')
+			windower.send_command('gs c set luzafring off; roll melee;')			
+		elseif cmd2 == 'back' then
+			atc('[COR] Backline rolls + lower radius')
+			windower.send_command('gs c set luzafring off; roll roll1 tact; roll roll2 gallant;')
+		elseif cmd2 == 'aoe' then
+			atc('[COR] Set Luzaf ON')
+			windower.send_command('gs c set luzafring on')
+		else
+			atc('[COR] Invalid command')
+		end
+	else
+		atc('[COR] Incorrect job, skipping.')
+	end
+end
 
 function sch(cmd2)
 	local player_job = windower.ffxi.get_player()
@@ -1254,12 +1275,21 @@ function food()
 end
 
 function rng(cmd2)
+	local player_job=windower.ffxi.get_player()
+	local RangedJobs = S{'RNG','COR'}
+	
 	if cmd2 == 'off' then
 		atc('RNG Helper DISABLED')
 		settings.rangedmode = false
+		if RangedJobs:contains(player_job.main_job) then
+			windower.send_command('gs c set rnghelper off')
+		end
 	elseif cmd2 == 'on' then
 		atc('RNG Helper ACTIVE')
 		settings.rangedmode = true
+		if RangedJobs:contains(player_job.main_job) then
+			windower.send_command('gs c set rnghelper on')
+		end
 	end
 	display_box()
 end

@@ -2424,6 +2424,14 @@ function get(cmd2)
 		else
 			atc('GET: Already have Radialens!')
 		end
+	elseif cmd2 == 'deimos' and zone == 246 then
+		atc('GET: Deimos Orb, will not check if you have enough seals!')
+		get_poke_check('Shami')
+		if npc_dialog == true then
+			windower.send_command('wait 1.6; setkey right down; wait 0.05; setkey right up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; ' ..
+				'setkey down down; wait 0.05; setkey down up; wait 0.75; setkey down down; wait 0.05; setkey down up; wait 0.75; setkey enter down; wait 0.5; setkey enter up; wait 0.75; setkey enter down; wait 0.5; setkey enter up; wait 0.75; ' ..
+				'setkey up down; wait 0.05; setkey up up; wait 0.75; setkey enter down; wait 0.5; setkey enter up;')
+		end
 	else
 		atc('GET: Incorrect Zone/Command.')
 	end
@@ -3026,7 +3034,7 @@ function get_poke_check(npc_name)
 	while npc_dialog == false and count < 3
 	do
 		count = count + 1
-		if math.sqrt(npcstats.distance)<6 and npcstats.valid_target then
+		if npcstats and math.sqrt(npcstats.distance)<6 and npcstats.valid_target then
 			atc('Poke #: ' ..count.. ' [NPC: ' .. npc_name.. ' ID: ' .. npcstats.id.. ']')
 			poke_npc(npcstats.id,npcstats.index)
 		else

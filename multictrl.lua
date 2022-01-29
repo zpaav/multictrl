@@ -611,9 +611,9 @@ function stage(cmd2)
 		elseif player_job.main_job == 'GEO' then
 			windower.send_command('gs c autoindi fury; gs c autogeo agi; gs c autoentrust attunement; gs c set castingmode DT; gs c set idlemode DT; gs c autoentrustee ' ..settings.char1)
 		elseif player_job.main_job == 'RNG' then
-			windower.send_command('gs c set weapons Fomalhaut; gs c set rnghelper on; wait 2; gs c autows Last Stand;')
+			windower.send_command('gs c set weapons Armageddon; gs c set rnghelper on; wait 2; gs c autows Last Stand;')
 		elseif player_job.main_job == 'COR' then
-			windower.send_command('roll roll1 sam; wait 1; roll roll2 chaos; gs c set weapons Fomalhaut; gs c set rnghelper on; wait 2; gs c autows Last Stand;')
+			windower.send_command('roll melee; gs c set weapons Fomalhaut; gs c set rnghelper on; wait 2; gs c autows Last Stand;')
 		end
 		settings.autows = true
 		settings.rangedmode = true
@@ -683,17 +683,16 @@ function stage(cmd2)
 		windower.send_command('gaze ap off')
 		if player_job.main_job == 'WHM' then
 			windower.send_command('hb buff <me> barstonra; hb buff <me> barpetra; gs c set castingmode DT; gs c set idlemode DT; hb debuff dia2; hb buff <me> auspice')
-			windower.send_command('input /p Haste DRK')
+			windower.send_command('input /p Haste DD')
 		elseif player_job.main_job == 'DRK' or player_job.main_job == 'SAM' then
 			windower.send_command('gs c set weapons KajaChopper; gs c set hybridmode SubtleBlow; ')
 		elseif player_job.main_job == 'BRD' then
-			windower.send_command('sing pl mboze; sing n off; sing p off; sing debuffing off; gs c set idlemode DT; sing debuff wind threnody 2')
-			windower.send_command('input /p Piano WHM BLU SMN - backline diff songs')
+			windower.send_command('sing pl mboze; sing n off; sing p off; sing debuffing off; gs c set idlemode DT; sing debuff wind threnody 2; gs c set weapons Naegling;')
 		elseif player_job.main_job == 'BLU' then
 			windower.send_command('gs c set castingmode resistant; gs c set autobuffmode auto; gs c set AutoBLUSpam on; gs c set weapons MACC;')
 			windower.send_command('input /p Check buff+spam modes')
 		elseif player_job.main_job == 'COR' then
-			windower.send_command('roll melee')
+			windower.send_command('roll melee; gs c set weapons Naegling;')
 			--windower.send_command('gs c set CompensatorMode always')
 		elseif player_job.main_job == 'BST' then
 			windower.send_command('gs c set JugMode ScissorlegXerin')
@@ -1031,7 +1030,7 @@ function off()
 	elseif player_job.main_job == "SMN" then
 		windower.send_command('gs c set autowardmode off; gs c set autobpmode off')
 	elseif player_job.main_job == "SCH" then
-		windower.send_command('gs c set autoapmode off')
+		--windower.send_command('gs c set autoapmode off')
 	elseif player_job.main_job == "PUP" then
 		windower.send_command('gs c set autopuppetmode off')
 	elseif player_job.main_job == "BST" then
@@ -1149,6 +1148,9 @@ function brd(cmd2)
 		elseif cmd2 == 'sv5' then
 			atc('[BRD] SV5')
 			windower.send_command('sing off; sing pl sv5; gs c set autozergmode on')
+		elseif cmd2 == 'sv' then
+			atc('[BRD] SV - Soul Voice')
+			windower.send_command('input /ja "Soul Voice" <me>;')
 		elseif cmd2 == 'nitro' then
 			atc('[BRD] NITRO')
 			windower.send_command('input /ja "Nightingale" <me>; wait 1.5; input /ja "Troubadour" <me>')
@@ -1168,6 +1170,9 @@ function bst(cmd2)
 			windower.send_command('gs c set AutoCallPet off; gs c set AutoFightMode off; gs c set AutoReadyMode off; gs c set JugMode ScissorlegXerin; wait 2.7; input /ja "Leave" <me>; wait 2.7; gs c set AutoCallPet on')
 			windower.send_command:schedule(9, 'gs c set AutoCallPet off; wait 1.0; input /ja "Killer Instinct" <me>;')
 			windower.send_command:schedule(13.3, 'input /ja "Leave" <me>; wait 2.7; gs c set JugMode FatsoFargann; gs c set AutoCallPet on; gs c set AutoFightMode on; gs c set AutoReadyMode on;')
+		elseif cmd2 == 'init' then
+			atc('[BST] Use Killer then reset to TP pet')
+			windower.send_command('wait 1.5; input /ja "Killer Instinct" <me>; wait 1.8; gs c set JugMode FatsoFargann; input /ja "Leave" <me>; wait 1.8; input /ja "Call Beast" <me>; gs c set AutoCallPet on;')
 		else
 			atc('[BST] Invalid command')
 		end
@@ -2458,6 +2463,16 @@ function deimos(leader)
 			local possible_npc = find_npc_to_poke()
 			if possible_npc then
 				windower.send_command('wait 1; tradenpc 1 "deimos orb" "Burning Circle"; wait 5.5; setkey down down; wait 0.25; setkey down up; wait 1.5; setkey enter down; wait 0.25; setkey enter up;')
+				coroutine.sleep(15)
+				if haveBuff('Battlefield') then
+					local items = windower.ffxi.get_items()
+					for index, item in pairs(items.inventory) do
+						if type(item) == 'table' and item.id == 3352 then
+							atc('[Dropping]: ' .. item.id .. ' - ' .. item.extdata)
+							windower.ffxi.drop_item(index, item.count)
+						end
+					end
+				end
 			end
 		else
 			atc('[Deimos Orb] - Others to enter.')
@@ -2495,6 +2510,7 @@ function enter()
 		coroutine.sleep(2.0)
 	end
 
+	--if not contains(deimos_zones, zone) then
 	if deimos_zones:contains(zone) then
 		atc('[ENTER] Nothing to poke for Deimos Orb.')
 	else
@@ -3052,7 +3068,7 @@ function get_poke_check_index(npc_name)
 	while npc_dialog == false and count < 3
 	do
 		count = count + 1
-		if math.sqrt(npcstats.distance)<6 and npcstats.valid_target then
+		if npcstats and math.sqrt(npcstats.distance)<6 and npcstats.valid_target then
 			atc('Poke #: ' ..count.. ' [NPC: ' .. npcstats.name.. ' ID: ' .. npcstats.id.. ']')
 			poke_npc(npcstats.id,npcstats.index)
 		else
@@ -3070,7 +3086,7 @@ function get_poke_check_id(npc_id)
 	while npc_dialog == false and count < 3
 	do
 		count = count + 1
-		if math.sqrt(npcstats.distance)<6 and npcstats.valid_target then
+		if npcstats and math.sqrt(npcstats.distance)<6 and npcstats.valid_target then
 			atc('Poke #: ' ..count.. ' [NPC: ' .. npcstats.name.. ' ID: ' ..npcstats.id.. ']')
 			poke_npc(npcstats.id,npcstats.index)
 		else

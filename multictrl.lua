@@ -90,14 +90,14 @@ InternalCMDS = S{
 	--Job
 	'brd','bst','cor','sch','smnburn','geoburn','burn','rng','proc','crit',
 	--Travel
-	'mnt','dis','warp','omen','enup','endown','ent','esc','go','enter','get',
+	'mnt','dis','warp','omen','enup','endown','ent','esc','go','enter','get','deimos',
 	--Misc
 	'reload','unload','fps','lotall','cleanstones','drop','buyalltemps','book'
 	--Inactive
 	--'jc',
 }
 
-DelayCMDS = S{'buyalltemps','get','enter','go','book'}
+DelayCMDS = S{'buyalltemps','get','enter','go','book','deimos'}
 	
 isCasting = false
 ipcflag = false
@@ -149,6 +149,10 @@ windower.register_event('addon command', function(input, ...)
 		local leader = windower.ffxi.get_player()
 		buy:schedule(0, cmd2,leader.name)
 		send_to_IPC:schedule(1, cmd,cmd2,leader.name)
+	elseif cmd == 'deimos' then
+		local leader = windower.ffxi.get_player()
+		deimos:schedule(0, leader.name)
+		send_to_IPC:schedule(1, cmd,leader.name)
 	elseif cmd == 'ein' then						-- Long delay
 		ein:schedule(0, cmd2)
 		if cmd2 == 'enter' then
@@ -2435,12 +2439,45 @@ function ent()
 	windower.send_command('wait 1.5; setkey enter down; wait 0.5; setkey enter up;')
 end
 
+function deimos(leader)
+	local zone = windower.ffxi.get_info()['zone']
+	local player = windower.ffxi.get_player()
+	local deimos_zones = S{146}
+		
+	if deimos_zones:contains(zone) then
+		if leader == player.name then
+			atc('[Deimos Orb] - Leader with Orb.')
+			local possible_npc = find_npc_to_poke()
+			if possible_npc then
+				windower.send_command('wait 1; tradenpc 1 "deimos orb" "Burning Circle"; wait 5.5; setkey down down; wait 0.25; setkey down up; wait 1.5; setkey enter down; wait 0.25; setkey enter up;')
+			end
+		else
+			atc('[Deimos Orb] - Others to enter.')
+			coroutine.sleep(11)
+			if haveBuff('Battlefield') then
+				local possible_npc = find_npc_to_poke()
+				if possible_npc then
+					get_poke_check_index(possible_npc.index)
+					if npc_dialog == true then
+						windower.send_command('wait 5.5; setkey down down; wait 0.25; setkey down up; wait 1.5; setkey enter down; wait 0.25; setkey enter up;')
+					end
+				end
+			else
+				atc('[Deimos Orb] No battlefield, leader not in entry, cancelling.')
+			end
+		end
+	else
+		atc('[Deimos Orb] Not in Deimos Orb zone, cancelling.')
+	end
+end
+
 function enter()
 	atc('[ENTER] Enter menu.')
 	local zone = windower.ffxi.get_info()['zone']
 	local cloister_zones = S{201,202,203,207,209,211}
 	local adoulin_beam_zones = S{265,268,269,272,273}
 	local wkr_zones = S{261,262,263,265,266,267}
+	local deimos_zones = S{146}
 
 	if haveBuff('Invisible') then
 		windower.send_command('cancel invisible')
@@ -2450,13 +2487,17 @@ function enter()
 		coroutine.sleep(2.0)
 	end
 
-	local possible_npc = find_npc_to_poke()
-	
-	if possible_npc then
-		get_poke_check_index(possible_npc.index)
+	if deimos_zones:contains(zone) then
+		atc('[ENTER] Nothing to poke for Deimos Orb.')
 	else
-		get_npc_dialogue('npc',3)
-	end	
+		local possible_npc = find_npc_to_poke()
+		
+		if possible_npc then
+			get_poke_check_index(possible_npc.index)
+		else
+			get_npc_dialogue('npc',3)
+		end	
+	end
 	
 	if npc_dialog == true then
 		--Shinryu

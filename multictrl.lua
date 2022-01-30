@@ -1139,7 +1139,6 @@ function brd(cmd2)
 		elseif cmd2 == 'ody' then
 			atc('[BRD] Odyssey')
 			windower.send_command("hb buff " ..settings.char1.. " sentinel's scherzo; hb buff " ..settings.char1.. " foe sirvente; hb buff " ..settings.char1.. " scop's operetta; hb buff " ..settings.char1.. " victory march")
---			windower.send_command("hb buff " ..settings.char5.. " sentinel's scherzo; hb buff " ..settings.char5.. " foe sirvente; hb buff " ..settings.char5.. " scop's operetta; hb buff " ..settings.char5.. " victory march")
 		elseif cmd2 == 'arebati' then
 			windower.send_command("hb buff " ..settings.char1.. " ice carol; hb buff " ..settings.char1.. " foe sirvente; hb buff " ..settings.char1.. " scop's operetta; hb buff " ..settings.char1.. " ice carol II")
 		elseif cmd2 == 'reset' then
@@ -1150,7 +1149,7 @@ function brd(cmd2)
 			windower.send_command('sing off; sing pl sv5; gs c set autozergmode on')
 		elseif cmd2 == 'sv' then
 			atc('[BRD] SV - Soul Voice')
-			windower.send_command('input /ja "Soul Voice" <me>;')
+			windower.send_command('sing off; gs c set autozergmode on;')
 		elseif cmd2 == 'nitro' then
 			atc('[BRD] NITRO')
 			windower.send_command('input /ja "Nightingale" <me>; wait 1.5; input /ja "Troubadour" <me>')

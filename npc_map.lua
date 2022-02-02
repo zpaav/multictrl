@@ -20,5 +20,8 @@ return {
 	[273] = {'???'},
 	[261] = {'???'},
 	[146] = {'Burning Circle'},
+	[256] = {'Dangueubert'},
+	[257] = {'Cunegonde'},
+	[67] = {'Ornamental Door'},
 }
 

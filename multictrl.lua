@@ -1192,6 +1192,9 @@ function cor(cmd2)
 		elseif cmd2 == 'aoe' then
 			atc('[COR] Set Luzaf ON')
 			windower.send_command('gs c set luzafring on')
+		elseif cmd2 == 'statue' then
+			atc('[COR] Killing statues')
+			windower.send_command('gs c killstatue')
 		else
 			atc('[COR] Invalid command')
 		end
@@ -2313,19 +2316,6 @@ function get(cmd2)
 		atc('GET: Omen Canteen.')
 		get_poke_check('Incantrix')
 		windower.send_command('wait 3; setkey enter down; wait 0.5; setkey enter up;')
-	elseif cmd2 == 'mgenter' and (zone == 257 or zone == 256) then
-		atc('GET: ENTER Mog Garden.')
-		if zone == 257 then
-			get_poke_check_id('17830103')
-			if npc_dialog == true then
-				windower.send_command('wait 3; setkey enter down; wait 0.5; setkey enter up;')
-			end
-		elseif zone == 256 then
-			get_poke_check_id('17826073')
-			if npc_dialog == true then
-				windower.send_command('wait 3; setkey enter down; wait 0.5; setkey enter up;')
-			end
-		end
 	elseif cmd2 == 'mgexit' and zone == 280 then
 		atc('GET: Exit Mog Garden.')
 		get_poke_check_id('17924124')
@@ -2551,6 +2541,16 @@ function enter()
 		--WKR
 		elseif wkr_zones:contains(zone) then
 			windower.send_command('wait 1.3; setkey down down; wait 0.15; setkey down up; wait 0.7; setkey enter down; wait 0.25; setkey enter up; wait 1.1; setkey up down; wait 0.25; setkey up up; wait 0.7; setkey enter down; wait 0.25; setkey enter up;')
+		--MG
+		elseif zone == 256 or zone == 257 then
+			windower.send_command('wait 1.3; setkey enter down; wait 0.5; setkey enter up;')
+		--Jade
+		elseif zone == 67 then
+			if possible_npc then
+				windower.send_command('wait 12.3; setkey down down; wait 0.15; setkey down up; wait 0.7; setkey enter down; wait 0.25; setkey enter up; wait 1.1; setkey up down; wait 1.1; setkey up up; wait 0.7; setkey enter down; wait 0.5; setkey enter up;')
+			else
+				atc('Not close the entry NPC, cancelling')
+			end
 		--General
 		else
 			windower.send_command('wait 0.85; setkey up down; wait 0.25; setkey up up; wait 0.7; setkey enter down; wait 0.25; setkey enter up;')

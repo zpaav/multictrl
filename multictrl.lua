@@ -682,14 +682,18 @@ function stage(cmd2)
 	elseif cmd2 == 'mboze' then
 		windower.send_command('gaze ap off')
 		if player_job.main_job == 'WHM' then
-			windower.send_command('hb buff <me> barstonra; hb buff <me> barpetra; gs c set castingmode DT; gs c set idlemode DT; hb debuff dia2; hb buff <me> auspice')
+			windower.send_command('hb buff <me> barstonra; gs c set castingmode DT; gs c set idlemode DT; hb debuff dia2; hb buff <me> auspice')
 			windower.send_command('input /p Haste DD')
 		elseif player_job.main_job == 'DRK' or player_job.main_job == 'SAM' then
-			windower.send_command('gs c set weapons KajaChopper; gs c set hybridmode SubtleBlow; ')
+			if player_job.main_job == 'DRK' then
+				windower.send_command('gs c set weapons KajaChopper; gs c set hybridmode SubtleBlow; gs c autows tp 1400')
+			else
+				windower.send_command('gs c set hybridmode SubtleBlow;')
+			end
 		elseif player_job.main_job == 'BRD' then
-			windower.send_command('sing pl mboze; sing n off; sing p off; sing debuffing off; gs c set idlemode DT; sing debuff wind threnody 2; gs c set weapons Naegling;')
+			windower.send_command('sing pl mboze; sing n off; sing p off; sing debuffing off; gs c set idlemode DT; sing debuff wind threnody 2; sing debuffing on; gs c set weapons Naegling;')
 		elseif player_job.main_job == 'BLU' then
-			windower.send_command('gs c set castingmode resistant; gs c set autobuffmode auto; gs c set AutoBLUSpam on; gs c set weapons MACC;')
+			windower.send_command('azuresets set mboze; gs c set castingmode resistant; gs c set AutoBLUSpam on; gs c set weapons MACC;')
 			windower.send_command('input /p Check buff+spam modes')
 		elseif player_job.main_job == 'COR' then
 			windower.send_command('roll melee; gs c set weapons Naegling;')
@@ -2309,7 +2313,7 @@ function get(cmd2)
 		get_poke_check('Rytaal')
 		windower.send_command('wait 2; setkey enter down; wait 0.5; setkey enter up;')
 	elseif cmd2 == 'nyzul' and zone == 50 then
-		atc('GET: Assault tag.')
+		atc('GET: Nyzul tag.')
 		get_poke_check('Sorrowful Sage')
 		windower.send_command('wait 2; setkey enter down; wait 0.5; setkey enter up; wait 0.75; setkey enter down; wait 0.5; setkey enter up; wait 0.75; setkey up down; wait 0.3; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
 	elseif cmd2 == 'canteen' and zone == 291 then

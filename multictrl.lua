@@ -90,7 +90,7 @@ InternalCMDS = S{
 	--Job
 	'brd','bst','cor','sch','smnburn','geoburn','burn','rng','proc','crit',
 	--Travel
-	'mnt','dis','warp','omen','enup','endown','ent','esc','go','enter','get','deimos',
+	'mnt','dis','warp','omen','enup','endown','ent','esc','go','enter','get','deimos','macro',
 	--Misc
 	'reload','unload','fps','lotall','cleanstones','drop','buyalltemps','book'
 	--Inactive
@@ -152,6 +152,10 @@ windower.register_event('addon command', function(input, ...)
 	elseif cmd == 'deimos' then
 		local leader = windower.ffxi.get_player()
 		deimos:schedule(0, leader.name)
+		send_to_IPC:schedule(1, cmd,leader.name)
+	elseif cmd == 'macro' then
+		local leader = windower.ffxi.get_player()
+		macro:schedule(0, leader.name)
 		send_to_IPC:schedule(1, cmd,leader.name)
 	elseif cmd == 'ein' then						-- Long delay
 		ein:schedule(0, cmd2)
@@ -513,19 +517,19 @@ function stage(cmd2)
 	-- Goblin month - BRD/NIN, GEO/WHM, WHM/SCH, PLD/RUN, RUN/DRK, SAM/WAR
 	if cmd2 == 'ambu' then
 		atc('[Stage]: Ambu')
-		windower.send_command('input /autotarget off')
+		windower.send_command('gaze ap on')
 		if player_job.main_job == 'BRD' then
-			windower.send_command('hb f dist 16; sing pl melee; sing n off; sing p on; gaze ap on; gs c set weapons dualcarn; sing ballad 1 ' ..settings.char1)
-		elseif player_job.main_job == 'RUN' then
-			windower.send_command('gaze ap on; gs c set runeelement unda; gs c set HybridMode DTLite')
+			windower.send_command('lua r autows; autows use savage blade; autows on; sing pl ambu; sing n on; gs c set weapons dualsavage;')
+		elseif player_job.main_job == 'MNK' then
+			windower.send_command('lua l dressup; gs c autows howling fist; gs c set weaponskillmode Emnity; gs c set weapons Malignance')
 		elseif player_job.main_job == 'PLD' then
-			windower.send_command('gs c set runeelement unda; hb buff <me> barfire; gaze ap on; hb as off; hb f off;')
-		elseif player_job.main_job == 'SAM' then
-			windower.send_command('gaze ap on;')
-		elseif player_job.main_job == 'GEO' then
-			windower.send_command('hb disable erase; hb mincure 3; gs c autogeo frailty; gs c autoindi fury; gs c autoentrust refresh;')
-		elseif player_job.main_job == 'WHM' then
-			windower.send_command('hb disable erase; hb as off; hb f dist 19')
+			windower.send_command('gaze ap off; hb mincure 4;')
+		elseif player_job.main_job == 'COR' then
+			windower.send_command('lua r autows; autows use savage blade; autows on; gs c set weapons dualsavage; roll melee')
+		elseif player_job.main_job == 'RDM' then
+			windower.send_command('dclear; wait 5; hb debuff dia3; hb debuff gravity2; hb debuff distract3; lua r autows; autows use black halo; autows on; gs c autows black halo; gs c set weapons DualClubs; mc buffall haste2; hb mincure 4; hb buff ' ..settings.char1.. ' refresh3; hb buff ' ..settings.char2.. ' refresh3; hb buff ' ..settings.char3.. ' refresh3')
+		elseif player_job.main_job == 'WAR' then
+			windower.send_command('lua l dressup; lua r autows; autows use Judgment; autows on; gs c autows Judgment; gs c set weaponskillmode Enmity; gs c set weapons Loxotic')
 		end
 		settings.autows = true
 	elseif cmd2 == 'ambu2' then
@@ -630,7 +634,7 @@ function stage(cmd2)
 		elseif player_job.main_job == 'WAR' then
 			windower.send_command('gs c set weapons ShiningOne; gs c set hybridmode SubtleBlow')
 		elseif player_job.main_job == 'COR' then
-			windower.send_command('roll melee; gs c set weapons Fomalhaut; gs c autows Last Stand;')
+			windower.send_command('roll melee; gs c set weapons Fomalhaut; gs c autows Last Stand; gs c set castingmode resistant')
 		end
 		settings.autows = true
 	elseif cmd2 == 'are2' then
@@ -712,8 +716,7 @@ function stage(cmd2)
 			windower.send_command('azuresets set mboze; gs c set castingmode resistant; gs c set AutoBLUSpam on; gs c set weapons MACC;')
 			windower.send_command('input /p Check buff+spam modes')
 		elseif player_job.main_job == 'COR' then
-			windower.send_command('roll melee; gs c set weapons Naegling;')
-			--windower.send_command('gs c set CompensatorMode always')
+			windower.send_command('roll melee; gs c set weapons Naegling; gs c set castingmode resistant;')
 		elseif player_job.main_job == 'BST' then
 			windower.send_command('gs c set JugMode ScissorlegXerin')
 		end
@@ -2270,11 +2273,6 @@ function omen()
 	windower.send_command('myomen')
 end
 
-function buyalltemps()
-	atc('Getting ALL TEMPS!')
-	windower.send_command('escha buyall')
-end
-
 function attackon()
 	atc('[ATTACK ON]')
 	local player = windower.ffxi.get_player()
@@ -2346,6 +2344,12 @@ function get(cmd2)
 				'setkey enter down; wait 0.5; setkey enter up; wait 1.5; setkey right down; wait 0.1; setkey right up; wait 1.0; ' ..
 				'setkey enter down; wait 0.5; setkey enter up;')
 		end
+	elseif cmd2 == 'gobbiekey' and zone == 239 then
+		atc('GET: Gobbie Key.')
+		get_poke_check('Arbitrix')
+		if npc_dialog == true then
+			windower.send_command('wait 3; setkey enter down; wait 0.5; setkey enter up; wait 1.5; setkey right down; wait 1.0; setkey right up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 9; setkey escape down; wait 0.05; setkey escape up; ')
+		end
 	elseif cmd2 == 'abystone' and zone == 246 then
 		atc('GET: Abyssea - Traveler Stone')
 		get_poke_check('Joachim')
@@ -2413,32 +2417,32 @@ function get(cmd2)
 		else
 			atc('GET: Already have Tribulens!')
 		end
-	elseif cmd2 == 'rads' and EschaZones:contains(zone) then
-		atc('GET: Radialens')
-		if not find_missing_ki(cmd2) then
-			if zone == 288 then
-				get_poke_check('Affi')
-			elseif zone == 289 then
-				get_poke_check('Dremi')
-			elseif zone == 291 then
-				get_poke_check('Shiftrix')
-			end
-			if npc_dialog == true then
-				if find_missing_ki('moll') then
-					windower.send_command('wait 4.7; setkey right down; wait 1.5; setkey right up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey enter down; wait 0.5; setkey enter up; wait 1.0; ' ..
---					windower.send_command('wait 4.7; setkey down down; wait 0.05; setkey down up; wait 1; setkey down down; wait 0.05; setkey down up; wait 1.5; setkey enter down; wait 0.5; setkey enter up; wait 1.5; ' ..
-						'setkey right down; wait 1.2; setkey right up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.5; ' ..
-						'setkey up down; wait 0.05; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 2.5; setkey escape down; wait 0.05; setkey escape up;')
-				else
-					windower.send_command('wait 4.7; setkey right down; wait 1.5; setkey right up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey enter down; wait 0.5; setkey enter up; wait 1.0; ' ..
-	--				windower.send_command('wait 4.7; setkey down down; wait 0.05; setkey down up; wait 1; setkey down down; wait 0.05; setkey down up; wait 1.5; setkey enter down; wait 0.5; setkey enter up; wait 1.5; ' ..
-						'setkey right down; wait 1.2; setkey right up; wait 1.0; setkey up down; wait 0.05; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.5; ' ..
-						'setkey up down; wait 0.05; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 2.5; setkey escape down; wait 0.05; setkey escape up;')
-				end
-			end
-		else
-			atc('GET: Already have Radialens!')
-		end
+	-- elseif cmd2 == 'rads' and EschaZones:contains(zone) then
+		-- atc('GET: Radialens')
+		-- if not find_missing_ki(cmd2) then
+			-- if zone == 288 then
+				-- get_poke_check('Affi')
+			-- elseif zone == 289 then
+				-- get_poke_check('Dremi')
+			-- elseif zone == 291 then
+				-- get_poke_check('Shiftrix')
+			-- end
+			-- if npc_dialog == true then
+				-- if find_missing_ki('moll') then
+					-- windower.send_command('wait 4.7; setkey right down; wait 1.5; setkey right up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey enter down; wait 0.5; setkey enter up; wait 1.0; ' ..
+-- --					windower.send_command('wait 4.7; setkey down down; wait 0.05; setkey down up; wait 1; setkey down down; wait 0.05; setkey down up; wait 1.5; setkey enter down; wait 0.5; setkey enter up; wait 1.5; ' ..
+						-- 'setkey right down; wait 1.2; setkey right up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.5; ' ..
+						-- 'setkey up down; wait 0.05; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 2.5; setkey escape down; wait 0.05; setkey escape up;')
+				-- else
+					-- windower.send_command('wait 4.7; setkey right down; wait 1.5; setkey right up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey enter down; wait 0.5; setkey enter up; wait 1.0; ' ..
+	-- --				windower.send_command('wait 4.7; setkey down down; wait 0.05; setkey down up; wait 1; setkey down down; wait 0.05; setkey down up; wait 1.5; setkey enter down; wait 0.5; setkey enter up; wait 1.5; ' ..
+						-- 'setkey right down; wait 1.2; setkey right up; wait 1.0; setkey up down; wait 0.05; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.5; ' ..
+						-- 'setkey up down; wait 0.05; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 2.5; setkey escape down; wait 0.05; setkey escape up;')
+				-- end
+			-- end
+		-- else
+			-- atc('GET: Already have Radialens!')
+		-- end
 	elseif cmd2 == 'deimos' and zone == 246 then
 		atc('GET: Deimos Orb, will not check if you have enough seals!')
 		get_poke_check('Shami')
@@ -2460,6 +2464,48 @@ end
 function ent()
 	atc('[ENT] Sending ENTER Key.')
 	windower.send_command('wait 1.5; setkey enter down; wait 0.5; setkey enter up;')
+end
+
+function macro(leader)
+	local zone = windower.ffxi.get_info()['zone']
+	local player = windower.ffxi.get_player()
+	local deimos_zones = S{146}
+		
+	if deimos_zones:contains(zone) then
+		if leader == player.name then
+			atc('[Macro Orb] - Leader with Orb.')
+			local possible_npc = find_npc_to_poke()
+			if possible_npc then
+				windower.send_command('wait 1; tradenpc 1 "macrocosmic orb" "Burning Circle"; wait 5.5; setkey down down; wait 0.25; setkey down up; wait 1.5; setkey enter down; wait 0.25; setkey enter up; wait 0.75; setkey left down; wait 1.05; setkey left up; wait 0.5; setkey enter down; wait 0.25; setkey enter up;')
+				coroutine.sleep(20)
+				if haveBuff('Battlefield') then
+					local items = windower.ffxi.get_items()
+					for index, item in pairs(items.inventory) do
+						if type(item) == 'table' and item.id == 4063 then
+							atc('[Dropping]: ' .. item.id .. ' - ' .. item.extdata)
+							windower.ffxi.drop_item(index, item.count)
+						end
+					end
+				end
+			end
+		else
+			atc('[Macro Orb] - Others to enter.')
+			coroutine.sleep(15)
+			if haveBuff('Battlefield') then
+				local possible_npc = find_npc_to_poke()
+				if possible_npc then
+					get_poke_check_index(possible_npc.index)
+					if npc_dialog == true then
+						windower.send_command('wait 5; setkey down down; wait 0.25; setkey down up; wait 1.5; setkey enter down; wait 0.25; setkey enter up;')
+					end
+				end
+			else
+				atc('[Macro Orb] No battlefield, leader not in entry, cancelling.')
+			end
+		end
+	else
+		atc('[Macro Orb] Not in Deimos Orb zone, cancelling.')
+	end
 end
 
 function deimos(leader)

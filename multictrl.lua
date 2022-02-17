@@ -985,8 +985,8 @@ function on()
 			windower.send_command('gs c set autoarts on;')
 		elseif player_job.main_job == "BLU" then
 			windower.send_command('gs c set autobuffmode auto;')
-		elseif player_job.main_job == "DNC" then
-			windower.send_command('gs c toggle autosambamode')
+		elseif player_job.main_job == "DNC" or player_job.sub_job == "DNC" then
+			windower.send_command('gs c set autosambamode haste')
 			windower.send_command('gs c set autobuffmode auto')
 		elseif player_job.main_job == "PUP" then
 			windower.send_command('gs c set autopuppetmode on')

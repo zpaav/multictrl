@@ -88,7 +88,7 @@ InternalCMDS = S{
 	'wsall','cc','zerg','wstype','buffup','dd','attackon',
 	
 	--Job
-	'brd','bst','cor','sch','smnburn','geoburn','burn','rng','proc','crit',
+	'brd','bst','cor','sch','smnburn','geoburn','burn','rng','proc','crit','wsproc',
 	--Travel
 	'mnt','dis','warp','omen','enup','endown','ent','esc','go','enter','get','deimos','macro',
 	--Misc
@@ -519,7 +519,7 @@ function stage(cmd2)
 		atc('[Stage]: Ambu')
 		windower.send_command('gaze ap on')
 		if player_job.main_job == 'BRD' then
-			windower.send_command('lua r autows; autows use savage blade; autows on; sing pl ambu; sing n on; gs c set weapons dualsavage;')
+			windower.send_command('lua r autows; autows use savage blade; autows on; sing pl ambu; sing n on; gs c set weapons dualsavage; sing sirvente ' .. settings.char1)
 		elseif player_job.main_job == 'MNK' then
 			windower.send_command('lua l dressup; gs c autows howling fist; gs c set weaponskillmode Emnity; gs c set weapons Malignance')
 		elseif player_job.main_job == 'PLD' then
@@ -2915,7 +2915,7 @@ function wstype(cmd2)
 				atc('WS is Torcleaver')
 				windower.send_command('gs c set weapons Caladbolg; gs c autows tp 1000')
 			elseif player_job.main_job == 'BLU' then
-				atc('WS is Expaciation')
+				atc('WS is Expiacion')
 				windower.send_command('gs c set weapons TizThib')
 			elseif player_job.main_job == 'WAR' then
 				atc('WS is Impulse')
@@ -2994,6 +2994,52 @@ function proc(cmd2)
 			windower.send_command('lua u maa')
 			if player_job.main_job == "GEO" then
 				windower.send_command('gs c autoindi refresh; gs c autogeo haste')
+			end
+		else
+			atc('[Proc] Incorrect JOB, Skipping.')
+		end
+	end
+end
+
+function wsproc(cmd2)
+	local player_job = windower.ffxi.get_player()
+	local ProcJobs = S{'WAR','BLU','RUN'}		
+
+	if cmd2 == 'phy' then
+		if ProcJobs:contains(player_job.main_job) then
+			atc('[Proc] Physical. -PROC ON-')
+			if player_job.main_job == "WAR" then
+				windower.send_command('gs c autows flat blade')
+			elseif player_job.main_job == "BLU" then
+				windower.send_command('gs c autows brainshaker')
+			elseif player_job.main_job == "RUN" then
+				windower.send_command('gs c autows shockwave')
+			end
+		else
+			atc('[Proc] Incorrect JOB, Skipping.')
+		end
+	elseif cmd2 == 'magic' then
+		if ProcJobs:contains(player_job.main_job) then
+			atc('[Proc] Magical. -PROC ON-')
+			if player_job.main_job == "WAR" then
+				windower.send_command('gs c autows burning blade')
+			elseif player_job.main_job == "BLU" then
+				windower.send_command('gs c autows shining strike')
+			elseif player_job.main_job == "RUN" then
+				windower.send_command('gs c autows freezebite')
+			end
+		else
+			atc('[Proc] Incorrect JOB, Skipping.')
+		end
+	elseif cmd2 == 'off' then
+		if ProcJobs:contains(player_job.main_job) then
+			atc('[Proc] OFF.')
+			if player_job.main_job == "WAR" then
+				windower.send_command('gs c autows Upheaval')
+			elseif player_job.main_job == "BLU" then
+				windower.send_command('gs c autows Expiacion')
+			elseif player_job.main_job == "RUN" then
+				windower.send_command('gs c autows Dimidiation')
 			end
 		else
 			atc('[Proc] Incorrect JOB, Skipping.')

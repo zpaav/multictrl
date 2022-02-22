@@ -519,17 +519,17 @@ function stage(cmd2)
 		atc('[Stage]: Ambu')
 		windower.send_command('gaze ap on')
 		if player_job.main_job == 'BRD' then
-			windower.send_command('lua r autows; autows use savage blade; autows on; sing pl ambu; sing n on; gs c set weapons dualsavage; sing sirvente ' .. settings.char1)
+			windower.send_command('lua r autows; autows use savage blade; autows on; autoss; sing pl ambu; sing n on; gs c set weapons dualsavage; sing debuffing on; sing sirvente ' .. settings.char1)
 		elseif player_job.main_job == 'MNK' then
 			windower.send_command('lua l dressup; gs c autows howling fist; gs c set weaponskillmode Emnity; gs c set weapons Malignance')
 		elseif player_job.main_job == 'PLD' then
-			windower.send_command('gaze ap off; hb mincure 4;')
+			windower.send_command('gaze ap off; hb mincure 4; gs c set runeelement lux; gs c set weapons Aegis')
 		elseif player_job.main_job == 'COR' then
 			windower.send_command('lua r autows; autows use savage blade; autows on; gs c set weapons dualsavage; roll melee')
 		elseif player_job.main_job == 'RDM' then
-			windower.send_command('dclear; wait 5; hb debuff dia3; hb debuff gravity2; hb debuff distract3; lua r autows; autows use black halo; autows on; gs c autows black halo; gs c set weapons DualClubs; mc buffall haste2; hb mincure 4; hb buff ' ..settings.char1.. ' refresh3; hb buff ' ..settings.char2.. ' refresh3; hb buff ' ..settings.char3.. ' refresh3')
+			windower.send_command('hb debuff dia3; hb debuff gravity2; hb debuff distract3; lua r autows; autows use black halo; autows on; gs c autows black halo; gs c set weapons DualClubs; autoss; mc buffall haste2; hb mincure 4; hb buff ' ..settings.char1.. ' refresh3; hb buff ' ..settings.char2.. ' refresh3; hb buff ' ..settings.char3.. ' refresh3')
 		elseif player_job.main_job == 'WAR' then
-			windower.send_command('lua l dressup; lua r autows; autows use Judgment; autows on; gs c autows Judgment; gs c set weaponskillmode Enmity; gs c set weapons Loxotic')
+			windower.send_command('lua l dressup; lua r autows; autows use Judgment; autows on; gs c set autotomahawkmode on; gs c autows Judgment; gs c set weaponskillmode Enmity; gs c set weapons Loxotic')
 		end
 		settings.autows = true
 	elseif cmd2 == 'ambu2' then

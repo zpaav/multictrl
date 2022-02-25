@@ -529,7 +529,7 @@ function stage(cmd2)
 		elseif player_job.main_job == 'RDM' then
 			windower.send_command('hb debuff dia3; hb debuff gravity2; hb debuff distract3; lua r autows; autows use black halo; autows on; gs c autows black halo; gs c set weapons DualClubs; autoss; mc buffall haste2; hb mincure 4; hb buff ' ..settings.char1.. ' refresh3; hb buff ' ..settings.char2.. ' refresh3; hb buff ' ..settings.char3.. ' refresh3')
 		elseif player_job.main_job == 'WAR' then
-			windower.send_command('lua l dressup; lua r autows; autows use Judgment; autows on; gs c set autotomahawkmode on; gs c autows Judgment; gs c set weaponskillmode Enmity; gs c set weapons Loxotic')
+			windower.send_command('lua l dressup; lua r autows; autows use Judgment; autows on; gs c set autotomahawkmode on; gs c autows Judgment; gs c set weaponskillmode Enmity; gs c set hybridmode Enmity; gs c set weapons Loxotic')
 		end
 		settings.autows = true
 	elseif cmd2 == 'ambu2' then
@@ -543,11 +543,11 @@ function stage(cmd2)
 		if player_job.main_job == 'WHM' then
 			windower.send_command('wait 1.5; gs c set castingmode DT; gs c set idlemode DT; gaze ap off; hb buff ' .. settings.char1 .. ' haste; hb buff ' .. settings.char2 .. ' haste; hb buff ' .. settings.char1 .. ' regen4; hb ignore_debuff all poison')
 		elseif player_job.main_job == 'RUN' then
-			windower.send_command('wait 1.5; gaze ap off; gs c set runeelement sulpor;')
+			windower.send_command('wait 1.5; gaze ap off; gs c set runeelement sulpor; hb mincure 5;')
 		elseif player_job.main_job == 'BRD' then
-			windower.send_command('wait 1.5; gs c set idlemode DT; gaze ap off; sing pl melee; sing n off; sing p on; hb buff ' .. settings.char3 .. ' haste; hb buff ' .. settings.char6 .. ' haste;')
+			windower.send_command('wait 1.5; gs c set idlemode DT; gaze ap on; gs c set weapons carnwenhan; sing pl melee; sing n off; sing p on; hb buff ' .. settings.char3 .. ' haste; hb buff ' .. settings.char6 .. ' haste;')
 		elseif player_job.main_job == 'COR' then
-			windower.send_command('wait 1.5; roll melee; gaze ap on;')
+			windower.send_command('wait 1.5; roll melee; gaze ap on; gs c autows Leaden Salute')
 		elseif player_job.main_job == 'SAM' or player_job.main_job == 'DRK' then
 			windower.send_command('wait 1.5; gaze ap on;')
 		elseif player_job.main_job == 'WAR' or player_job.main_job == 'DRG' then

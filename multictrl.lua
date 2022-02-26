@@ -103,6 +103,7 @@ InternalCMDS = S{
 DelayCMDS = S{'buyalltemps','get','enter','go','book','deimos'}
 	
 isCasting = false
+isResting = false
 ipcflag = false
 currentPC=windower.ffxi.get_player()
 new = 0
@@ -1547,80 +1548,27 @@ function d2()
 		and {japanese='デジョンII',english='"Warp II"'})
 	
 	if spell then
-	-- Ok have right job/sub job and spells
+	-- Have right job/sub job and spells
 
 		for k, v in pairs(windower.ffxi.get_party()) do
 		
 			if type(v) == 'table' then
 				if v.name ~= currentPC.name then
-				
-					coroutine.sleep(0.55)
-				
+	
 					ptymember = windower.ffxi.get_mob_by_name(v.name)
 					-- check if party member in same zone.
 
-					if v.mob == nil then
-						-- Not in zone.
-						atc(v.name .. ' is not in zone, skipping')
-						--coroutine.sleep(0.5)
-					else
-						-- In zone, do distance check
-						if math.sqrt(ptymember.distance) < 18  and windower.ffxi.get_mob_by_name(v.name).in_party then
-							-- Checking recast
-							isWaiting = true
-							RCast = windower.ffxi.get_spell_recasts()
+					if v.mob ~= nil and math.sqrt(ptymember.distance) < 19 and windower.ffxi.get_mob_by_name(v.name).in_party then
+						-- Checking recast
+						check_mp_rest(262)
+						coroutine.sleep(1.5)
+						atc('[D2] Warping ' .. v.name)
+						windower.send_command('input /ma "Warp II" ' .. v.name)
+						coroutine.sleep(2.0)
 
-							while isWaiting == true do
-								coroutine.sleep(0.75)
-								
-								RCast = windower.ffxi.get_spell_recasts()
-								
-								if (RCast[262] == 0 ) then
-									
-									--Check MP
-									playernow = windower.ffxi.get_player()
-									checkmp = playernow.vitals.mp >= 150
-
-									if checkmp then
-										--check if resting
-										if (new == 33 and old == 0) then
-											windower.send_command('input /heal')
-										end
-										isWaiting = false
-									else --Rest for MP
-										
-										--check if resting
-										if (new == 33 and old == 0) then --Already resting
-											
-										elseif (new == 0 and old == 0) then
-											atc('Resting for MP')
-											windower.send_command('input /heal')
-											coroutine.sleep(3)
-										else -- idle
-											atc('Resting for MP')
-											windower.send_command('input /heal')
-											coroutine.sleep(3)
-										end
-										isWaiting = true
-									end
-								end
-								
-							end
-						
-								isWaiting = true								
-								coroutine.sleep(1.63)
-								windower.send_command('input /ma "Warp II" ' .. v.name)
-								coroutine.sleep(1)
-								atc('Warping ' .. v.name)
-								
-								--Check if still casting		
-								while isCasting do
-									coroutine.sleep(0.5)
-								end
-
-						else
-							atc(v.name .. ' is too far to warp, skipping')
-							--coroutine.sleep(0.5)
+						--Check if still casting
+						while isCasting do
+							coroutine.sleep(0.5)
 						end
 					end
 
@@ -1630,57 +1578,42 @@ function d2()
 		end
 
 		-- Warp self
-	
-		coroutine.sleep(0.25)
-		isWaiting = true
-		RCast = windower.ffxi.get_spell_recasts()
-	
-		while isWaiting == true do
-			coroutine.sleep(0.75)
-			RCast = windower.ffxi.get_spell_recasts()
-			
-			if (RCast[262] == 0 ) then
-									
-				--Check MP
-				playernow = windower.ffxi.get_player()
-				checkmp = playernow.vitals.mp >= 100
-
-				if checkmp then
-					--check if resting
-					if (new == 33 and old == 0) then
-						windower.send_command('input /heal')
-					end
-					isWaiting = false
-				else --Rest for MP
-					
-					--check if resting
-					if (new == 33 and old == 0) then --Already resting
-						
-					elseif (new == 0 and old == 0) then
-						atc('Resting for MP')
-						windower.send_command('input /heal')
-						coroutine.sleep(3)
-					else -- idle
-						atc('Resting for MP')
-						windower.send_command('input /heal')
-						coroutine.sleep(3)
-					end
-					isWaiting = true
-				end
-			end
-			
-		end
-
-		coroutine.sleep(1.1)
-		atc('Warping')
+		check_mp_rest(261)
+		coroutine.sleep(2.2)
+		atc('[D2] Warping')
 		windower.send_command('input /ma "Warp" ' .. currentPC.name)
-		
 	else
-		atc('Not BLM main or sub or no warp spells!')
+		atc('[D2] Not BLM main or sub or no warp spells!')
 	end
 	
 end
 
+function check_mp_rest(spell)
+	isWaiting = true
+	while isWaiting == true do
+		coroutine.sleep(0.75)
+		
+		spell_recasts = windower.ffxi.get_spell_recasts()
+		playernow = windower.ffxi.get_player().vitals.mp
+
+		if playernow and playernow >= res.spells[spell].mp_cost and spell_recasts[spell] == 0 then
+			if isResting then	-- If resting then stop resting
+				coroutine.sleep(2.5)
+				windower.send_command('input /heal')
+			end
+			isWaiting = false
+		elseif spell_recasts[spell] > 0 then -- Recast
+			coroutine.sleep(1.8)
+		else --Not enough MP 
+			if not isResting then	-- If not resting then rest
+				atc('[MP Check] Resting for MP')
+				windower.send_command('input /heal')
+				coroutine.sleep(3)
+			end
+			isWaiting = true
+		end
+	end
+end
 
 -- Burn functions SMN/GEO
 function burn(cmd2,cmd3)
@@ -3305,17 +3238,17 @@ windower.register_event("status change", function(new,old)
             npc_dialog = false
         end
     end
+	if new == 33 then	-- resting
+		isResting = true
+	elseif new == 00 then	-- idle
+		isResting = false
+	end
 end)
 
 windower.register_event("lose buff", function(buff_id)
 	if buff_id == 254 then
 		off()
     end
-end)
-
-windower.register_event('status change', function(a, b)
-	new = a
-	old = b
 end)
 
 windower.register_event('incoming chunk', function(id, data)

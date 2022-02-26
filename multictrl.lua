@@ -13,6 +13,9 @@ res = require('resources')
 texts = require('texts')
 npc_map = require('npc_map')
 
+-- job registry is a key->value table/db of player name->jobs we have encountered
+job_registry = T{}
+
 default = {
 
 	avatar='ramuh',
@@ -105,22 +108,6 @@ currentPC=windower.ffxi.get_player()
 new = 0
 old = 0
 
-windower.register_event('status change', function(a, b)
-	new = a
-	old = b
-end)
-
-windower.register_event('incoming chunk', function(id, data)
-    if id == 0x028 then
-        local action_message = packets.parse('incoming', data)
-		if action_message["Category"] == 4 then
-			isCasting = false
-		elseif action_message["Category"] == 8 then
-			isCasting = true
-		end
-	end
-end)
-
 windower.register_event('addon command', function(input, ...)
 	local cmd
     if input ~= nil then
@@ -141,6 +128,8 @@ windower.register_event('addon command', function(input, ...)
 
 	if cmd == nil then
 		windower.add_to_chat(123,"Abort: No command specified")
+	elseif cmd == 'job' then
+		find_job_charname(string.upper(cmd2),cmd3)
 	elseif cmd == 'rand' then
 		local leader = windower.ffxi.get_player()
 		rand(leader.name)
@@ -519,7 +508,7 @@ function stage(cmd2)
 		atc('[Stage]: Ambu')
 		windower.send_command('gaze ap on')
 		if player_job.main_job == 'BRD' then
-			windower.send_command('lua r autows; autows use savage blade; autows on; autoss; sing pl ambu; sing n on; gs c set weapons dualsavage; sing debuffing on; sing sirvente ' .. settings.char1)
+			windower.send_command('lua r autows; autows use savage blade; autows on; autoss; sing pl ambu; sing n on; gs c set weapons dualsavage; sing debuffing on; sing sirvente ' .. find_job_charname('PLD'))
 		elseif player_job.main_job == 'MNK' then
 			windower.send_command('lua l dressup; gs c autows howling fist; gs c set weaponskillmode Emnity; gs c set weapons Malignance')
 		elseif player_job.main_job == 'PLD' then
@@ -527,7 +516,7 @@ function stage(cmd2)
 		elseif player_job.main_job == 'COR' then
 			windower.send_command('lua r autows; autows use savage blade; autows on; gs c set weapons dualsavage; roll melee')
 		elseif player_job.main_job == 'RDM' then
-			windower.send_command('hb debuff dia3; hb debuff gravity2; hb debuff distract3; lua r autows; autows use black halo; autows on; gs c autows black halo; gs c set weapons DualClubs; autoss; mc buffall haste2; hb mincure 4; hb buff ' ..settings.char1.. ' refresh3; hb buff ' ..settings.char2.. ' refresh3; hb buff ' ..settings.char3.. ' refresh3')
+			windower.send_command('hb debuff dia3; hb debuff gravity2; hb debuff distract3; lua r autows; autows use black halo; autows on; gs c autows black halo; gs c set weapons DualClubs; autoss; mc buffall haste2; hb mincure 4; hb buff ' ..find_job_charname('PLD').. ' refresh3; hb buff ' ..find_job_charname('WAR').. ' refresh3; hb buff ' ..find_job_charname('MNK').. ' refresh3')
 		elseif player_job.main_job == 'WAR' then
 			windower.send_command('lua l dressup; lua r autows; autows use Judgment; autows on; gs c set autotomahawkmode on; gs c autows Judgment; gs c set weaponskillmode Enmity; gs c set hybridmode Enmity; gs c set weapons Loxotic')
 		end
@@ -541,11 +530,11 @@ function stage(cmd2)
 		windower.send_command('lua r gazecheck')
 		windower.send_command('input /autotarget on')
 		if player_job.main_job == 'WHM' then
-			windower.send_command('wait 1.5; gs c set castingmode DT; gs c set idlemode DT; gaze ap off; hb buff ' .. settings.char1 .. ' haste; hb buff ' .. settings.char2 .. ' haste; hb buff ' .. settings.char1 .. ' regen4; hb ignore_debuff all poison')
+			windower.send_command('wait 1.5; gs c set castingmode DT; gs c set idlemode DT; gaze ap off; hb buff ' .. find_job_charname('RUN') .. ' haste; hb buff ' .. find_job_charname('SAM') .. ' haste; hb buff ' .. find_job_charname('RUN') .. ' regen4; hb ignore_debuff all poison')
 		elseif player_job.main_job == 'RUN' then
 			windower.send_command('wait 1.5; gaze ap off; gs c set runeelement sulpor; hb mincure 5;')
 		elseif player_job.main_job == 'BRD' then
-			windower.send_command('wait 1.5; gs c set idlemode DT; gaze ap on; gs c set weapons carnwenhan; sing pl melee; sing n off; sing p on; hb buff ' .. settings.char3 .. ' haste; hb buff ' .. settings.char6 .. ' haste;')
+			windower.send_command('wait 1.5; gs c set idlemode DT; gaze ap on; gs c set weapons carnwenhan; sing pl melee; sing n off; sing p on; hb buff ' .. find_job_charname('COR') .. ' haste; hb buff ' .. find_job_charname('SAM','2') .. ' haste;')
 		elseif player_job.main_job == 'COR' then
 			windower.send_command('wait 1.5; roll melee; gaze ap on; gs c autows Leaden Salute')
 		elseif player_job.main_job == 'SAM' or player_job.main_job == 'DRK' then
@@ -623,12 +612,12 @@ function stage(cmd2)
 		settings.rangedmode = true
 	elseif cmd2 == 'arewar' then
 		if player_job.main_job == 'WHM' or player_job.main_job == 'WHM' then
-			windower.send_command('hb debuff dia2; hb buff <me> barblizzara; hb disable erase; hb buff <me> auspice; hb buff ' ..settings.char3.. ' haste; hb buff ' ..settings.char1.. ' haste; hb buff ' ..settings.char2.. ' haste; hb buff ' ..settings.char4.. ' haste')
+			windower.send_command('hb debuff dia2; hb debuff slow; hb debuff silence; hb buff <me> barblizzara; hb disable erase; hb buff <me> auspice; hb buff ' ..settings.char3.. ' haste; hb buff ' ..settings.char1.. ' haste; hb buff ' ..settings.char2.. ' haste; hb buff ' ..settings.char4.. ' haste')
 			windower.send_command('gs c set castingmode DT; gs c set idlemode DT;')
 		elseif player_job.main_job == 'PLD' then
 			--windower.send_command('')
 		elseif player_job.main_job == 'BRD' then
-			windower.send_command('mc brd reset; wait 2; sing debuff nocturne; sing debuffing on; gs c set weapons Aeneas; sing pl sv5; sing n off; sing p off; gs c set idlemode DT; sing ballad 2 ' ..settings.char6.. '; sing ballad 2 ' ..settings.char1)
+			windower.send_command('mc brd reset; wait 2; sing debuff nocturne; sing debuffing on; sing p on; gs c set weapons Aeneas; sing pl sv5; sing n off; sing p off; gs c set idlemode DT; sing ballad 2 ' ..settings.char6.. '; sing ballad 2 ' ..settings.char1)
 		elseif player_job.main_job == 'BST' then
 			windower.send_command('gs c set JugMode SweetCaroline')
 		elseif player_job.main_job == 'WAR' then
@@ -3300,13 +3289,12 @@ windower.register_event('ipc message', function(msg, ...)
 	end
 end)
 
-function loaded()
+
+windower.register_event('load', function()
 	settings = config.load(default)
 	init_box_pos()
 	atcwarn('Required addons: Selindrile\'s GearSwap, HealBot, FastCS, Organizer, TradeNPC, Send, MAA, Roller, Singer, Sparks, Powder, SellNPC')
-end
-
-windower.register_event('load', loaded)
+end)
 
 windower.register_event("status change", function(new,old)
     local target = windower.ffxi.get_mob_by_target('t')
@@ -3324,7 +3312,53 @@ windower.register_event("lose buff", function(buff_id)
 		off()
     end
 end)
---276 - confrontation EschaZones
+
+windower.register_event('status change', function(a, b)
+	new = a
+	old = b
+end)
+
+windower.register_event('incoming chunk', function(id, data)
+    if id == 0x028 then	-- Casting
+        local action_message = packets.parse('incoming', data)
+		if action_message["Category"] == 4 then
+			isCasting = false
+		elseif action_message["Category"] == 8 then
+			isCasting = true
+		end
+	elseif id == 0x0DF then -- Char update
+        local packet = packets.parse('incoming', data)
+		if packet then
+			local playerId = packet['ID']
+			local job = packet['Main job']
+			
+			if playerId and playerId > 0 then
+				set_registry(packet['ID'], packet['Main job'])
+			end
+		end
+	elseif id == 0x0DD then -- Party member update
+        local packet = packets.parse('incoming', data)
+		if packet then
+			local playerId = packet['ID']
+			local job = packet['Main job']
+			
+			if playerId and playerId > 0 then
+				set_registry(packet['Name'], packet['Main job'])
+			end
+		end
+	elseif id == 0x0C8 then -- Alliance update
+        local packet = packets.parse('incoming', data)
+		if packet then
+			local playerId = packet['ID']
+			local job = packet['Main job']
+			
+			if playerId and playerId > 0 then
+				set_registry(packet['Name'], packet['Main job'])
+			end
+		end
+	end
+end)
+
 
 function poke_npc(npc,target_index)
 	if npc and target_index then
@@ -3335,5 +3369,53 @@ function poke_npc(npc,target_index)
 			["Param"]=0,
 			["_unknown1"]=0})
 		packets.inject(packet)
+	end
+end
+
+-- Credit to partyhints
+function set_registry(id, job_id)
+    if not id then return false end
+    job_registry[id] = job_registry[id] or 'NON'
+    job_id = job_id or 0
+    if res.jobs[job_id].ens == 'NON' and job_registry[id] and not S{'NON', 'UNK'}:contains(job_registry[id]) then 
+        return false
+    end
+    job_registry[id] = res.jobs[job_id].ens
+    return true
+end
+
+-- Credit to partyhints
+function get_registry(id)
+    if job_registry[id] then
+        return job_registry[id]
+    else
+        return 'UNK'
+    end
+end
+
+-- Find which char has which job
+function find_job_charname(job, job_count)
+	local count = 0
+	local player = windower.ffxi.get_player()
+	for k, v in pairs(windower.ffxi.get_party()) do
+		if type(v) == 'table' then
+			if v.name ~= player.name then
+				ptymember = windower.ffxi.get_mob_by_name(v.name)
+				if v.mob ~= nil then
+					if ptymember.valid_target then
+						if get_registry(ptymember.id) == job then
+							count = count +1
+							if job_count and job_count == (tostring(count)) then
+								atc('[Job finder]: Job: '..job.. ' Name: ' .. v.name.. ' ID: ' .. ptymember.id)
+								return v.name
+							elseif not job_count then
+								atc('[Job finder]: Job: '..job.. ' Name: ' .. v.name.. ' ID: ' .. ptymember.id)
+								return v.name
+							end
+						end
+					end
+				end
+			end
+		end
 	end
 end

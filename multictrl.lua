@@ -3343,7 +3343,7 @@ windower.register_event('incoming chunk', function(id, data)
 			local job = packet['Main job']
 			
 			if playerId and playerId > 0 then
-				set_registry(packet['Name'], packet['Main job'])
+				set_registry(packet['ID'], packet['Main job'])
 			end
 		end
 	elseif id == 0x0C8 then -- Alliance update
@@ -3353,7 +3353,7 @@ windower.register_event('incoming chunk', function(id, data)
 			local job = packet['Main job']
 			
 			if playerId and playerId > 0 then
-				set_registry(packet['Name'], packet['Main job'])
+				set_registry(packet['ID'], packet['Main job'])
 			end
 		end
 	end

@@ -131,6 +131,8 @@ windower.register_event('addon command', function(input, ...)
 		windower.add_to_chat(123,"Abort: No command specified")
 	elseif cmd == 'job' then
 		find_job_charname(string.upper(cmd2),cmd3)
+	elseif cmd == 'jobtype' then
+		find_job_type(string.lower(cmd2))
 	elseif cmd == 'rand' then
 		local leader = windower.ffxi.get_player()
 		rand(leader.name)
@@ -1148,15 +1150,15 @@ function brd(cmd2)
 	if player_job.main_job == "BRD" then
 		if cmd2 == 'ambu' then
 			atc('[BRD] Ambu')
-			windower.send_command("hb buff " ..settings.char1.. " mage's ballad III; hb buff " ..settings.char1.. "  sentinel's scherzo;")
+			windower.send_command("hb buff " ..find_job_type('tank').. " mage's ballad III; hb buff " ..find_job_type('tank').. "  sentinel's scherzo;")
 		elseif cmd2 == 'ody' then
 			atc('[BRD] Odyssey')
-			windower.send_command("hb buff " ..settings.char1.. " sentinel's scherzo; hb buff " ..settings.char1.. " foe sirvente; hb buff " ..settings.char1.. " scop's operetta; hb buff " ..settings.char1.. " victory march")
+			windower.send_command("hb buff " ..find_job_type('tank').. " sentinel's scherzo; hb buff " ..find_job_type('tank').. " foe sirvente; hb buff " ..find_job_type('tank').. " scop's operetta; hb buff " ..find_job_type('tank').. " victory march")
 		elseif cmd2 == 'arebati' then
-			windower.send_command("hb buff " ..settings.char1.. " ice carol; hb buff " ..settings.char1.. " foe sirvente; hb buff " ..settings.char1.. " scop's operetta; hb buff " ..settings.char1.. " ice carol II")
+			windower.send_command("hb buff " ..find_job_type('tank').. " ice carol; hb buff " ..find_job_type('tank').. " foe sirvente; hb buff " ..find_job_type('tank').. " scop's operetta; hb buff " ..find_job_type('tank').. " ice carol II")
 		elseif cmd2 == 'reset' then
 			atc('[BRD] Reset')
-			windower.send_command("hb cancelbuff " ..settings.char1.. " mage's ballad III; hb cancelbuff " ..settings.char1.. " mage's ballad II; hb cancelbuff " ..settings.char1.. " sentinel's scherzo; hb cancelbuff " ..settings.char1.. " foe sirvente; hb cancelbuff " ..settings.char1.. " scop's operetta; hb cancelbuff " ..settings.char1.. " victory march; hb cancelbuff " ..settings.char1.. " ice carol; hb cancelbuff " ..settings.char1.. " ice carol II")
+			windower.send_command("hb nobuff " ..find_job_type('tank').. " all")
 		elseif cmd2 == 'sv5' then
 			atc('[BRD] SV5')
 			windower.send_command('sing off; sing pl sv5; gs c set autozergmode on')
@@ -3324,6 +3326,18 @@ function get_registry(id)
     else
         return 'UNK'
     end
+end
+
+function find_job_type(classtype)
+	if string.lower(classtype) == 'tank' then
+		if find_job_charname('PLD') then 
+			return find_job_charname('PLD')
+		elseif find_job_charname('RUN') then 
+			return find_job_charname('RUN')
+		end
+	elseif string.lower(classtype) == 'dd' then
+	elseif string.lower(classtype) == 'mage' then
+	end
 end
 
 -- Find which char has which job

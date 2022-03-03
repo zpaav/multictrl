@@ -32,7 +32,7 @@ default = {
 	rangedmode=false,
 	send_all_delay = 1.08,
 	antisleep=true,
-	rngsc=false,
+	autosc=false,
 	autoarts='',
 	npc_dialog=false,
 	battletarget='Raskovniche',
@@ -88,7 +88,7 @@ InternalCMDS = S{
 
 	--Battle
 	'on','off','stage','fight','fightmage','fightsmall','ws','food','sleep','fin',
-	'wsall','cc','zerg','wstype','buffup','dd','attackon',
+	'wsall','cc','zerg','wstype','buffup','dd','attackon','mb',
 	
 	--Job
 	'brd','bst','cor','sch','smnburn','geoburn','burn','rng','proc','crit','wsproc',
@@ -172,9 +172,9 @@ windower.register_event('addon command', function(input, ...)
 		local leader = windower.ffxi.get_player()
 		smn:schedule(0, cmd2, leader.name, cmd3)
 		send_to_IPC:schedule(0, cmd, cmd2, leader.name, cmd3)
-	elseif cmd == 'rngsc' then						-- Leader
+	elseif cmd == 'autosc' then						-- Leader
 		local leader = windower.ffxi.get_player()
-		rngsc:schedule(0, cmd2, leader.name)
+		autosc:schedule(0, cmd2, leader.name)
 		send_to_IPC:schedule(0, cmd, cmd2, leader.name)
 	elseif cmd == 'send' then						-- Special parameter
 		send:schedule(0, term)
@@ -435,8 +435,8 @@ display_box = function()
 		rng_help:clear()
 	end
 	
-	if settings.rngsc then
-		rng_sc:append(string.format("%sRNG SC: %sON", clr.w, clr.r))
+	if settings.autosc then
+		rng_sc:append(string.format("%sAUTO SC: %sON", clr.w, clr.r))
 	else
 		rng_sc:clear()
 	end
@@ -620,7 +620,7 @@ function stage(cmd2)
 		elseif player_job.main_job == 'PLD' then
 			--windower.send_command('')
 		elseif player_job.main_job == 'BRD' then
-			windower.send_command('mc brd reset; wait 2; sing debuff nocturne; sing debuffing on; sing p on; gs c set weapons Aeneas; sing pl sv5; sing n off; sing p off; gs c set idlemode DT; sing ballad 2 ' ..settings.char6.. '; sing ballad 2 ' ..settings.char1)
+			windower.send_command('mc brd reset; wait 2; sing debuff nocturne; sing debuffing on; sing p on; gs c set weapons Aeneas; sing pl arewar; sing n off; sing p off; gs c set idlemode DT; sing ballad 2 ' ..settings.char6.. '; sing ballad 2 ' ..settings.char1)
 		elseif player_job.main_job == 'BST' then
 			windower.send_command('gs c set JugMode SweetCaroline')
 		elseif player_job.main_job == 'WAR' then
@@ -694,13 +694,16 @@ function stage(cmd2)
 	elseif cmd2 == 'mboze' then
 		windower.send_command('gaze ap off')
 		if player_job.main_job == 'WHM' then
-			windower.send_command('hb buff <me> barstonra; gs c set castingmode DT; gs c set idlemode DT; hb debuff dia2; hb buff <me> auspice')
+			windower.send_command('hb buff <me> barstonra; gs c set castingmode DT; gs c set idlemode DT; hb debuff dia2; hb debuff silence; hb debuff paralyze; hb buff <me> auspice')
 			windower.send_command('input /p Haste DD')
-		elseif player_job.main_job == 'DRK' or player_job.main_job == 'SAM' then
+		elseif player_job.main_job == 'DRK' or player_job.main_job == 'SAM' or player_job.main_job == 'WAR' then
+			windower.send_command('lua l dressup')
 			if player_job.main_job == 'DRK' then
-				windower.send_command('gs c set weapons KajaChopper; gs c set hybridmode SubtleBlow;')
-			else
-				windower.send_command('gs c set hybridmode SubtleBlow;')
+				windower.send_command('gs c set weapons KajaChopper; gs c set hybridmode SubtleBlow; gs c autows tp 1750;')
+			elseif player_job.main_job == 'SAM' then
+				windower.send_command('gs c set hybridmode SubtleBlow; gs c autows Tachi: Ageha;')
+			elseif player_job.main_job == 'WAR' then
+				windower.send_command('gs c set hybridmode SubtleBlow; gs c set weapons Naegling; gs c autows Savage Blade')
 			end
 		elseif player_job.main_job == 'BRD' then
 			windower.send_command('sing pl mboze; sing n off; sing p off; sing debuffing off; gs c set idlemode DT; sing debuff wind threnody 2; sing debuffing on; gs c set weapons Naegling;')
@@ -1181,10 +1184,9 @@ function bst(cmd2)
 	if player_job.main_job == "BST" then
 		if cmd2 == 'killer' then
 			atc('[BST] Killer Toggle')
---			windower.send_command('gs c set AutoCallPet off; gs c set AutoFightMode off; gs c set AutoReadyMode off; gs c set JugMode ScissorlegXerin; wait 1.3; input /ja "Leave" <me>; wait 1.8; gs c set AutoCallPet on')
-			windower.send_command('gs c set AutoCallPet off; gs c set AutoFightMode off; gs c set AutoReadyMode off; gs c set JugMode SweetCaroline; wait 1.3; input /ja "Leave" <me>; wait 1.8; gs c set AutoCallPet on')
-			windower.send_command:schedule(8.0, 'input /ja "Killer Instinct" <me>;')
-			windower.send_command:schedule(11.1, 'input /ja "Leave" <me>; wait 1.8; gs c set JugMode FatsoFargann; gs c set AutoCallPet on; gs c set AutoReadyMode on;')
+		windower.send_command('gs c set AutoCallPet off; gs c set AutoFightMode off; gs c set AutoReadyMode off; gs c set JugMode ScissorlegXerin; wait 5.0; input /ja "Leave" <me>; wait 2.5; gs c set AutoCallPet on')
+				--windower.send_command('gs c set AutoCallPet off; gs c set AutoFightMode off; gs c set AutoReadyMode off; gs c set JugMode SweetCaroline; wait 1.3; input /ja "Leave" <me>; wait 1.8; gs c set AutoCallPet on')
+			windower.send_command:schedule(11.0, 'input /ja "Killer Instinct" <me>; gs c set JugMode FatsoFargann; wait 3.5; input /ja "Leave" <me>; wait 3.5; gs c set AutoCallPet on; gs c set AutoReadyMode on;')
 		elseif cmd2 == 'init' then
 			atc('[BST] Use Killer then reset to TP pet')
 			windower.send_command('wait 1.5; input /ja "Killer Instinct" <me>; wait 1.8; gs c set JugMode FatsoFargann; input /ja "Leave" <me>; wait 1.8; input /ja "Call Beast" <me>; gs c set AutoCallPet on;')
@@ -1933,31 +1935,31 @@ function smn(cmd2,leader_smn,cmd3)
 	display_box()
 end	
 
-function rngsc(cmd2, leader_rng)
+function autosc(cmd2, leader_rng)
 	currentPC=windower.ffxi.get_player()
 	
-	local rangedjobs = S{'RNG','COR','RNG','SCH','BLM','RUN'}
+	local rangedjobs = S{'COR','SCH','BLM','RUN'}
 
 	if cmd2 == nil then
-		if settings.rngsc then
-			atc('Helper for Ranged SC DISABLED')
-			settings.rngsc = false
+		if settings.autosc then
+			atc('Helper for Auto SC DISABLED')
+			settings.autosc = false
 		else
-			atc('Helper for Ranged SC ACTIVE')
-			settings.rngsc = true
+			atc('Helper for Auto SC ACTIVE')
+			settings.autosc = true
 		end
 	end
 	
 	
-	if settings.rngsc then
+	if settings.autosc then
 		if rangedjobs:contains(currentPC.main_job) then
 			if cmd2 and cmd2:lower() == 'freezebite' then
 				if currentPC.main_job == 'SCH' then				
-					atc('[RNGSC] ENDING SCH - Water [Fragmentation]')
+					atc('[AUTOSC] ENDING SCH - Water [Fragmentation]')
 					windower.send_command('input /ja "Immanence" <me>')
 					windower.send_command:schedule(3.4, 'gs c elemental tier1 Raskovniche')
 				elseif currentPC.main_job == 'COR' then
-					atc('[RNGSC] COR Last Stand')
+					atc('[AUTOSC] COR Last Stand')
 					local abil_recasts = windower.ffxi.get_ability_recasts()
 					local latency = 0.7
 					if abil_recasts[195] < latency then
@@ -1966,12 +1968,12 @@ function rngsc(cmd2, leader_rng)
 					windower.send_command:schedule(10.1, 'input /ws "Last Stand" <t>')
 					windower.send_command:schedule(13.5, 'autora start')
 				elseif currentPC.main_job == 'BLM' then
-					atc('[RNGSC] BLM PreNuke')
+					atc('[AUTOSC] BLM PreNuke')
 					windower.send_command:schedule(3.9, 'gs c elemental aja Raskovniche')
 				elseif currentPC.main_job == 'RUN' then
 					local abil_recasts = windower.ffxi.get_ability_recasts()
 					local latency = 0.7
-					atc('[RNGSC] Rayke/Gambit')
+					atc('[AUTOSC] Rayke/Gambit')
 					--windower.send_command:schedule(3.2, 'gs c set autowsmode off')
 					if abil_recasts[116] < latency then
 						windower.send_command('gs c set autotankmode off; gs c set autobuffmode off; gs c set autorunemode off')
@@ -1987,11 +1989,11 @@ function rngsc(cmd2, leader_rng)
 				end
 			elseif cmd2 and cmd2:lower() == 'frostbite' then
 				if currentPC.main_job == 'SCH' then				
-					atc('[RNGSC] ENDING SCH - Water [Fragmentation]')
+					atc('[AUTOSC] ENDING SCH - Water [Fragmentation]')
 					windower.send_command('input /ja "Immanence" <me>')
 					windower.send_command:schedule(3.4, 'gs c elemental tier1 Marmorkrebs')
 				elseif currentPC.main_job == 'COR' then
-					atc('[RNGSC] COR Last Stand')
+					atc('[AUTOSC] COR Last Stand')
 					local abil_recasts = windower.ffxi.get_ability_recasts()
 					local latency = 0.7
 					if abil_recasts[195] < latency then
@@ -2000,79 +2002,56 @@ function rngsc(cmd2, leader_rng)
 					windower.send_command:schedule(10.1, 'input /ws "Last Stand" <t>')
 					windower.send_command:schedule(13.5, 'autora start')
 				elseif currentPC.main_job == 'BLM' then
-					atc('[RNGSC] BLM PreNuke')
+					atc('[AUTOSC] BLM PreNuke')
 					windower.send_command:schedule(3.9, 'gs c elemental aja Marmorkrebs')
 				elseif currentPC.main_job == 'RUN' then
 					local abil_recasts = windower.ffxi.get_ability_recasts()
 					local latency = 0.7
-					atc('[RNGSC] Rayke/Gambit')
+					atc('[AUTOSC] Rayke/Gambit')
 					--windower.send_command:schedule(3.2, 'gs c set autowsmode off')
 					if abil_recasts[116] < latency then
 						windower.send_command('gs c set autotankmode off; gs c set autobuffmode off; gs c set autorunemode off')
-						windower.send_command:schedule(2.5, 'input /p Gambit - 86s duration; wait 86; input /p Gambit OFF! <scall20>')
 						windower.send_command:schedule(3.1, 'input /ja "Gambit" <t>')
 						windower.send_command:schedule(4.2, 'gs c set autotankmode on; gs c set autorunemode on')
 					elseif abil_recasts[119] < latency then
 						windower.send_command('gs c set autotankmode off; gs c set autobuffmode off; gs c set autorunemode off')
-						windower.send_command:schedule(2.5, 'input /p Rayke - 44s duration; wait 44; input /p Rayke OFF! <scall20>')
 						windower.send_command:schedule(3.1, 'input /ja "Rayke" <t>')
 						windower.send_command:schedule(4.2, 'gs c set autotankmode on; gs c set autorunemode on')
 					end
 				end
-				
-			--Aero(Open Gravitation) > Nocthelix(Closing Gravitation) > Earth Shot + Rayke > Steel Cyclone or Full break(GeoHelix) > Wild fire.
-			elseif cmd2 and cmd2:lower() == 'ongosch' then
-				if currentPC.main_job == 'SCH' then
-				--check if have 2 gems?
-				--if 2 gems then do SC
-					--mc rungsc ongoruncor ???
-				end
-			elseif cmd2 and cmd2:lower() == 'ongoruncor' then
+			--Upheaval > Gambit/Rayke/Earth Shot > Leaden Saluate > Steel Cyclone > Wild fire.
+			elseif cmd2 and cmd2:lower() == 'upheaval' then
 				if currentPC.main_job == 'COR' then
-					atc('[RNGSC] COR Wildfire and Earth Shot')
+					atc('[AUTOSC] COR Leaden and Earth Shot')
 					local abil_recasts = windower.ffxi.get_ability_recasts()
 					local latency = 0.7
 					if abil_recasts[195] < latency then
 						windower.send_command:schedule(1.7, 'input /ja "Earth Shot" <t>')
 					end
-					windower.send_command:schedule(10.1, 'input /ws "Wildfire" <t>')
-					windower.send_command:schedule(13.5, 'autora start')
+					windower.send_command:schedule(3.4, 'input /ws "Leaden Salute" <t>')
+					windower.send_command:schedule(7.2, 'autora start')
+					windower.send_command:schedule(16.3, 'input /ws "Wildfire" <t>')
+					windower.send_command:schedule(20.1, 'autora start')
 				elseif currentPC.main_job == 'RUN' then
 					local abil_recasts = windower.ffxi.get_ability_recasts()
 					local latency = 0.7
-					atc('[RNGSC] Rayke/Gambit')
+					windower.send_command('hb off; gs c set autotankmode off; gs c set autobuffmode off; gs c set autorunemode off; gs c set autowsmode off')
+					atc('[AUTOSC] Rayke/Gambit')
 					if abil_recasts[116] < latency then
-						windower.send_command('gs c set autotankmode off; gs c set autobuffmode off; gs c set autorunemode off')
-						windower.send_command('input /ja "Gambit" <t>')
-						windower.send_command:schedule(1.5, 'input /p Gambit - 86s duration; wait 86; input /p Gambit OFF! <scall20>')
-						windower.send_command:schedule(4.2, 'input /ws "Steel Cyclone" <t>')
-						windower.send_command:schedule(6.2, 'gs c set autotankmode on; gs c set autorunemode on')
+						windower.send_command:schedule(1.8, 'input /ja "Gambit" <t>')
 					elseif abil_recasts[119] < latency then
-						windower.send_command('gs c set autotankmode off; gs c set autobuffmode off; gs c set autorunemode off')
-						windower.send_command('input /ja "Rayke" <t>')
-						windower.send_command:schedule(1.5, 'input /p Rayke - 44s duration; wait 44; input /p Rayke OFF! <scall20>')
-						windower.send_command:schedule(4.2, 'input /ws "Steel Cyclone" <t>')
-						windower.send_command:schedule(6.2, 'gs c set autotankmode on; gs c set autorunemode on')
+						windower.send_command:schedule(1.8, 'input /ja "Rayke" <t>')
 					end
-				end
-			elseif cmd2 == 'Jishnu' then
-				windower.add_to_chat(123, 'Second step Leaden Salute + Earth shot!')
-				windower.send_command('input /ja "Earth Shot" <t>')
-				coroutine.sleep(3.7)
-				windower.send_command('input /ws "Leaden Salute" <t>')
-				windower.send_command('wait 3.3; autora start')
-				coroutine.sleep(14.4)
-				windower.add_to_chat(123, 'Forth step Wildfire')
-				windower.send_command('input /ws "Wildfire" <t>')
-				windower.send_command('wait 3.3; autora start')
-			elseif cmd2 == 'shoot' then
-				if not (currentPC.main_job == 'RUN') then				
-					windower.add_to_chat(123, 'Shooting')
-					windower.send_command('autora start')
+					windower.send_command:schedule(12.0, 'input /ws "Steel Cyclone" <t>')
+					windower.send_command:schedule(14.2, 'gs c set autotankmode on; gs c set autorunemode on')
+					--windower.send_command:schedule(25, 'gs c set autowsmode on;')
+				elseif currentPC.main_job == 'BLM' then
+					atc('[AUTOSC] BLM PreNuke')
+					windower.send_command:schedule(4.1, 'gs c elemental aja Ongo')
 				end
 			end
 		else
-			atc('[RNGSC] Not RNG/COR/RUN/SCH/BLM job, skipping.')
+			atc('[AUTOSC] Not COR/RUN/SCH/BLM job, skipping.')
 		end
 	end
 	display_box()
@@ -2242,11 +2221,11 @@ function get(cmd2)
 	elseif cmd2 == 'srki' and zone == 276  then
 		atc('GET: SR KI.')
 		get_poke_check('Malobra')
-		windower.send_command('wait 3; setkey down down; wait 0.1; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.0; setkey up down; wait 0.5; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
+		windower.send_command('wait 1.1; setkey down down; wait 0.1; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.0; setkey up down; wait 0.5; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
 	elseif cmd2 == 'srdrops' and zone == 276 then
 		atc('GET: SR Rewards.')
 		get_poke_check('Malobra')
-		windower.send_command('wait 3; setkey down down; wait 0.1; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
+		windower.send_command('wait 1; setkey down down; wait 0.1; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
 	elseif cmd2 == 'tag' and zone == 50 then
 		atc('GET: Assault tag.')
 		get_poke_check('Rytaal')
@@ -2706,6 +2685,23 @@ function rand(leader)
 	--windower.ffxi.run(false)
 end
 
+function mb(cmd2)
+	
+	local player_job = windower.ffxi.get_player()
+	local MBjobs = S{'SCH','GEO'}		
+
+	if MBjobs:contains(player_job.main_job) then
+		if cmd2 == 'on' then
+			atc('[MB]: ON!')
+			windower.send_command('lua r maa')
+		elseif cmd2 == 'off' then
+			atc('[MB]: OFF!')
+			windower.send_command('lua u maa')
+		end
+	else
+		atc('[MB]: Not MB jobs.')
+	end
+end
 
 function wstype(cmd2)
 	local player_job = windower.ffxi.get_player()
@@ -3213,8 +3209,8 @@ windower.register_event('ipc message', function(msg, ...)
 		gt(send_cmd)
 	elseif cmd == 'smn' then
 		smn(cmd2, cmd3, cmd4)
-	elseif cmd == 'rngsc' then
-		rngsc(cmd2, cmd3)
+	elseif cmd == 'autosc' then
+		autosc(cmd2, cmd3)
 	elseif cmd == 'ein' then
 		coroutine.sleep(delay)
 		ein(cmd2)

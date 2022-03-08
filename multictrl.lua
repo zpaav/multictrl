@@ -694,10 +694,9 @@ function stage(cmd2)
 	elseif cmd2 == 'mboze' then
 		windower.send_command('gaze ap off')
 		if player_job.main_job == 'WHM' then
-			windower.send_command('hb buff <me> barstonra; gs c set castingmode DT; gs c set idlemode DT; hb debuff dia2; hb debuff silence; hb debuff paralyze; hb buff <me> auspice')
-			windower.send_command('input /p Haste DD')
+			windower.send_command('hb buff <me> barstonra; gs c set castingmode DT; gs c set idlemode DT; hb debuff slow; hb debuff dia2; hb debuff paralyze; hb buff <me> auspice; hb buff ' ..find_job_type('dd').. ' haste')
 		elseif player_job.main_job == 'DRK' or player_job.main_job == 'SAM' or player_job.main_job == 'WAR' then
-			windower.send_command('lua l dressup')
+			windower.send_command('lua l dressup; gs c set defensedownmode tag')
 			if player_job.main_job == 'DRK' then
 				windower.send_command('gs c set weapons KajaChopper; gs c set hybridmode SubtleBlow; gs c autows tp 1750;')
 			elseif player_job.main_job == 'SAM' then
@@ -706,14 +705,35 @@ function stage(cmd2)
 				windower.send_command('gs c set hybridmode SubtleBlow; gs c set weapons Naegling; gs c autows Savage Blade')
 			end
 		elseif player_job.main_job == 'BRD' then
-			windower.send_command('sing pl mboze; sing n off; sing p off; sing debuffing off; gs c set idlemode DT; sing debuff wind threnody 2; sing debuffing on; gs c set weapons Naegling;')
+			windower.send_command('sing pl mboze; sing n off; sing p off; sing debuffing off; gs c set idlemode DT; sing debuff wind threnody 2; hb debuff wind threnody ii;')-- hb debuff pining nocturne; hb debuff Foe Requiem VII;')
 		elseif player_job.main_job == 'BLU' then
-			windower.send_command('azuresets set mboze; gs c set castingmode resistant; gs c set AutoBLUSpam on; gs c set weapons MACC;')
+			windower.send_command('azuresets set mboze; gs c set castingmode resistant; gs c set AutoBLUSpam on; gs c set weapons MACC; hb debuff silent storm')
 			windower.send_command('input /p Check buff+spam modes')
 		elseif player_job.main_job == 'COR' then
 			windower.send_command('roll melee; gs c set weapons Naegling; gs c set castingmode resistant;')
 		elseif player_job.main_job == 'BST' then
 			windower.send_command('gs c set JugMode ScissorlegXerin')
+		end
+	elseif cmd2 == 'mbozepre' then
+		windower.send_command('gaze ap off')
+		if player_job.main_job == 'RDM' then
+			windower.send_command('dfull')
+		elseif player_job.main_job == 'DRK' or player_job.main_job == 'SAM' or player_job.main_job == 'WAR' then
+			windower.send_command('lua l dressup; gs c set defensedownmode tag')
+			if player_job.main_job == 'DRK' then
+				windower.send_command('gs c set weapons KajaChopper; gs c set hybridmode SubtleBlow; gs c autows tp 1750;')
+			elseif player_job.main_job == 'SAM' then
+				windower.send_command('gs c set hybridmode SubtleBlow; gs c autows Tachi: Ageha;')
+			elseif player_job.main_job == 'WAR' then
+				windower.send_command('gs c set hybridmode SubtleBlow; gs c set weapons Naegling; gs c autows Savage Blade')
+			end
+		elseif player_job.main_job == 'GEO' then
+			windower.send_command('gs c autogeo vit')-- hb debuff pining nocturne; hb debuff Foe Requiem VII;')
+		elseif player_job.main_job == 'SCH' then
+			windower.send_command('')
+		elseif player_job.main_job == 'SMN' then
+			windower.send_command('')
+		elseif player_job.main_job == 'MNK' then
 		end
 	elseif cmd2 == 'ngai' then
 		windower.send_command('gaze ap off')
@@ -1167,10 +1187,12 @@ function brd(cmd2)
 			windower.send_command('sing off; sing pl sv5; gs c set autozergmode on')
 		elseif cmd2 == 'sv' then
 			atc('[BRD] SV - Soul Voice')
-			windower.send_command('sing off; gs c set autozergmode on;')
+			windower.send_command('sing off; input /ja "Soul Voice" <me>;')
 		elseif cmd2 == 'nitro' then
 			atc('[BRD] NITRO')
-			windower.send_command('input /ja "Nightingale" <me>; wait 1.5; input /ja "Troubadour" <me>')
+			windower.send_command('sing off; input /ja "Nightingale" <me>; wait 1.5; input /ja "Troubadour" <me>')
+		elseif cmd2 == 'zerg' then
+			windower.send_command('sing off; gs c set autozergmode on')
 		else
 			atc('[BRD] Invalid command')
 		end
@@ -1206,7 +1228,7 @@ function cor(cmd2)
 			windower.send_command('gs c set luzafring off; roll melee;')			
 		elseif cmd2 == 'back' then
 			atc('[COR] Backline rolls + lower radius')
-			windower.send_command('gs c set luzafring off; roll roll1 tact; roll roll2 gallant;')
+			windower.send_command('gs c set luzafring off; roll roll1 warlock; roll roll2 gallant;')
 		elseif cmd2 == 'aoe' then
 			atc('[COR] Set Luzaf ON')
 			windower.send_command('gs c set luzafring on')
@@ -2643,17 +2665,30 @@ function ein(cmd2)
 	end
 end
 
-function dd()
+function dd(cmd2)
 	player = windower.ffxi.get_player()
-	if player.main_job == 'BLU' then
-		windower.send_command('input /ma "Tenebral Crush" <t>')
-	elseif player.main_job == 'WHM' or player.main_job == 'RDM' or player.sub_job == 'RDM' or player.sub_job == 'WHM' and not haveBuff('SJ Restriction') then
-		if player.main_job == 'RDM' then
-			windower.send_command('input /ma "Dia III" <t>')
+	if not cmd2 then
+		if player.main_job == 'BLU' then
+			windower.send_command('input /ma "Tenebral Crush" <t>')
+		elseif player.main_job == 'WHM' or player.main_job == 'RDM' or player.sub_job == 'RDM' or player.sub_job == 'WHM' and not haveBuff('SJ Restriction') then
+			if player.main_job == 'RDM' then
+				windower.send_command('input /ma "Dia III" <t>')
+			else
+				windower.send_command('input /ma "Dia II" <t>')
+			end
+		end
+	elseif cmd2 == 'def' then
+		if player.main_job == 'SAM' then
+			atc('[DD] - SAM')
+			windower.send_command('gs c autows Tachi: Ageha')
+		elseif player.main_job == 'DRK' then
+			atc('[DD] - DRK')
+			windower.send_command('gs c set weapons KajaChopper')
 		else
-			windower.send_command('input /ma "Dia II" <t>')
+			atc('[DD] - Not proper job.')
 		end
 	end
+	
 end
 
 function buffall(cmd2)
@@ -3332,6 +3367,11 @@ function find_job_type(classtype)
 			return find_job_charname('RUN')
 		end
 	elseif string.lower(classtype) == 'dd' then
+		if find_job_charname('SAM') then 
+			return find_job_charname('SAM')
+		elseif find_job_charname('DRK') then 
+			return find_job_charname('DRK')
+		end
 	elseif string.lower(classtype) == 'mage' then
 	end
 end

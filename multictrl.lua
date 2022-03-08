@@ -603,13 +603,13 @@ function stage(cmd2)
 		elseif player_job.main_job == 'RUN' then
 			windower.send_command('gs c set runeelement ignis; hb buff <me> barblizzard; lua r react')
 		elseif player_job.main_job == 'BRD' then
-			windower.send_command('mc brd reset; sing pl arebati; sing n on; sing p on; gs c set idlemode DT; sing sirvente ' ..settings.char1.. '; sing ice 1 ' ..settings.char1)
+			windower.send_command('mc brd reset; sing pl arebati; sing n on; sing p on; gs c set idlemode DT; sing sirvente ' ..find_job_type('tank').. '; sing ice 1 ' ..find_job_type('tank').. 
 		elseif player_job.main_job == 'GEO' then
-			windower.send_command('gs c autoindi fury; gs c autogeo agi; gs c autoentrust attunement; gs c set castingmode DT; gs c set idlemode DT; gs c autoentrustee ' ..settings.char1)
+			windower.send_command('gs c autoindi fury; gs c autogeo agi; gs c autoentrust attunement; gs c set castingmode DT; gs c set idlemode DT; gs c autoentrustee ' ..find_job_type('tank'))
 		elseif player_job.main_job == 'RNG' then
 			windower.send_command('gs c set weapons Armageddon; gs c set rnghelper on; wait 2; gs c autows Last Stand;')
 		elseif player_job.main_job == 'COR' then
-			windower.send_command('roll melee; gs c set weapons Fomalhaut; gs c set rnghelper on; wait 2; gs c autows Last Stand;')
+			windower.send_command('roll melee; gs c set weapons Armageddon; gs c set rnghelper on; wait 2; gs c autows Last Stand;')
 		end
 		settings.autows = true
 		settings.rangedmode = true
@@ -694,7 +694,7 @@ function stage(cmd2)
 	elseif cmd2 == 'mboze' then
 		windower.send_command('gaze ap off')
 		if player_job.main_job == 'WHM' then
-			windower.send_command('hb buff <me> barstonra; gs c set castingmode DT; gs c set idlemode DT; hb debuff slow; hb debuff dia2; hb debuff paralyze; hb buff <me> auspice; hb buff ' ..find_job_type('dd').. ' haste')
+			windower.send_command('hb buff <me> barstonra; hb buff <me> boost-vit; gs c set castingmode DT; gs c set idlemode DT; hb debuff slow; hb debuff dia2; hb debuff paralyze; hb buff <me> auspice; hb buff ' ..find_job_type('dd').. ' haste')
 		elseif player_job.main_job == 'DRK' or player_job.main_job == 'SAM' or player_job.main_job == 'WAR' then
 			windower.send_command('lua l dressup; gs c set defensedownmode tag')
 			if player_job.main_job == 'DRK' then

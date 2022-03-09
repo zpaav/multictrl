@@ -537,7 +537,7 @@ function stage(cmd2)
 		elseif player_job.main_job == 'RUN' then
 			windower.send_command('wait 1.5; gaze ap off; gs c set runeelement sulpor; hb mincure 5;')
 		elseif player_job.main_job == 'BRD' then
-			windower.send_command('wait 1.5; gs c set idlemode DT; gaze ap on; gs c set weapons carnwenhan; sing pl melee; sing n off; sing p on; hb buff ' .. find_job_charname('COR') .. ' haste; hb buff ' .. find_job_charname('SAM','2') .. ' haste;')
+			windower.send_command('wait 1.5; gs c set idlemode DT; gaze ap on; gs c set weapons carnwenhan; sing pl melee; sing n off; sing p on; sing clear; wait 1.5; sing ballad 1 '..find_job_charname('WHM')..'; hb buff ' .. find_job_charname('COR') .. ' haste; hb buff ' .. find_job_charname('SAM','2') .. ' haste;')
 		elseif player_job.main_job == 'COR' then
 			windower.send_command('wait 1.5; roll melee; gaze ap on; gs c autows Leaden Salute')
 		elseif player_job.main_job == 'SAM' or player_job.main_job == 'DRK' then
@@ -603,7 +603,7 @@ function stage(cmd2)
 		elseif player_job.main_job == 'RUN' then
 			windower.send_command('gs c set runeelement ignis; hb buff <me> barblizzard; lua r react')
 		elseif player_job.main_job == 'BRD' then
-			windower.send_command('mc brd reset; sing pl arebati; sing n on; sing p on; gs c set idlemode DT; sing sirvente ' ..find_job_type('tank').. '; sing ice 1 ' ..find_job_type('tank'))
+			windower.send_command('mc brd reset; sing pl arebati; sing n on; sing p on; gs c set idlemode DT; sing sirvente ' ..find_job_type('tank').. '; sing ice 1 ' ..find_job_type('tank').. '; sing ballad 2 ' ..find_job_charname('SCH'))
 		elseif player_job.main_job == 'GEO' then
 			windower.send_command('gs c autoindi fury; gs c autogeo agi; gs c autoentrust attunement; gs c set castingmode DT; gs c set idlemode DT; gs c autoentrustee ' ..find_job_type('tank'))
 		elseif player_job.main_job == 'RNG' then
@@ -3401,4 +3401,5 @@ function find_job_charname(job, job_count)
 			end
 		end
 	end
+	return 'Nojobfound'
 end

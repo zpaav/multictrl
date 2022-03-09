@@ -603,7 +603,7 @@ function stage(cmd2)
 		elseif player_job.main_job == 'RUN' then
 			windower.send_command('gs c set runeelement ignis; hb buff <me> barblizzard; lua r react')
 		elseif player_job.main_job == 'BRD' then
-			windower.send_command('mc brd reset; sing pl arebati; sing n on; sing p on; gs c set idlemode DT; sing sirvente ' ..find_job_type('tank').. '; sing ice 1 ' ..find_job_type('tank').. 
+			windower.send_command('mc brd reset; sing pl arebati; sing n on; sing p on; gs c set idlemode DT; sing sirvente ' ..find_job_type('tank').. '; sing ice 1 ' ..find_job_type('tank'))
 		elseif player_job.main_job == 'GEO' then
 			windower.send_command('gs c autoindi fury; gs c autogeo agi; gs c autoentrust attunement; gs c set castingmode DT; gs c set idlemode DT; gs c autoentrustee ' ..find_job_type('tank'))
 		elseif player_job.main_job == 'RNG' then

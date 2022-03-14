@@ -1757,12 +1757,12 @@ function burn(cmd2,cmd3)
 							local healers = S{'COR','WHM','RDM','RUN','THF','SCH'}
 							-- Potential healers or /SJ healers don't disable hb.
 							if not (healers:contains(player.main_job)) then
-								windower.send_command('hb reload; wait 1.5; hb disable cure; hb disable na; hb assist ' ..settings.assist .. '; wait 1.0; hb on')
+								windower.send_command('hb reload; wait 1.5; hb disable cure; hb disable na; hb assist ' ..settings.assist .. '; hb as nolock off; wait 1.0; hb on')
 							end
 							if player.main_job == 'THF' then
 								atc('[BurnSet] THF Init')
 								windower.send_command('wait 1.0; hb f dist 1.5; hb f ' ..settings.assist)
-								windower.send_command('hb disable cure; hb disable na; hb assist ' ..settings.assist .. '; wait 1.0; hb on')
+								windower.send_command('hb disable cure; hb disable na; hb assist ' ..settings.assist .. '; hb as nolock off; wait 1.0; hb on')
 							elseif player.main_job == 'RUN' then
 								atc('[BurnSet] RUN Init')
 								windower.send_command('gs c set autobuffmode off; hb f off; gs c set runeelement tenebrae')

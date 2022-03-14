@@ -1522,6 +1522,7 @@ function as(cmd,namearg)
 			atc('[Assist] Leader for assisting - Melee ONLY')
 			windower.send_command('hb assist off')
 			windower.send_command('hb assist attack off')
+			windower.send_command('hb assist nolock off')
 		else
 			local player_job = windower.ffxi.get_player()
 			local MeleeJobs = S{'WAR','SAM','DRG','DRK','NIN','MNK','COR','BLU','PUP','DNC','RUN','PLD','THF','BST','RNG'}		
@@ -1542,6 +1543,7 @@ function as(cmd,namearg)
 			atc('[Assist] Leader for assisting - Melee+Mage BRD')
 			windower.send_command('hb assist off')
 			windower.send_command('hb assist attack off')
+			windower.send_command('hb assist nolock off')
 		else
 			local player_job = windower.ffxi.get_player()
 			local MeleeJobs = S{'WAR','SAM','DRG','DRK','NIN','MNK','COR','BLU','PUP','DNC','RUN','PLD','THF','BST','RNG','BRD'}		
@@ -1562,6 +1564,7 @@ function as(cmd,namearg)
 			atc('[Assist] Leader for assisting attack - ALL JOBS')
 			windower.send_command('hb assist off')
 			windower.send_command('hb assist attack off')
+			windower.send_command('hb assist nolock off')
 		else
 			atc('[Assist] Attack -> ' .. namearg)
 			windower.send_command('hb assist ' .. namearg)
@@ -1573,14 +1576,26 @@ function as(cmd,namearg)
 			atc('[Assist] Leader for assisting in spells - ALL JOBS')
 			windower.send_command('hb assist off')
 			windower.send_command('hb assist attack off')
+			windower.send_command('hb assist nolock off')
 			windower.send_command('wait 0.5; hb on')
 		else
-			atc('[Assist] Spell only -> ' ..namearg)
-			windower.send_command('hb assist ' .. namearg)
+			atc('[Assist] Spell only / no target or lock  -> ' ..namearg)
+			windower.send_command('hb assist ' .. namearg .. '; hb as nolock on')
+		end
+	elseif cmd == 'lock' then
+		if currentPC.name:lower() == namearg:lower() then
+			atc('[Assist] Leader for assisting with lock - ALL JOBS')
+			windower.send_command('hb assist off')
+			windower.send_command('hb assist attack off')
+			windower.send_command('hb assist nolock off')
+			windower.send_command('wait 0.5; hb on')
+		else
+			atc('[Assist] Lock on assist -> ' ..namearg)
+			windower.send_command('hb assist ' .. namearg .. '; hb as nolock off')
 		end
 	elseif cmd == 'off' then
 		atc('[Assist] OFF')
-		windower.send_command('hb assist off; hb assist attack off')
+		windower.send_command('hb assist off; hb assist attack off; hb assist nolock off;')
 	end
 end
 

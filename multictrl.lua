@@ -88,7 +88,7 @@ InternalCMDS = S{
 
 	--Battle
 	'on','off','stage','fight','fightmage','fightsmall','ws','food','sleep','fin',
-	'wsall','cc','zerg','wstype','buffup','dd','attackon','mb',
+	'wsall','zerg','wstype','buffup','dd','attackon','mb',
 	
 	--Job
 	'brd','bst','cor','sch','smnburn','geoburn','burn','rng','proc','crit','wsproc','jc',
@@ -139,6 +139,12 @@ windower.register_event('addon command', function(input, ...)
 		local leader = windower.ffxi.get_player()
 		buy:schedule(0, cmd2,leader.name)
 		send_to_IPC:schedule(1, cmd,cmd2,leader.name)
+	elseif cmd == 'cc' then						-- Leader
+		local leader = windower.ffxi.get_player()
+		local target = windower.ffxi.get_mob_by_target('t')
+		local mob_id = target and target.valid_target and target.is_npc and target.id
+		cc:schedule(0, mob_id)
+		send_to_IPC:schedule(1, cmd,mob_id)
 	elseif cmd == 'deimos' then
 		local leader = windower.ffxi.get_player()
 		deimos:schedule(0, leader.name)
@@ -516,7 +522,7 @@ function stage(cmd2)
 		atc('[Stage]: Ambu')
 		windower.send_command('gaze ap on')
 		if player_job.main_job == 'BRD' then
-			windower.send_command('wait 2.5; gaze ap off; sing pl melee; sing n on; gs c set weapons dualsavage; gs c othertargetws Sabotender Dulce; sing ballad 1 ' ..tank_char_name.. '; sing ballad 1 ' ..whm_char_name)
+			windower.send_command('wait 2.5; gaze ap off; sing pl melee; sing n on; sing p on; gs c set weapons dualsavage; gs c othertargetws Sabotender Dulce; sing ballad 1 ' ..tank_char_name.. '; sing ballad 1 ' ..whm_char_name)
 		elseif player_job.main_job == 'WHM' then
 			windower.send_command('gs c set castingmode DT; gs c set idlemode DT; hb buff me barstonra; hb buff me barpetra;')
 		elseif player_job.main_job == 'PLD' then
@@ -526,7 +532,7 @@ function stage(cmd2)
 		elseif player_job.main_job == 'GEO' then
 			windower.send_command('hb debuff dia2; gs c set castingmode DT; gs c set idlemode DT;')
 		elseif player_job.main_job == 'WAR' then
-			windower.send_command('gaze ap off; gs c set autotomahawkmode on; gs c othertargetws Sabotender Dulce; gs c set weapons Naegling')
+			windower.send_command('gaze ap off; gs c othertargetws Sabotender Dulce; gs c set weapons Naegling')
 		end
 		settings.autows = true
 	elseif cmd2 == 'ambu2' then
@@ -699,7 +705,7 @@ function stage(cmd2)
 	elseif cmd2 == 'mboze' then
 		windower.send_command('gaze ap off')
 		if player_job.main_job == 'WHM' then
-			windower.send_command('hb buff <me> barstonra; hb buff <me> boost-vit; gs c set castingmode DT; gs c set idlemode DT; hb debuff slow; hb debuff dia2; hb debuff paralyze; hb buff <me> auspice; hb buff ' ..find_job_charname('dd').. ' haste')
+			windower.send_command('hb buff <me> barstonra; hb buff <me> boost-vit; gs c set castingmode DT; gs c set idlemode DT; hb mincuraga 3; hb debuff silence; hb debuff slow; hb debuff dia2; hb debuff paralyze; hb buff <me> auspice; hb buff ' ..find_job_charname('dd').. ' haste')
 		elseif player_job.main_job == 'DRK' or player_job.main_job == 'SAM' or player_job.main_job == 'WAR' then
 			windower.send_command('lua l dressup; gs c set defensedownmode tag')
 			if player_job.main_job == 'DRK' then
@@ -713,7 +719,6 @@ function stage(cmd2)
 			windower.send_command('wait 2.5; sing pl mboze; sing n off; sing p off; sing debuffing off; gs c set idlemode DT; sing debuff wind threnody 2; hb debuff wind threnody ii;')-- hb debuff pining nocturne; hb debuff Foe Requiem VII;')
 		elseif player_job.main_job == 'BLU' then
 			windower.send_command('azuresets set mboze; gs c set castingmode resistant; gs c set AutoBLUSpam on; gs c set weapons MACC; hb debuff silent storm')
-			windower.send_command('input /p Check buff+spam modes')
 		elseif player_job.main_job == 'COR' then
 			windower.send_command('roll melee; gs c set weapons Naegling; gs c set castingmode resistant;')
 		elseif player_job.main_job == 'BST' then
@@ -919,27 +924,35 @@ function wsall()
 	end
 end
 
-function cc()
+function cc(cmd2)
 	local player_job = windower.ffxi.get_player()
 	local SleepJobs = S{'BRD','BLM','RDM','GEO'}
 	local SleepSubs = S{'BLM','RDM'}
+
 	if SleepJobs:contains(player_job.main_job) then
 		
 		if player_job.main_job == "BRD" then
 			atcwarn("CC: Horde Lullaby.")
-			windower.send_command('input /ma \'Horde Lullaby II\' <t>')
+			if cmd2 then
+				windower.send_command('input /ma \'Horde Lullaby II\' ' .. cmd2)
+			else
+				windower.send_command('input /ma \'Horde Lullaby II\' <t>')
+			end
 		elseif player_job.main_job == "BLM" then
 			atcwarn("CC: Sleepga II.")
-			windower.send_command('input /ma \'Sleepga II\' <t>')
-		elseif player_job.main_job == "RDM" then
-			if player_job.sub_job == "BLM" then
-				atcwarn("CC: Sleepga.")
-				windower.send_command('input /ma \'Sleepga\' <t>')
+			if cmd2 then
+				windower.send_command('input /ma \'Sleepga II\' ' .. cmd2)
+			else
+				windower.send_command('input /ma \'Sleepga II\' <t>')
 			end
-		elseif player_job.main_job == "GEO" then
+		elseif player_job.main_job == "RDM" or player_job.main_job == "GEO" then
 			if player_job.sub_job == "BLM" then
 				atcwarn("CC: Sleepga.")
-				windower.send_command('input /ma \'Sleepga\' <t>')
+				if cmd2 then
+					windower.send_command('input /ma \'Sleepga\' ' .. cmd2)
+				else
+					windower.send_command('input /ma \'Sleepga\' <t>')
+				end
 			end
 		end
 	else
@@ -3258,6 +3271,8 @@ windower.register_event('ipc message', function(msg, ...)
 	elseif cmd == 'buy' then
 		coroutine.sleep(delay+delay)
 		buy(cmd2, cmd3)	
+	elseif cmd == 'cc' then
+		cc(cmd2)	
 	end
 end)
 

@@ -612,7 +612,7 @@ function stage(cmd2)
 				windower.send_command('mc sch heal; gs c set autoapmode on;')
 			end
 		elseif player_job.main_job == 'RUN' then
-			windower.send_command('gs c set runeelement ignis; hb buff <me> barblizzard; lua r react')
+			windower.send_command('gs c set runeelement ignis; hb buff <me> barblizzard; hb buff <me> shell v; lua r react')
 		elseif player_job.main_job == 'BRD' then
 			windower.send_command('wait 2.5; sing pl arebati; sing n off; sing p on; gs c set idlemode DT; sing sirvente ' ..tank_char_name.. '; sing ice 1 ' ..tank_char_name.. '; sing ballad 2 ' ..find_job_charname('SCH').. '; hb debuff horde lullaby ii; hb debuff horde lullaby; hb debuff foe lullaby ii; hb debuff foe lullaby; hb debuff off;')
 		elseif player_job.main_job == 'GEO' then
@@ -620,7 +620,7 @@ function stage(cmd2)
 		elseif player_job.main_job == 'RNG' then
 			windower.send_command('gs c set weapons Armageddon; gs c set maintainaftermath on; gs c set rnghelper on; wait 2; gs c autows Last Stand;')
 		elseif player_job.main_job == 'COR' then
-			windower.send_command('roll melee; gs c set maintainaftermath on; gs c set weapons Armageddon; gs c set rnghelper on; wait 2; gs c autows Last Stand;')
+			windower.send_command('roll roll1 chaos; roll roll2 rogue; gs c set maintainaftermath on; gs c set weapons Fomalhaut; gs c set rnghelper on; wait 2; gs c autows Last Stand;')
 		end
 		settings.autows = true
 		settings.rangedmode = true
@@ -642,7 +642,7 @@ function stage(cmd2)
 		settings.autows = true
 	elseif cmd2 == 'are2' then
 		if player_job.main_job == 'GEO' then
-			windower.send_command('gs c autoindi fury; gs c autogeo barrier; gs c autoentrust attunement; gs c set castingmode DT; gs c set idlemode DT; gs c autoentrustee ' ..settings.char1)
+			windower.send_command('gs c autoindi fury; gs c autogeo barrier; gs c autoentrust attunement; gs c set castingmode DT; gs c set idlemode DT; gs c autoentrustee ' ..tank_char_name.. '; mc zerg on')
 		elseif player_job.main_job == 'COR' then
 			--windower.send_command('roll roll1 gallant;')
 		elseif player_job.main_job == 'RNG' then
@@ -863,7 +863,7 @@ function jc(cmd2)
 	if cmd2 == 'ody' then
 		atc('[JC] Odyssey C farm.')
 		if player_job.name == "" ..settings.char1.. "" then
-			windower.send_command("jc run/drk" )
+			windower.send_command("jc run/pld" )
 		elseif player_job.name == "" ..settings.char2.. "" then
 			windower.send_command("jc sam/war" )
 		elseif player_job.name == "" ..settings.char3.. "" then
@@ -1244,7 +1244,7 @@ function cor(cmd2)
 	if player_job.main_job == "COR" then
 		if cmd2 == 'melee' then
 			atc('[COR] Melee rolls + lower radius')
-			windower.send_command('gs c set luzafring off; roll melee;')			
+			windower.send_command('gs c set luzafring on; roll melee;')			
 		elseif cmd2 == 'back' then
 			atc('[COR] Backline rolls + lower radius')
 			windower.send_command('gs c set luzafring off; roll roll1 warlock; roll roll2 gallant;')

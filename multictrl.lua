@@ -753,12 +753,12 @@ function stage(cmd2)
 			windower.send_command('gs c set hybridmode Tank; gs c set weaponskillmode tank')
 		elseif player_job.main_job == 'BRD' then
 			windower.send_command('wait 2.5; sing pl ngai; sing n on; sing p on; sing debuffing off; gs c set weapons Carnwenhan')
-		elseif player_job.main_job == 'DNC' then
+		elseif player_job.main_job == 'GEO' then
 			--windower.send_command('')
 		elseif player_job.main_job == 'COR' then
 			windower.send_command('roll melee')
 			windower.send_command('gs c set weapons Naegling')
-		elseif player_job.main_job == 'SMN' then
+		elseif player_job.main_job == 'WAR' then
 			windower.send_command('gs c set idlemode DT;')
 		end
 	elseif cmd2 == 'lilsam' then
@@ -1522,7 +1522,7 @@ function as(cmd,namearg)
 			atc('[Assist] Leader for assisting - Melee ONLY')
 			windower.send_command('hb assist off')
 			windower.send_command('hb assist attack off')
-			windower.send_command('hb assist nolock off')
+			windower.send_command('hb assist nolock off; gaze ap off')
 		else
 			local player_job = windower.ffxi.get_player()
 			local MeleeJobs = S{'WAR','SAM','DRG','DRK','NIN','MNK','COR','BLU','PUP','DNC','RUN','PLD','THF','BST','RNG'}		
@@ -1531,7 +1531,7 @@ function as(cmd,namearg)
 				windower.send_command('hb assist ' .. namearg)
 				windower.send_command('hb f ' .. namearg)
 				windower.send_command('wait 0.5; hb assist attack on')
-				windower.send_command('wait 0.5; hb on')
+				windower.send_command('wait 0.5; hb on; gaze ap on')
 			else
 				atc('[Assist] Disabling assist, not melee job.')
 				windower.send_command('hb assist off')
@@ -1543,7 +1543,7 @@ function as(cmd,namearg)
 			atc('[Assist] Leader for assisting - Melee+Mage BRD')
 			windower.send_command('hb assist off')
 			windower.send_command('hb assist attack off')
-			windower.send_command('hb assist nolock off')
+			windower.send_command('hb assist nolock off; gaze ap off')
 		else
 			local player_job = windower.ffxi.get_player()
 			local MeleeJobs = S{'WAR','SAM','DRG','DRK','NIN','MNK','COR','BLU','PUP','DNC','RUN','PLD','THF','BST','RNG','BRD'}		
@@ -1552,7 +1552,7 @@ function as(cmd,namearg)
 				windower.send_command('hb assist ' .. namearg)
 				windower.send_command('hb f ' .. namearg)
 				windower.send_command('wait 0.5; hb assist attack on')
-				windower.send_command('wait 0.5; hb on')
+				windower.send_command('wait 0.5; hb on; gaze ap on')
 			else
 				atc('[Assist] Disabling assist, not melee job.')
 				windower.send_command('hb assist off')
@@ -1564,23 +1564,23 @@ function as(cmd,namearg)
 			atc('[Assist] Leader for assisting attack - ALL JOBS')
 			windower.send_command('hb assist off')
 			windower.send_command('hb assist attack off')
-			windower.send_command('hb assist nolock off')
+			windower.send_command('hb assist nolock off; gaze ap off')
 		else
 			atc('[Assist] Attack -> ' .. namearg)
 			windower.send_command('hb assist ' .. namearg)
+            windower.send_command('hb assist nolock off')
 			windower.send_command('wait 0.5; hb assist attack on')
-			windower.send_command('wait 0.5; hb on')
+			windower.send_command('wait 0.5; hb on; gaze ap on')
 		end
 	elseif cmd == 'on' then
 		if currentPC.name:lower() == namearg:lower() then
 			atc('[Assist] Leader for assisting in spells - ALL JOBS')
 			windower.send_command('hb assist off')
 			windower.send_command('hb assist attack off')
-			windower.send_command('hb assist nolock off')
-			windower.send_command('wait 0.5; hb on')
+			windower.send_command('hb assist nolock off; gaze ap off')
 		else
 			atc('[Assist] Spell only / no target or lock  -> ' ..namearg)
-			windower.send_command('hb assist ' .. namearg .. '; hb as nolock on')
+			windower.send_command('hb assist ' .. namearg .. '; hb as nolock on; gaze ap off')
 		end
 	elseif cmd == 'lock' then
 		if currentPC.name:lower() == namearg:lower() then
@@ -1588,14 +1588,13 @@ function as(cmd,namearg)
 			windower.send_command('hb assist off')
 			windower.send_command('hb assist attack off')
 			windower.send_command('hb assist nolock off')
-			windower.send_command('wait 0.5; hb on')
 		else
 			atc('[Assist] Lock on assist -> ' ..namearg)
-			windower.send_command('hb assist ' .. namearg .. '; hb as nolock off')
+			windower.send_command('hb assist ' .. namearg .. '; hb as nolock off; gaze ap off')
 		end
 	elseif cmd == 'off' then
 		atc('[Assist] OFF')
-		windower.send_command('hb assist off; hb assist attack off; hb assist nolock off;')
+		windower.send_command('hb assist off; hb assist attack off; hb assist nolock off; gaze ap off')
 	end
 end
 

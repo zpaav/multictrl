@@ -631,13 +631,13 @@ function stage(cmd2)
 		elseif player_job.main_job == 'PLD' then
 			--windower.send_command('')
 		elseif player_job.main_job == 'BRD' then
-			windower.send_command('wait 2.5; sing debuff nocturne; sing debuffing on; sing p on; gs c set weapons Aeneas; sing pl arewar; sing n off; sing p off; gs c set idlemode DT; sing ballad 2 ' ..settings.char6.. '; sing ballad 2 ' ..settings.char1)
+			windower.send_command('wait 2.5; sing debuff nocturne; sing debuffing on; sing p on; gs c set weapons Aeneas; sing pl arewar; sing n off; sing p off; gs c set idlemode DT; sing ballad 2 ' ..settings.char6.. '; sing ballad 2 ' ..settings.char1..'; gs c othertargetws Arebati;')
 		elseif player_job.main_job == 'BST' then
 			windower.send_command('gs c set JugMode SweetCaroline')
 		elseif player_job.main_job == 'WAR' then
-			windower.send_command('gs c set weapons ShiningOne; gs c set hybridmode SubtleBlow')
+			windower.send_command('gs c set weapons ShiningOne; gs c set hybridmode SubtleBlow; gs c othertargetws Arebati;')
 		elseif player_job.main_job == 'COR' then
-			windower.send_command('roll melee; gs c set weapons Fomalhaut; gs c autows Last Stand; gs c set castingmode resistant')
+			windower.send_command('roll melee; gs c set weapons Fomalhaut; gs c autows Last Stand; gs c set castingmode resistant; gs c othertargetws Arebati;')
 		end
 		settings.autows = true
 	elseif cmd2 == 'are2' then
@@ -1222,11 +1222,13 @@ end
 
 function bst(cmd2)
 	local player_job = windower.ffxi.get_player()
+    local petjug = ''
 	if player_job.main_job == "BST" then
-		if cmd2 == 'killer' then
+		if cmd2 == 'mboze' or cmd2 == 'arebati' then
+            if cmd2 == 'mboze' then petjug='SweetCaroline' end
+            if cmd2 == 'arebati' then petjug='ScissorlegXerin' end
 			atc('[BST] Killer Toggle')
-		windower.send_command('gs c set AutoCallPet off; gs c set AutoFightMode off; gs c set AutoReadyMode off; gs c set JugMode ScissorlegXerin; wait 5.0; input /ja "Leave" <me>; wait 2.5; gs c set AutoCallPet on')
-				--windower.send_command('gs c set AutoCallPet off; gs c set AutoFightMode off; gs c set AutoReadyMode off; gs c set JugMode SweetCaroline; wait 1.3; input /ja "Leave" <me>; wait 1.8; gs c set AutoCallPet on')
+            windower.send_command('gs c set AutoCallPet off; gs c set AutoFightMode off; gs c set AutoReadyMode off; gs c set JugMode '..petjug..'; wait 5.0; input /ja "Leave" <me>; wait 2.5; gs c set AutoCallPet on')
 			windower.send_command:schedule(11.0, 'input /ja "Killer Instinct" <me>; gs c set JugMode FatsoFargann; wait 3.5; input /ja "Leave" <me>; wait 3.5; gs c set AutoCallPet on; gs c set AutoReadyMode on;')
 		elseif cmd2 == 'init' then
 			atc('[BST] Use Killer then reset to TP pet')

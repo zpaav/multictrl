@@ -1191,13 +1191,13 @@ function brd(cmd2)
 	if player_job.main_job == "BRD" then
 		if cmd2 == 'ambu' then
 			atc('[BRD] Ambu')
-			windower.send_command("hb buff " ..tank_jobs.. " mage's ballad III; hb buff " ..tank_jobs.. "  sentinel's scherzo;")
+			windower.send_command("hb buff " ..tank_jobs.. " mage's ballad III; hb buff " ..tank_jobs.. "  sentinel's scherzo; hb on")
 		elseif cmd2 == 'ody' then
 			atc('[BRD] Odyssey dispel')
-			windower.send_command("hb buff " ..tank_jobs.. " sentinel's scherzo; hb buff " ..tank_jobs.. " foe sirvente; hb buff " ..tank_jobs.. " scop's operetta; hb buff " ..tank_jobs.. " victory march")
+			windower.send_command("hb buff " ..tank_jobs.. " sentinel's scherzo; hb buff " ..tank_jobs.. " foe sirvente; hb buff " ..tank_jobs.. " scop's operetta; hb buff " ..tank_jobs.. " victory march; hb on")
 		elseif cmd2 == 'arebati' then
 			atc('[BRD] Arebati')
-			windower.send_command("hb buff " ..tank_jobs.. " ice carol; hb buff " ..tank_jobs.. " foe sirvente; hb buff " ..tank_jobs.. " scop's operetta; hb buff " ..tank_jobs.. " ice carol II")
+			windower.send_command("hb buff " ..tank_jobs.. " ice carol; hb buff " ..tank_jobs.. " foe sirvente; hb buff " ..tank_jobs.. " scop's operetta; hb buff " ..tank_jobs.. " ice carol II; hb on")
 		elseif cmd2 == 'reset' then
 			atc('[BRD] Reset')
 			windower.send_command("hb nobuff " ..tank_jobs.. " all")

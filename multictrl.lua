@@ -1530,11 +1530,10 @@ function as(cmd,namearg)
 				atc('[Assist] Attack -> ' ..namearg)
 				windower.send_command('hb assist ' .. namearg)
 				windower.send_command('hb f ' .. namearg)
-				windower.send_command('wait 0.5; hb assist attack on')
+				windower.send_command('wait 0.5; hb as attack on; hb as nolock off')
 				windower.send_command('wait 0.5; hb on; gaze ap on')
 			else
-				atc('[Assist] Disabling assist, not melee job.')
-				windower.send_command('hb assist off')
+				atc('[Assist] Disabling attack, not melee job.')
 				windower.send_command('hb assist attack off')
 			end
 		end
@@ -1551,11 +1550,10 @@ function as(cmd,namearg)
 				atc('[Assist] Attack -> ' ..namearg)
 				windower.send_command('hb assist ' .. namearg)
 				windower.send_command('hb f ' .. namearg)
-				windower.send_command('wait 0.5; hb assist attack on')
+				windower.send_command('wait 0.5; hb as attack on; hb as nolock off')
 				windower.send_command('wait 0.5; hb on; gaze ap on')
 			else
-				atc('[Assist] Disabling assist, not melee job.')
-				windower.send_command('hb assist off')
+				atc('[Assist] Disabling attack, not melee job.')
 				windower.send_command('hb assist attack off')
 			end
 		end
@@ -1580,7 +1578,7 @@ function as(cmd,namearg)
 			windower.send_command('hb assist nolock off; gaze ap off')
 		else
 			atc('[Assist] Spell only / no target or lock  -> ' ..namearg)
-			windower.send_command('hb assist ' .. namearg .. '; hb as nolock on; gaze ap off')
+			windower.send_command('hb assist ' .. namearg .. '; hb as nolock on;')
 		end
 	elseif cmd == 'lock' then
 		if currentPC.name:lower() == namearg:lower() then
@@ -2276,15 +2274,15 @@ function get(cmd2)
 	elseif cmd2 == 'srki' and zone == 276  then
 		atc('GET: SR KI.')
 		get_poke_check('Malobra')
-		windower.send_command('wait 1.1; setkey down down; wait 0.1; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.0; setkey up down; wait 0.5; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
+		windower.send_command('wait 0.5; setkey down down; wait 0.1; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.0; setkey up down; wait 0.5; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
 	elseif cmd2 == 'srdrops' and zone == 276 then
 		atc('GET: SR Rewards.')
 		get_poke_check('Malobra')
-		windower.send_command('wait 1; setkey down down; wait 0.1; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
+		windower.send_command('wait 0.5; setkey down down; wait 0.1; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
 	elseif cmd2 == 'tag' and zone == 50 then
 		atc('GET: Assault tag.')
 		get_poke_check('Rytaal')
-		windower.send_command('wait 2; setkey enter down; wait 0.5; setkey enter up;')
+		windower.send_command('wait 1; setkey enter down; wait 0.5; setkey enter up;')
 	elseif cmd2 == 'nyzul' and zone == 50 then
 		atc('GET: Nyzul tag.')
 		get_poke_check('Sorrowful Sage')

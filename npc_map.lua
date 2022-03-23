@@ -19,9 +19,14 @@ return {
 	[272] = {'???'},
 	[273] = {'???'},
 	[261] = {'???'},
+    [163] = {'Mahogany Door'},
+    [165] = {'Throne Room'},
+    [206] = {'Burning Circle'},
+    [168] = {'Shimmering Circle'},
+    [139] = {'Burning Circle'},
+    [144] = {'Burning Circle'},
 	[146] = {'Burning Circle'},
 	[256] = {'Dangueubert'},
 	[257] = {'Cunegonde'},
 	[67] = {'Ornamental Door'},
 }
-

@@ -91,7 +91,7 @@ InternalCMDS = S{
 	'wsall','zerg','wstype','buffup','dd','attackon','mb',
 	
 	--Job
-	'brd','bst','cor','sch','smnburn','geoburn','burn','rng','proc','crit','wsproc','jc',
+	'brd','bst','sch','smnburn','geoburn','burn','rng','proc','crit','wsproc','jc',
 	--Travel
 	'mnt','dis','warp','omen','enup','endown','ent','esc','go','enter','get','deimos','macro',
 	--Misc
@@ -139,13 +139,12 @@ windower.register_event('addon command', function(input, ...)
 		local leader = windower.ffxi.get_player()
 		buy:schedule(0, cmd2,leader.name)
 		send_to_IPC:schedule(1, cmd,cmd2,leader.name)
-	elseif cmd == 'statue' then						-- Leader
+    elseif cmd == 'cor' then						-- Mob ID
 		local target = windower.ffxi.get_mob_by_target('t')
 		local mob_id = target and target.valid_target and target.is_npc and target.id
-		statue:schedule(0, mob_id)
-		send_to_IPC:schedule(1, cmd,mob_id)
-	elseif cmd == 'cc' then						-- Leader
-		local leader = windower.ffxi.get_player()
+		cor:schedule(0, cmd2, mob_id)
+		send_to_IPC:schedule(1, cmd,cmd2,mob_id)
+	elseif cmd == 'cc' then				    		-- Mob ID
 		local target = windower.ffxi.get_mob_by_target('t')
 		local mob_id = target and target.valid_target and target.is_npc and target.id
 		cc:schedule(0, mob_id)
@@ -885,7 +884,6 @@ function jc(cmd2)
 	end
 end
 
-
 function wsall()
 	atc("WSALL!")
 	local player_job = windower.ffxi.get_player()
@@ -929,28 +927,13 @@ function wsall()
 	end
 end
 
-function statue(cmd2)
-    local player_job = windower.ffxi.get_player()
-    local mob = cmd2 and windower.ffxi.get_mob_by_id(cmd2)
-    if player_job.main_job == "COR" then
-        atcwarn("[Statue] - Leaden")
-        if cmd2 and player_job.vitals.tp > 1000 and (math.sqrt(mob.distance) < 21) then
-            local self_vector = windower.ffxi.get_mob_by_id(player_job.id)
-			local angle = (math.atan2((mob.y - self_vector.y), (mob.x - self_vector.x))*180/math.pi)*-1
-			windower.ffxi.turn((angle):radian())
-            windower.send_command:schedule(0.75,'input /ws \'Leaden Salute\' ' .. cmd2)
-        end
-    else
-        atcwarn("CC: [Statue] - NOT COR, skipping.")
-    end
-end
-
 function cc(cmd2)
 	local player_job = windower.ffxi.get_player()
 	local SleepJobs = S{'BRD','BLM','RDM','GEO'}
 	local SleepSubs = S{'BLM','RDM'}
+    local world = res.zones[windower.ffxi.get_info().zone].name
 
-	if SleepJobs:contains(player_job.main_job) then
+	if SleepJobs:contains(player_job.main_job) and not(areas.Cities:contains(world)) then
 		
 		if player_job.main_job == "BRD" then
 			atcwarn("CC: Horde Lullaby.")
@@ -1262,11 +1245,14 @@ function bst(cmd2)
 	end
 end
 
-function cor(cmd2)
+function cor(cmd2, cmd3)
 	local player_job = windower.ffxi.get_player()
+    local mob = cmd3 and windower.ffxi.get_mob_by_id(cmd3)
+    local world = res.zones[windower.ffxi.get_info().zone].name
+    
 	if player_job.main_job == "COR" then
 		if cmd2 == 'melee' then
-			atc('[COR] Melee rolls + lower radius')
+			atc('[COR] Melee rolls + higher radius')
 			windower.send_command('gs c set luzafring on; roll melee;')			
 		elseif cmd2 == 'back' then
 			atc('[COR] Backline rolls + lower radius')
@@ -1274,9 +1260,19 @@ function cor(cmd2)
 		elseif cmd2 == 'aoe' then
 			atc('[COR] Set Luzaf ON')
 			windower.send_command('gs c set luzafring on')
-		elseif cmd2 == 'statue' then
+		elseif cmd2 == 'statue' and not(areas.Cities:contains(world)) then
 			atc('[COR] Killing statues')
 			windower.send_command('gs c killstatue')
+        elseif cmd2 == 'leaden' and not(areas.Cities:contains(world)) then
+            atc('[COR] Leaden Salute')
+            if cmd3 and player_job.vitals.tp > 1000 and (math.sqrt(mob.distance) < 21) then
+                local self_vector = windower.ffxi.get_mob_by_id(player_job.id)
+                local angle = (math.atan2((mob.y - self_vector.y), (mob.x - self_vector.x))*180/math.pi)*-1
+                windower.ffxi.turn((angle):radian())
+                windower.send_command:schedule(0.75,'input /ws \'Leaden Salute\' ' .. cmd2)
+            else
+                atc('[COR] Target too far or not enough TP!')
+            end
 		else
 			atc('[COR] Invalid command')
 		end
@@ -2383,31 +2379,20 @@ function get(cmd2)
 		else
 			atc('GET: Already have Mollifier!')
 		end
-	elseif cmd2 == 'trib' and EschaZones:contains(zone) then
-		atc('GET: Tribulens')
-		if not find_missing_ki(cmd2) then
-			if zone == 288 then
-				get_poke_check('Affi')
-			elseif zone == 289 then
-				get_poke_check('Dremi')
-			elseif zone == 291 then
-				get_poke_check('Shiftrix')
-			end
-			if npc_dialog == true then
-				windower.send_command('wait 4.7; setkey right down; wait 1.5; setkey right up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey enter down; wait 0.5; setkey enter up; wait 1.0; ' ..
-			--	windower.send_command('wait 4.7; setkey down down; wait 0.05; setkey down up; wait 1; setkey down down; wait 0.05; setkey down up; wait 1.5; setkey enter down; wait 0.5; setkey enter up; wait 1.5; ' ..
-					'setkey down down; wait 0.05; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.5; ' ..
-					'setkey up down; wait 0.05; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 2.5; setkey escape down; wait 0.05; setkey escape up;')
-			end
-		else
-			atc('GET: Already have Tribulens!')
-		end
 	elseif cmd2 == 'deimos' and zone == 246 then
 		atc('GET: Deimos Orb, will not check if you have enough seals!')
 		get_poke_check('Shami')
 		if npc_dialog == true then
 			windower.send_command('wait 1.6; setkey right down; wait 0.05; setkey right up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; ' ..
 				'setkey down down; wait 0.05; setkey down up; wait 0.75; setkey down down; wait 0.05; setkey down up; wait 0.75; setkey enter down; wait 0.5; setkey enter up; wait 0.75; setkey enter down; wait 0.5; setkey enter up; wait 0.75; ' ..
+				'setkey up down; wait 0.05; setkey up up; wait 0.75; setkey enter down; wait 0.5; setkey enter up;')
+		end
+	elseif cmd2 == 'macro' and zone == 246 then
+		atc('GET: Macrocosmic Orb, will not check if you have enough seals!')
+		get_poke_check('Shami')
+		if npc_dialog == true then
+			windower.send_command('wait 1.6; setkey right down; wait 0.05; setkey right up; wait 0.7; setkey down down; wait 0.05; setkey down up; wait 0.25; setkey down down; wait 0.05; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; ' ..
+				'setkey right down; wait 0.05; setkey right up; wait 0.75; setkey enter down; wait 0.5; setkey enter up; wait 0.75; setkey enter down; wait 0.5; setkey enter up; wait 0.75; ' ..
 				'setkey up down; wait 0.05; setkey up up; wait 0.75; setkey enter down; wait 0.5; setkey enter up;')
 		end
 	else
@@ -2428,15 +2413,15 @@ end
 function macro(leader)
 	local zone = windower.ffxi.get_info()['zone']
 	local player = windower.ffxi.get_player()
-	local deimos_zones = S{146}
+	local macro_zones = S{163,165,206,168,139,144,146}
 		
-	if deimos_zones:contains(zone) then
+	if macro_zones:contains(zone) then
 		if leader == player.name then
 			atc('[Macro Orb] - Leader with Orb.')
 			local possible_npc = find_npc_to_poke()
 			if possible_npc then
-				windower.send_command('wait 1; tradenpc 1 "macrocosmic orb" "Burning Circle"; wait 5.5; setkey down down; wait 0.25; setkey down up; wait 1.5; setkey enter down; wait 0.25; setkey enter up; wait 0.75; setkey left down; wait 1.05; setkey left up; wait 0.5; setkey enter down; wait 0.25; setkey enter up;')
-				coroutine.sleep(20)
+				windower.send_command('wait 1; tradenpc 1 "macrocosmic orb" "Burning Circle"; wait 10.5; setkey down down; wait 0.25; setkey down up; wait 1.5; setkey enter down; wait 0.25; setkey enter up; wait 0.75; setkey left down; wait 1.05; setkey left up; wait 0.5; setkey enter down; wait 0.25; setkey enter up;')
+				coroutine.sleep(25)
 				if haveBuff('Battlefield') then
 					local items = windower.ffxi.get_items()
 					for index, item in pairs(items.inventory) do
@@ -2449,7 +2434,7 @@ function macro(leader)
 			end
 		else
 			atc('[Macro Orb] - Others to enter.')
-			coroutine.sleep(15)
+			coroutine.sleep(20)
 			if haveBuff('Battlefield') then
 				local possible_npc = find_npc_to_poke()
 				if possible_npc then
@@ -2470,7 +2455,7 @@ end
 function deimos(leader)
 	local zone = windower.ffxi.get_info()['zone']
 	local player = windower.ffxi.get_player()
-	local deimos_zones = S{146}
+	local deimos_zones = S{163,168,139,144,146}
 		
 	if deimos_zones:contains(zone) then
 		if leader == player.name then
@@ -2515,7 +2500,7 @@ function enter()
 	local cloister_zones = S{201,202,203,207,209,211}
 	local adoulin_beam_zones = S{265,268,269,272,273}
 	local wkr_zones = S{261,262,263,265,266,267}
-	local deimos_zones = S{146}
+    local orb_zones = S{163,165,206,168,139,144,146}
 
 	if haveBuff('Invisible') then
 		windower.send_command('cancel invisible')
@@ -2526,8 +2511,8 @@ function enter()
 	end
 
 	--if not contains(deimos_zones, zone) then
-	if deimos_zones:contains(zone) then
-		atc('[ENTER] Nothing to poke for Deimos Orb.')
+	if orb_zones:contains(zone) then
+		atc('[ENTER] Nothing to poke for orb fights, cancelling.')
 	else
 		local possible_npc = find_npc_to_poke()
 		
@@ -3288,8 +3273,8 @@ windower.register_event('ipc message', function(msg, ...)
 		buy(cmd2, cmd3)	
 	elseif cmd == 'cc' then
 		cc(cmd2)	
-    elseif cmd == 'statue' then
-		statue(cmd2)	
+    elseif cmd == 'cor' then
+        cor(cmd2,cmd3)
 	end
 end)
 

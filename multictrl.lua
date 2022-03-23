@@ -139,6 +139,11 @@ windower.register_event('addon command', function(input, ...)
 		local leader = windower.ffxi.get_player()
 		buy:schedule(0, cmd2,leader.name)
 		send_to_IPC:schedule(1, cmd,cmd2,leader.name)
+	elseif cmd == 'statue' then						-- Leader
+		local target = windower.ffxi.get_mob_by_target('t')
+		local mob_id = target and target.valid_target and target.is_npc and target.id
+		statue:schedule(0, mob_id)
+		send_to_IPC:schedule(1, cmd,mob_id)
 	elseif cmd == 'cc' then						-- Leader
 		local leader = windower.ffxi.get_player()
 		local target = windower.ffxi.get_mob_by_target('t')
@@ -922,6 +927,22 @@ function wsall()
 			windower.send_command('input /ws \'Black Halo\' <t>')
 		end
 	end
+end
+
+function statue(cmd2)
+    local player_job = windower.ffxi.get_player()
+    local mob = cmd2 and windower.ffxi.get_mob_by_id(cmd2)
+    if player_job.main_job == "COR" then
+        atcwarn("[Statue] - Leaden")
+        if cmd2 and player_job.vitals.tp > 1000 and (math.sqrt(mob.distance) < 21) then
+            local self_vector = windower.ffxi.get_mob_by_id(player_job.id)
+			local angle = (math.atan2((mob.y - self_vector.y), (mob.x - self_vector.x))*180/math.pi)*-1
+			windower.ffxi.turn((angle):radian())
+            windower.send_command:schedule(0.75,'input /ws \'Leaden Salute\' ' .. cmd2)
+        end
+    else
+        atcwarn("CC: [Statue] - NOT COR, skipping.")
+    end
 end
 
 function cc(cmd2)
@@ -2314,6 +2335,12 @@ function get(cmd2)
 		if npc_dialog == true then
 			windower.send_command('wait 3; setkey enter down; wait 0.5; setkey enter up;')
 		end
+    elseif cmd2 == 'ody' and (zone == 279 or zone == 298) then
+		atc('GET: Odyssey Rewards')
+		get_poke_check('Otherworldly Vortex')
+		if npc_dialog == true then
+			windower.send_command('wait 0.1; setkey esc down; wait 0.5; setkey esc up;')
+		end
 	elseif cmd2 == 'aby' and areas.Abyssea:contains(zone) then
 		atc('GET: Abyssea Visitation - Remaining time')
 		get_poke_check('Conflux Surveyor')
@@ -2375,32 +2402,6 @@ function get(cmd2)
 		else
 			atc('GET: Already have Tribulens!')
 		end
-	-- elseif cmd2 == 'rads' and EschaZones:contains(zone) then
-		-- atc('GET: Radialens')
-		-- if not find_missing_ki(cmd2) then
-			-- if zone == 288 then
-				-- get_poke_check('Affi')
-			-- elseif zone == 289 then
-				-- get_poke_check('Dremi')
-			-- elseif zone == 291 then
-				-- get_poke_check('Shiftrix')
-			-- end
-			-- if npc_dialog == true then
-				-- if find_missing_ki('moll') then
-					-- windower.send_command('wait 4.7; setkey right down; wait 1.5; setkey right up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey enter down; wait 0.5; setkey enter up; wait 1.0; ' ..
--- --					windower.send_command('wait 4.7; setkey down down; wait 0.05; setkey down up; wait 1; setkey down down; wait 0.05; setkey down up; wait 1.5; setkey enter down; wait 0.5; setkey enter up; wait 1.5; ' ..
-						-- 'setkey right down; wait 1.2; setkey right up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.5; ' ..
-						-- 'setkey up down; wait 0.05; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 2.5; setkey escape down; wait 0.05; setkey escape up;')
-				-- else
-					-- windower.send_command('wait 4.7; setkey right down; wait 1.5; setkey right up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey enter down; wait 0.5; setkey enter up; wait 1.0; ' ..
-	-- --				windower.send_command('wait 4.7; setkey down down; wait 0.05; setkey down up; wait 1; setkey down down; wait 0.05; setkey down up; wait 1.5; setkey enter down; wait 0.5; setkey enter up; wait 1.5; ' ..
-						-- 'setkey right down; wait 1.2; setkey right up; wait 1.0; setkey up down; wait 0.05; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 1.5; ' ..
-						-- 'setkey up down; wait 0.05; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up; wait 2.5; setkey escape down; wait 0.05; setkey escape up;')
-				-- end
-			-- end
-		-- else
-			-- atc('GET: Already have Radialens!')
-		-- end
 	elseif cmd2 == 'deimos' and zone == 246 then
 		atc('GET: Deimos Orb, will not check if you have enough seals!')
 		get_poke_check('Shami')
@@ -3287,6 +3288,8 @@ windower.register_event('ipc message', function(msg, ...)
 		buy(cmd2, cmd3)	
 	elseif cmd == 'cc' then
 		cc(cmd2)	
+    elseif cmd == 'statue' then
+		statue(cmd2)	
 	end
 end)
 

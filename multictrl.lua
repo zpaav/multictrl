@@ -535,7 +535,7 @@ function stage(cmd2)
 			windower.send_command('gaze ap off; gs c set weapons dualsavage; roll melee; gs c othertargetws Sabotender Dulce;')
 		elseif player_job.main_job == 'GEO' then
 			windower.send_command('hb debuff dia2; gs c set castingmode DT; gs c set idlemode DT;')
-		elseif player_job.main_job == 'WAR' then
+		elseif player_job.main_job == 'WAR' or player_job.main_job == 'SAM' or player_job.main_job == 'DRK' then
 			windower.send_command('gaze ap off; gs c othertargetws Sabotender Dulce; gs c set weapons Naegling')
 		end
 		settings.autows = true
@@ -1269,7 +1269,7 @@ function cor(cmd2, cmd3)
                 local self_vector = windower.ffxi.get_mob_by_id(player_job.id)
                 local angle = (math.atan2((mob.y - self_vector.y), (mob.x - self_vector.x))*180/math.pi)*-1
                 windower.ffxi.turn((angle):radian())
-                windower.send_command:schedule(0.75,'input /ws \'Leaden Salute\' ' .. cmd2)
+                windower.send_command:schedule(0.75,'input /ja \'Leaden Salute\' ' .. cmd3)
             else
                 atc('[COR] Target too far or not enough TP!')
             end
@@ -1533,23 +1533,28 @@ function fps(cmd2)
 	end
 end
 
+local function as_helper(cmd)
+    if cmd and cmd == 'reset' then
+    	windower.send_command('hb as off; hb as attack off; hb as nolock off; hb as sametarget off; gaze ap off;')
+    elseif cmd and cmd == 'lead_reset' then
+        windower.send_command('hb f off; hb as off; hb as attack off; hb as nolock off; hb as sametarget off; gaze ap off;')
+    end
+end
 function as(cmd,namearg)
 
 	currentPC=windower.ffxi.get_player()
 	if cmd == 'melee' then
 		if currentPC.name:lower() == namearg:lower() then
 			atc('[Assist] Leader for assisting - Melee ONLY')
-			windower.send_command('hb assist off')
-			windower.send_command('hb assist attack off')
-			windower.send_command('hb assist nolock off; gaze ap off')
+			as_helper('lead_reset')
 		else
 			local player_job = windower.ffxi.get_player()
 			local MeleeJobs = S{'WAR','SAM','DRG','DRK','NIN','MNK','COR','BLU','PUP','DNC','RUN','PLD','THF','BST','RNG'}		
 			if MeleeJobs:contains(player_job.main_job) then
 				atc('[Assist] Attack -> ' ..namearg)
-				windower.send_command('hb assist ' .. namearg)
+				windower.send_command('hb as ' .. namearg)
 				windower.send_command('hb f ' .. namearg)
-				windower.send_command('wait 0.5; hb as attack on; hb as nolock off')
+				windower.send_command('wait 0.5; hb as nolock off; hb as attack on;')
 				windower.send_command('wait 0.5; hb on; gaze ap on')
 			else
 				atc('[Assist] Disabling attack, not melee job.')
@@ -1559,17 +1564,15 @@ function as(cmd,namearg)
 	elseif cmd == 'mag' then
 		if currentPC.name:lower() == namearg:lower() then
 			atc('[Assist] Leader for assisting - Melee+Mage BRD')
-			windower.send_command('hb assist off')
-			windower.send_command('hb assist attack off')
-			windower.send_command('hb assist nolock off; gaze ap off')
+			as_helper('lead_reset')
 		else
 			local player_job = windower.ffxi.get_player()
 			local MeleeJobs = S{'WAR','SAM','DRG','DRK','NIN','MNK','COR','BLU','PUP','DNC','RUN','PLD','THF','BST','RNG','BRD'}		
 			if MeleeJobs:contains(player_job.main_job) then
 				atc('[Assist] Attack -> ' ..namearg)
-				windower.send_command('hb assist ' .. namearg)
+				windower.send_command('hb as ' .. namearg)
 				windower.send_command('hb f ' .. namearg)
-				windower.send_command('wait 0.5; hb as attack on; hb as nolock off')
+				windower.send_command('wait 0.5; hb as nolock off; hb as attack on;')
 				windower.send_command('wait 0.5; hb on; gaze ap on')
 			else
 				atc('[Assist] Disabling attack, not melee job.')
@@ -1579,39 +1582,41 @@ function as(cmd,namearg)
 	elseif cmd == 'all' then
 		if currentPC.name:lower() == namearg:lower() then
 			atc('[Assist] Leader for assisting attack - ALL JOBS')
-			windower.send_command('hb assist off')
-			windower.send_command('hb assist attack off')
-			windower.send_command('hb assist nolock off; gaze ap off')
+			as_helper('lead_reset')
 		else
 			atc('[Assist] Attack -> ' .. namearg)
-			windower.send_command('hb assist ' .. namearg)
-            windower.send_command('hb assist nolock off')
-			windower.send_command('wait 0.5; hb assist attack on')
+			windower.send_command('hb as ' .. namearg)
+            windower.send_command('hb f ' .. namearg)
+			windower.send_command('wait 0.5; hb as nolock off; hb as attack on;')
 			windower.send_command('wait 0.5; hb on; gaze ap on')
 		end
 	elseif cmd == 'on' then
 		if currentPC.name:lower() == namearg:lower() then
 			atc('[Assist] Leader for assisting in spells - ALL JOBS')
-			windower.send_command('hb assist off')
-			windower.send_command('hb assist attack off')
-			windower.send_command('hb assist nolock off; gaze ap off')
+			as_helper('lead_reset')
 		else
 			atc('[Assist] Spell only / no target or lock  -> ' ..namearg)
-			windower.send_command('hb assist ' .. namearg .. '; hb as nolock on;')
+			windower.send_command('hb as ' .. namearg .. '; hb as nolock on;')
 		end
 	elseif cmd == 'lock' then
 		if currentPC.name:lower() == namearg:lower() then
 			atc('[Assist] Leader for assisting with lock - ALL JOBS')
-			windower.send_command('hb assist off')
-			windower.send_command('hb assist attack off')
-			windower.send_command('hb assist nolock off')
+			as_helper('lead_reset')
 		else
 			atc('[Assist] Lock on assist -> ' ..namearg)
-			windower.send_command('hb assist ' .. namearg .. '; hb as nolock off; gaze ap off')
+			windower.send_command('hb as ' .. namearg .. '; hb as nolock off; gaze ap off')
+		end
+    elseif cmd == 'same' then
+		if currentPC.name:lower() == namearg:lower() then
+			atc('[Assist] Leader for assisting with same target(set target) - ALL JOBS')
+			as_helper('lead_reset')
+		else
+			atc('[Assist] Same target on attack/engage -> ' ..namearg)
+			windower.send_command('hb as sametarget;')
 		end
 	elseif cmd == 'off' then
 		atc('[Assist] OFF')
-		windower.send_command('hb assist off; hb assist attack off; hb assist nolock off; gaze ap off')
+		as_helper('reset')
 	end
 end
 
@@ -2335,7 +2340,7 @@ function get(cmd2)
 		atc('GET: Odyssey Rewards')
 		get_poke_check('Otherworldly Vortex')
 		if npc_dialog == true then
-			windower.send_command('wait 0.1; setkey esc down; wait 0.5; setkey esc up;')
+			windower.send_command('wait 1.3; setkey escape down; wait 0.5; setkey escape up;')
 		end
 	elseif cmd2 == 'aby' and areas.Abyssea:contains(zone) then
 		atc('GET: Abyssea Visitation - Remaining time')

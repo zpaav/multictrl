@@ -937,14 +937,14 @@ function cc(cmd2)
 		
 		if player_job.main_job == "BRD" then
 			atcwarn("CC: Horde Lullaby.")
-			if cmd2 then
+			if cmd2 and not (player_job.target_locked) then
 				windower.send_command('input /ma \'Horde Lullaby II\' ' .. cmd2)
 			else
 				windower.send_command('input /ma \'Horde Lullaby II\' <t>')
 			end
 		elseif player_job.main_job == "BLM" then
 			atcwarn("CC: Sleepga II.")
-			if cmd2 then
+			if cmd2 and not (player_job.target_locked) then
 				windower.send_command('input /ma \'Sleepga II\' ' .. cmd2)
 			else
 				windower.send_command('input /ma \'Sleepga II\' <t>')
@@ -952,10 +952,17 @@ function cc(cmd2)
 		elseif player_job.main_job == "RDM" or player_job.main_job == "GEO" then
 			if player_job.sub_job == "BLM" then
 				atcwarn("CC: Sleepga.")
-				if cmd2 then
+				if cmd2 and not (player_job.target_locked) then
 					windower.send_command('input /ma \'Sleepga\' ' .. cmd2)
 				else
 					windower.send_command('input /ma \'Sleepga\' <t>')
+				end
+            else
+            	atcwarn("CC: Sleep II.")
+				if cmd2 and not (player_job.target_locked) then
+					windower.send_command('input /ma \'Sleep II\' ' .. cmd2)
+				else
+					windower.send_command('input /ma \'Sleep II\' <t>')
 				end
 			end
 		end

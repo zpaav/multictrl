@@ -88,7 +88,7 @@ InternalCMDS = S{
 
 	--Battle
 	'on','off','stage','fight','fightmage','fightsmall','ws','food','sleep',
-	'wsall','zerg','wstype','buffup','dd','attackon','mb',
+	'wsall','zerg','wstype','buffup','dd','attackon','mb','reraise',
 	
 	--Job
 	'brd','bst','sch','smnburn','geoburn','burn','rng','proc','crit','wsproc','jc',
@@ -1276,6 +1276,48 @@ function cc(cmd2)
             atcwarn("[CC]: Non sleepable jobs, skipping")
         end
 	end
+end
+
+function reraise()
+    local player_job = windower.ffxi.get_player()
+    if player_job.main_job == "WHM" then
+        if not haveBuff('Reraise') then
+            while not (haveBuff('Reraise')) do
+                atc("[Reraise]: Attempting to cast Reraise IV.")
+                windower.send_command('input /ma "Reraise IV" <me>')
+                coroutine.sleep(5)
+            end
+        else
+            atc("[Reraise]: Already have reraise!")
+        end
+    elseif player_job.main_job == "SCH" then
+        if not haveBuff('Reraise') then
+            while not (haveBuff('Reraise')) do
+                atc("[Reraise]: Attempting to cast Reraise III.")
+                windower.send_command('input /ma "Reraise III" <me>')
+                coroutine.sleep(5)
+            end
+        else
+            atc("[Reraise]: Already have reraise!")
+        end
+    elseif player_job.sub_job == "WHM" then
+        if not haveBuff('Reraise') then
+            while not (haveBuff('Reraise')) do
+                atc("[Reraise]: Attempting to cast Reraise.")
+                windower.send_command('input /ma "Reraise" <me>')
+                coroutine.sleep(5)
+            end
+        else
+            atc("[Reraise]: Already have reraise!")
+        end
+    else
+        if not haveBuff('Reraise') then
+            atc("[Reraise]: Attempting item reraise")
+            windower.send_command('reraise')
+        else
+            atc("[Reraise]: Already have reraise!")
+        end
+    end
 end
 
 function fin(cmd2)

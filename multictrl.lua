@@ -87,7 +87,7 @@ jobnames = {
 InternalCMDS = S{
 
 	--Battle
-	'on','off','stage','fight','fightmage','fightsmall','ws','food','sleep','fin',
+	'on','off','stage','fight','fightmage','fightsmall','ws','food','sleep',
 	'wsall','zerg','wstype','buffup','dd','attackon','mb',
 	
 	--Job
@@ -148,6 +148,11 @@ windower.register_event('addon command', function(input, ...)
 		local target = windower.ffxi.get_mob_by_target('t')
 		local mob_id = target and target.valid_target and target.is_npc and target.id
 		cc:schedule(0, mob_id)
+		send_to_IPC:schedule(1, cmd,mob_id)
+	elseif cmd == 'fin' then				    		-- Mob ID
+		local target = windower.ffxi.get_mob_by_target('t')
+		local mob_id = target and target.valid_target and target.is_npc and target.id
+		fin:schedule(0, mob_id)
 		send_to_IPC:schedule(1, cmd,mob_id)
 	elseif cmd == 'deimos' then
 		local leader = windower.ffxi.get_player()
@@ -543,6 +548,46 @@ function stage(cmd2)
 		if player_job.main_job == 'RDM' then
 			windower.send_command('hb f off; hb as off; hb off')
 		end
+    elseif cmd2 == 'wave1' then
+        if player_job.main_job == 'COR' then
+			windower.send_command('gs c set weapons DualLeadenRanged; roll roll1 tact; roll roll2 wizard;')
+		elseif player_job.main_job == 'GEO' then
+			windower.send_command('gs c set castingmode DT; gs c set idlemode DT; gmalaise; iacumen;')
+		elseif player_job.main_job == 'WHM' then
+        	windower.send_command('gs c set castingmode DT; gs c set idlemode DT;')
+        elseif player_job.main_job == 'BRD' then
+            windower.send_command('sing pl melee; sing n off;')
+        end
+    elseif cmd2 == 'wave2' then
+        if player_job.main_job == 'COR' then
+			windower.send_command('gs c set weapons DualSavage; roll melee;')
+		elseif player_job.main_job == 'GEO' then
+			windower.send_command('gs c set castingmode DT; gs c set idlemode DT; gfury; ibarrier; gs c autoentrust frailty')
+		elseif player_job.main_job == 'WHM' then
+        	windower.send_command('gs c set castingmode DT; gs c set idlemode DT;')
+        elseif player_job.main_job == 'BRD' then
+            windower.send_command('sing off; sing pl w2; sing n on;')
+        end
+    elseif cmd2 == 'wave3' then
+        if player_job.main_job == 'COR' then
+			windower.send_command('gs c set weapons DualSavage; roll melee;')
+		elseif player_job.main_job == 'GEO' then
+			windower.send_command('gs c set castingmode DT; gs c set idlemode DT; gtorpor; ifury; gs c autoentrust frailty')
+		elseif player_job.main_job == 'WHM' then
+        	windower.send_command('gs c set castingmode DT; gs c set idlemode DT;')
+        elseif player_job.main_job == 'BRD' then
+            windower.send_command('sing off; sing pl w3; sing n on;')
+        end
+    elseif cmd2 == 'wave3boss' then
+        if player_job.main_job == 'COR' then
+			windower.send_command('gs c set weapons DualSavage; roll melee;')
+		elseif player_job.main_job == 'GEO' then
+			windower.send_command('gs c set castingmode DT; gs c set idlemode DT; gacumen; ifury; gs c autoentrust malaise;')
+		elseif player_job.main_job == 'WHM' then
+        	windower.send_command('gs c set castingmode DT; gs c set idlemode DT;')
+        elseif player_job.main_job == 'BRD' then
+            windower.send_command('sing off; sing pl w3boss; sing n on;')
+        end
 	elseif cmd2 == 'ody' then
 		atc('[Stage]: Odyssey A B C')
 		windower.send_command('lua r gazecheck')
@@ -1185,14 +1230,84 @@ function reload(addonarg)
 	end
 end
 
-function fin()
-	atc('FIN: Dispel/Finale.')
+function cc(cmd2)
 	local player_job = windower.ffxi.get_player()
-	if player_job.main_job == "BRD" then
-		windower.send_command('fin <t>')
-	elseif player_job.main_job == "RDM" or player_job.sub_job == "RDM" then
-		windower.send_command('dis <t>')
+	local SleepJobs = S{'BRD','BLM','RDM','GEO'}
+	local SleepSubs = S{'BLM','RDM'}
+    local world = res.zones[windower.ffxi.get_info().zone].name
+
+	if (SleepJobs:contains(player_job.main_job) or SleepSubs:contains(player_job.sub_job)) and not(areas.Cities:contains(world)) then
+		
+		if player_job.main_job == "BRD" then
+			atcwarn("[CC]: Horde Lullaby.")
+			if cmd2 and not (player_job.target_locked) then
+				windower.send_command('input /ma \'Horde Lullaby II\' ' .. cmd2)
+			else
+				windower.send_command('input /ma \'Horde Lullaby II\' <t>')
+			end
+		elseif player_job.main_job == "BLM" then
+			atcwarn("[CC]: Sleepga II.")
+			if cmd2 and not (player_job.target_locked) then
+				windower.send_command('input /ma \'Sleepga II\' ' .. cmd2)
+			else
+				windower.send_command('input /ma \'Sleepga II\' <t>')
+			end
+		elseif player_job.main_job == "RDM" or player_job.main_job == "GEO" then
+			if player_job.sub_job == "BLM" then
+				atcwarn("[CC]: Sleepga.")
+				if cmd2 and not (player_job.target_locked) then
+					windower.send_command('input /ma \'Sleepga\' ' .. cmd2)
+				else
+					windower.send_command('input /ma \'Sleepga\' <t>')
+				end
+            else
+            	atcwarn("[CC]: Sleep II.")
+				if cmd2 and not (player_job.target_locked) then
+					windower.send_command('input /ma \'Sleep II\' ' .. cmd2)
+				else
+					windower.send_command('input /ma \'Sleep II\' <t>')
+				end
+			end
+		end
+	else
+        if areas.Cities:contains(world) then
+            atcwarn("[CC]: In town area, cancelling.")
+        else
+            atcwarn("[CC]: Non sleepable jobs, skipping")
+        end
 	end
+end
+
+function fin(cmd2)
+	atc('[FIN]: Dispel/Finale.')
+	local player_job = windower.ffxi.get_player()
+    local world = res.zones[windower.ffxi.get_info().zone].name
+    local DispelJobs = S{'RDM','BRD'}
+    
+    if (DispelJobs:contains(player_job.main_job) or DispelJobs:contains(player_job.sub_job)) and not(areas.Cities:contains(world)) then
+        
+        if player_job.main_job == "BRD" then
+            atcwarn("[FIN]: Finale")
+            if cmd2 and not (player_job.target_locked) then
+                windower.send_command("input /ma 'Magic Finale' " .. cmd2)
+            else
+                windower.send_command("input /ma 'Magic Finale' <t>")
+            end
+        elseif player_job.main_job == "RDM" or player_job.sub_job == "RDM" then
+            atcwarn("[FIN]: Dispel")
+            if cmd2 and not (player_job.target_locked) then
+                windower.send_command("input /ma 'Dispel " .. cmd2)
+            else
+                windower.send_command("input /ma 'Dispel' <t>")
+            end
+        end
+    else
+        if areas.Cities:contains(world) then
+            atcwarn("[FIN]: In town area, cancelling.")
+        else
+            atcwarn("[FIN]: Non dispelable jobs, skipping")
+        end
+    end
 end
 
 function brd(cmd2)
@@ -3285,6 +3400,8 @@ windower.register_event('ipc message', function(msg, ...)
 		buy(cmd2, cmd3)	
 	elseif cmd == 'cc' then
 		cc(cmd2)	
+    elseif cmd == 'fin' then
+        fin(cmd2)
     elseif cmd == 'cor' then
         cor(cmd2,cmd3)
 	end

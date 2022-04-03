@@ -1419,8 +1419,8 @@ function bst(cmd2)
     local petjug = ''
 	if player_job.main_job == "BST" then
 		if cmd2 == 'mboze' or cmd2 == 'arebati' then
-            if cmd2 == 'mboze' then petjug='SweetCaroline' end
-            if cmd2 == 'arebati' then petjug='ScissorlegXerin' end
+            if cmd2 == 'mboze' then petjug='ScissorlegXerin' end
+            if cmd2 == 'arebati' then petjug='SweetCaroline' end
 			atc('[BST] Killer Toggle')
             windower.send_command('gs c set AutoCallPet off; gs c set AutoFightMode off; gs c set AutoReadyMode off; gs c set JugMode '..petjug..'; wait 5.0; input /ja "Leave" <me>; wait 2.5; gs c set AutoCallPet on')
 			windower.send_command:schedule(11.0, 'input /ja "Killer Instinct" <me>; gs c set JugMode FatsoFargann; wait 3.5; input /ja "Leave" <me>; wait 3.5; gs c set AutoCallPet on; gs c set AutoReadyMode on;')

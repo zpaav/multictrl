@@ -531,17 +531,17 @@ function stage(cmd2)
 		atc('[Stage]: Ambu')
 		windower.send_command('gaze ap on')
 		if player_job.main_job == 'BRD' then
-			windower.send_command('wait 2.5; gaze ap off; sing pl melee; sing n on; sing p on; gs c set weapons dualsavage; gs c othertargetws Sabotender Dulce; sing ballad 1 ' ..tank_char_name.. '; sing ballad 1 ' ..whm_char_name)
+			windower.send_command('wait 2.5; sing pl melee; sing n on; sing p on; gs c set weapons carnwenhan; sing ballad 1 ' ..tank_char_name.. '; sing ballad 1 ' ..whm_char_name)
 		elseif player_job.main_job == 'WHM' then
-			windower.send_command('gs c set castingmode DT; gs c set idlemode DT; hb buff me barstonra; hb buff me barpetra;')
-		elseif player_job.main_job == 'PLD' then
-			windower.send_command('gaze ap off; gs c autows savage blade; hb mincure 4; gs c set runeelement flabra; gs c othertargetws Sabotender Dulce;')
+			windower.send_command('gs c set castingmode DT; gs c set idlemode DT; hb buff me barstonra; hb buff me barpetra; hb f off; hb buff '..tank_char_name..' regen4')
+		elseif player_job.main_job == 'RUN' then
+			windower.send_command('gs c set hybridmode DTLite; hb disable cure; gs c set runeelement flabra; gs c set maintaintenebrae on')
 		elseif player_job.main_job == 'COR' then
-			windower.send_command('gaze ap off; gs c set weapons dualsavage; roll melee; gs c othertargetws Sabotender Dulce;')
+			windower.send_command('gs c set weapons dualsavage; roll melee;')
 		elseif player_job.main_job == 'GEO' then
-			windower.send_command('hb debuff dia2; gs c set castingmode DT; gs c set idlemode DT;')
+			windower.send_command('gs c set castingmode DT; gs c set idlemode DT; ifury; gfrailty')
 		elseif player_job.main_job == 'WAR' or player_job.main_job == 'SAM' or player_job.main_job == 'DRK' then
-			windower.send_command('gaze ap off; gs c othertargetws Sabotender Dulce; gs c set weapons Naegling')
+			--windower.send_command('')
 		end
 		settings.autows = true
 	elseif cmd2 == 'ambu2' then
@@ -975,7 +975,10 @@ function wsall()
 			windower.send_command('input /ws \'Upheaval\' <t>')
 		elseif player_job.main_job == "COR" then
             local player = windower.ffxi.get_items('equipment')
-            if player.range == 17 then
+            local bag = player.range_bag
+            local index = player.range
+            local weapon =  windower.ffxi.get_items(bag, index).id
+            if weapon == 22141 then
                 windower.send_command('input /ws \'Leaden Salute\' <t>')
             else
                 windower.send_command('input /ws \'Savage Blade\' <t>')

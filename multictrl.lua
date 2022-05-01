@@ -6,12 +6,13 @@ _addon.commands = {'mc'}
 require('functions')
 require('logger')
 require('tables')
+require('coroutine')
 config = require('config')
 packets = require('packets')
-require('coroutine')
 res = require('resources')
 texts = require('texts')
 npc_map = require('npc_map')
+extdata = require('extdata')
 
 -- job registry is a key->value table/db of player name->jobs we have encountered
 job_registry = T{}
@@ -89,14 +90,14 @@ InternalCMDS = S{
 
 	--Battle
 	'on','off','stage','fight','fightmage','fightsmall','ws','food','sleep',
-	'wsall','zerg','wstype','buffup','dd','attackon','mb','reraise','smartws',
+	'wsall','zerg','wstype','buffup','rebuff','dd','attackon','mb','reraise','smartws',
 	
 	--Job
 	'brd','bst','sch','smnburn','geoburn','burn','rng','proc','crit','wsproc','jc',
 	--Travel
 	'mnt','dis','warp','omen','enup','endown','ent','esc','go','enter','get','deimos','macro',
 	--Misc
-	'reload','unload','fps','lotall','cleanstones','drop','buyalltemps','book'
+	'reload','unload','fps','lotall','cleanstones','drop','buyalltemps','book',
 	--Inactive
 	--'jc',
 }
@@ -109,6 +110,7 @@ ipcflag = false
 currentPC=windower.ffxi.get_player()
 new = 0
 old = 0
+log_flag = true
 
 windower.register_event('addon command', function(input, ...)
 	local cmd
@@ -204,6 +206,8 @@ windower.register_event('addon command', function(input, ...)
 			_G[cmd]:schedule(0, cmd2,cmd3)
 			send_to_IPC:schedule(0, cmd,cmd2,cmd3)
 		end
+    elseif cmd == 'shobu' then
+        shobu()
 	end
 
 end)
@@ -1754,6 +1758,68 @@ function buy(cmd2,leader_buy)
 	display_box()
 end
 
+function shobu()
+    local target = windower.ffxi.get_mob_by_target()
+    local get_items = windower.ffxi.get_items
+    local set_equip = windower.ffxi.set_equip
+    local item_array = {}
+    item_info = {[1]={id=26789,japanese='尚武鳳凰兜',english='"Shobuhouou Kabuto"',slot=4},}
+    lang = string.lower(windower.ffxi.get_info().language)
+    
+    if target and not (target.is_npc) then
+    
+        for bag_id in pairs(res.bags:equippable(true)) do
+            local bag = get_items(bag_id)
+            for _,item in ipairs(bag) do
+                if item.id > 0  then
+                    item_array[item.id] = item
+                    item_array[item.id].bag = bag_id
+                    item_array[item.id].bag_enabled = bag.enabled
+                end
+            end
+        end
+
+        for index,stats in pairs(item_info) do
+            local item = item_array[stats.id]
+            if item and item.bag_enabled then
+            
+                local ext = extdata.decode(item)
+                local enchant = ext.type == 'Enchanted Equipment'
+                local recast = enchant and ext.charges_remaining > 0 and math.max(ext.next_use_time+18000-os.time(),0)
+                local usable = recast and recast == 0
+                local equip_slot = res.slots[stats.slot].en
+                atc(stats[lang],usable and '' or recast and recast..' sec recast.')
+                if usable or ext.type == 'General' then
+                    if enchant and item.status ~= 5 then --not equipped
+                        windower.send_command('gs disable '..equip_slot..'; input /equip '..equip_slot..' '..windower.to_shift_jis(stats[lang]))
+                        repeat --waiting cast delay
+                            coroutine.sleep(1)
+                            local ext = extdata.decode(get_items(item.bag,item.slot))
+                            local delay = ext.activation_time+18000-os.time()
+                            if delay > 0 then
+                                atc(stats[lang],delay)
+                            elseif log_flag then
+                                log_flag = false
+                                atc('Item use within 3 seconds..')
+                            end
+                        until ext.usable or delay > 30
+                    end
+                    windower.chat.input('/item '..windower.to_shift_jis(stats[lang])..' '..target.id)
+                    coroutine.sleep(9.2)
+                    windower.send_command('gs enable '..equip_slot)
+                    break;
+                end
+            elseif item and not item.bag_enabled then
+                atc('You cannot access '..stats[lang]..' from ' .. res.bags[item.bag].name ..' at this time.')
+            else
+                atc('You don\'t have '..stats[lang]..'.')
+            end
+        end
+    else
+        atc("[Shobu] Invalid target.")
+    end
+end
+
 function buffup()
 	atc('[Buffup] Buffing up jobs.')
 	local player_job = windower.ffxi.get_player()
@@ -1762,6 +1828,20 @@ function buffup()
 		windower.send_command('gs c buffup')
 	else
 		atc('[Buffup] Not a buffup job')
+	end
+end
+
+function rebuff()
+	atc('[Rebuff] Buffing up jobs.')
+	local player_job = windower.ffxi.get_player()
+	local buff_jobs = S{"WHM","RDM","GEO","BRD","SMN","BLM","SCH","RUN"}
+	if buff_jobs:contains(player_job.main_job) then
+		windower.send_command('gs c buffup Rebuff')
+        if player_job.main_job == "BRD" then
+            windower.send_command('sing reset')
+        end
+	else
+		atc('[Rebuff] Not a rebuff job')
 	end
 end
 

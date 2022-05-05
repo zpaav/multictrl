@@ -3705,6 +3705,7 @@ windower.register_event('ipc message', function(msg, ...)
     elseif cmd == 'fin' then
         fin(cmd2)
     elseif cmd == 'poke' then
+        coroutine.sleep(delay)
         poke(cmd2)
     elseif cmd == 'cor' then
         cor(cmd2,cmd3)

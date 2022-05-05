@@ -157,6 +157,11 @@ windower.register_event('addon command', function(input, ...)
 		local mob_id = target and target.valid_target and target.is_npc and target.id
 		fin:schedule(0, mob_id)
 		send_to_IPC:schedule(1, cmd,mob_id)
+	elseif cmd == 'poke' then				    		-- Mob ID
+		local target = windower.ffxi.get_mob_by_target('t')
+		local mob_id = target and target.valid_target and target.is_npc and target.id
+		poke:schedule(0, mob_id)
+		send_to_IPC:schedule(1, cmd,mob_id)
 	elseif cmd == 'deimos' then
 		local leader = windower.ffxi.get_player()
 		deimos:schedule(0, leader.name)
@@ -1141,6 +1146,13 @@ function cc(cmd2)
 	end
 end
 
+function poke(cmd2)
+    atcwarn("[POKE] - Attempt to poke NPC")
+    if cmd2 then
+        get_poke_check_id(cmd2)
+    end
+end
+
 function mnt()
 	windower.send_command('input /mount \'Red Crab\'')
 end
@@ -1304,7 +1316,7 @@ function fon()
 					-- Not in zone.
 					atc('FON: ' .. v.name .. ' is not in zone, not following.')
 				else
-					if ptymember.valid_target then
+					if ptymember and ptymember.valid_target then
 						windower.send_command('send ' .. v.name .. ' hb f dist 1.8')
 						windower.send_command('send ' .. v.name .. ' hb follow ' .. currentPC.name)
 					else
@@ -3692,6 +3704,8 @@ windower.register_event('ipc message', function(msg, ...)
 		cc(cmd2)	
     elseif cmd == 'fin' then
         fin(cmd2)
+    elseif cmd == 'poke' then
+        poke(cmd2)
     elseif cmd == 'cor' then
         cor(cmd2,cmd3)
 	end

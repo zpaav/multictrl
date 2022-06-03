@@ -3273,11 +3273,11 @@ function wstype(cmd2)
 				if player_job.sub_job == 'NIN' or player_job.sub_job == 'DNC' then
 					atc('WS-Type: Wildfire')
 					windower.send_command('gs c autows Wildfire')
-					windower.send_command('gs c set weapons DualLeaden')
+					windower.send_command('gs c set weapons DualWildfire')
 				else
 					atc('WS-Type: Wildfire')
 					windower.send_command('gs c autows Wildfire')
-					windower.send_command('gs c set weapons DeathPenalty')
+					windower.send_command('gs c set weapons Armageddon')
 				end
 			else
 				atc('WS-Type: Wildfire - Not COR, no WS change.')
@@ -3364,14 +3364,14 @@ function wstype(cmd2)
 				atc('WS is Judgment')
 				windower.send_command('gs c set weapons Loxotic; gs c autows tp 1692')
 			elseif player_job.main_job == 'SAM' then
-				atc('WS is Kagero')
+				atc('WS is Jinpu')
 				windower.send_command('gs c set weapons Dojikiri')
-				windower.send_command('gs c autows Tachi: Kagero')
+				windower.send_command('gs c autows Tachi: Jinpu')
 			elseif player_job.main_job == 'COR' then
 				atc('WS is WildFire')
 				windower.send_command('gs c autows Wildfire')
-				windower.send_command('gs c set weapons DualLeaden')
-				elseif player_job.main_job == 'DRG' then
+				windower.send_command('gs c set weapons DualWildfire')
+			elseif player_job.main_job == 'DRG' then
 				atc('WS is Retribution')
 				windower.send_command('gs c autows Retribution')
 				windower.send_command('gs c set weapons Malignance')

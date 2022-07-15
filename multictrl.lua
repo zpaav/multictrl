@@ -578,17 +578,11 @@ function stage(cmd2)
 		atc('[Stage]: Ambu')
 		windower.send_command('gaze ap on')
 		if player_job.main_job == 'BRD' then
-			windower.send_command('wait 2.5; gs c set autoshadowmode on; sing pl ambu; sing n on; sing p on; gs c set weapons DualCarn; sing ballad 1 ' ..tank_char_name.. '; sing ballad 1 ' ..find_job_charname('SMN')..'; sing ballad 1 '..find_job_charname('RDM'))
-		elseif player_job.main_job == 'SMN' then
-			windower.send_command('gs c set idlemode DT; gs c set autobpmode; gs c set avatar cait sith; hb f '..tank_char_name..'; hb as off; hb as attack off;')
+			windower.send_command('wait 2.5; sing pl meleehaste2; sing n on; sing p on; gs c set weapons DualCarn; sing ballad 1 ' ..tank_char_name.. '; sing ballad 1 ' ..find_job_charname('RDM'))
 		elseif player_job.main_job == 'PLD' then
-			windower.send_command('hb f off; hb as off; hb as attack off;')
+			windower.send_command('hb f off; hb as off; hb as attack off; gs c set weapons Aegis')
 		elseif player_job.main_job == 'RDM' then
-			windower.send_command('dmain; mc buffall haste2; wait 1; mc buffall shell5; hb mincure 4; hb buff '..tank_char_name..' refresh3; gs c set autoshadowmode on; hb f off; hb as off; hb as attack off;')
-		elseif player_job.main_job == 'BLU' then
-            windower.send_command('gs c set autoshadowmode on; hb debuff sudden lunge;')
-        elseif player_job.main_job == 'NIN' then
-			windower.send_command('gs c set autoshadowmode on; gs c set autotankmode on;')
+			windower.send_command('dsmall; hb aoe on; mc buffall haste2; wait 1; mc buffall shell5; hb mincure 3; hb buff '..tank_char_name..' refresh3; hb f off; hb as off; hb as attack off; hb as nolock; hb as '..tank_char_name)
 		end
 		settings.autows = true
         windower.send_command('input /autotarget off')
@@ -609,8 +603,11 @@ function stage(cmd2)
         elseif player_job.main_job == 'RDM' then
 			windower.send_command('mc buffall haste2; wait 1.0; mc buffall shell5; wait 1.0; hb buff me enthunder2; hb buff '..tank_char_name.. ' refresh3,protect5,shell5; hb mincure 4; hb buff '..find_job_charname('GEO')..' refresh3; dmain;')
 		elseif player_job.main_job == 'GEO' then
-			windower.send_command('gs c set castingmode DT; gs c set idlemode DT; gfocus; iacumen; hb mincure 4')
+			windower.send_command('gs c set castingmode DT; gs c set idlemode DT; gfocus; iacumen; hb mincure 4; hb aoe on')
             windower.send_command('wait 0.7; hb buff ' ..find_job_charname('SAM').. ' windstorm; hb buff ' ..find_job_charname('RDM','1').. ' aurorastorm; hb buff ' ..find_job_charname('RDM','2').. ' aurorastorm; hb buff ' ..find_job_charname('BRD').. ' aurorastorm; hb buff ' ..tank_char_name.. ' aurorastorm;')
+		elseif player_job.main_job == 'SCH' then
+			windower.send_command('gs c set castingmode DT; gs c set idlemode DT; hb mincure 4')
+            windower.send_command('wait 0.7; hb buff me auspice,regen5; hb buff ' ..find_job_charname('SAM').. ' windstorm2; hb buff ' ..find_job_charname('RDM','1').. ' aurorastorm2; hb buff ' ..find_job_charname('RDM','2').. ' aurorastorm2; hb buff ' ..find_job_charname('BRD').. ' aurorastorm2; hb buff ' ..tank_char_name.. ' aurorastorm2;')
         elseif player_job.main_job == 'BRD' then
             windower.send_command('wait 1; hb minwaltz 3; gs c weapons DualCarn; sing pl melee; sing n on; sing d on; hb debuff wind threnody II; sing debuff carnage elegy;')
             windower.send_command('wait 0.7; sing ballad 1 '..find_job_charname('GEO').. '; sing ballad 1 '..find_job_charname('RDM','1')..'; sing ballad 1 '..find_job_charname('RDM','2'))
@@ -627,8 +624,11 @@ function stage(cmd2)
         elseif player_job.main_job == 'RDM' then
    			windower.send_command('mc buffall haste2; wait 1.0; mc buffall shell5; wait 1.0; hb buff me enthunder2; hb buff '..tank_char_name.. ' refresh3,protect5,shell5; hb mincure 4; hb buff '..find_job_charname('GEO')..' refresh3; dfull; gs c set weapons DualSavage; gs c autows savage blade')
 		elseif player_job.main_job == 'GEO' then
-   			windower.send_command('gs c set castingmode DT; gs c set idlemode DT; gfury; ibarrier; gs c autoentrust frailty; hb mincure 4')
+   			windower.send_command('gs c set castingmode DT; gs c set idlemode DT; gfury; ibarrier; gs c autoentrust frailty; hb mincure 4; hb aoe on')
             windower.send_command('wait 0.7; hb buff ' ..find_job_charname('SAM').. ' windstorm; hb buff ' ..find_job_charname('RDM','1').. ' aurorastorm; hb buff ' ..find_job_charname('RDM','2').. ' aurorastorm; hb buff ' ..find_job_charname('BRD').. ' aurorastorm; hb buff ' ..tank_char_name.. ' aurorastorm;')
+		elseif player_job.main_job == 'SCH' then
+			windower.send_command('gs c set castingmode DT; gs c set idlemode DT; hb mincure 4')
+            windower.send_command('wait 0.7; hb buff me auspice,regen5; hb buff ' ..find_job_charname('SAM').. ' windstorm2; hb buff ' ..find_job_charname('RDM','1').. ' aurorastorm2; hb buff ' ..find_job_charname('RDM','2').. ' aurorastorm2; hb buff ' ..find_job_charname('BRD').. ' aurorastorm2; hb buff ' ..tank_char_name.. ' aurorastorm2;')
         elseif player_job.main_job == 'BRD' then
             windower.send_command('wait 1; hb minwaltz 3; gs c weapons DualCarn; sing pl w2; sing n on; sing d on; hb debuff wind threnody II; sing debuff carnage elegy;')
             windower.send_command('wait 0.7; sing ballad 1 '..find_job_charname('GEO').. '; sing ballad 1 '..find_job_charname('RDM','1')..'; sing ballad 1 '..find_job_charname('RDM','2'))
@@ -645,8 +645,11 @@ function stage(cmd2)
         elseif player_job.main_job == 'RDM' then
 			windower.send_command('mc buffall haste2; wait 1.0; mc buffall shell5; wait 1.0; hb buff me enthunder2; hb buff '..tank_char_name.. ' refresh3,protect5,shell5; hb mincure 4; hb buff '..find_job_charname('GEO')..' refresh3; dvolte; gs c set weapons DualCroDay; gs c autows Seraph Blade;')
 		elseif player_job.main_job == 'GEO' then
-			windower.send_command('gs c set castingmode DT; gs c set idlemode DT; gmalaise; iacumen; gs c autoentrust fury; hb mincure 4')
+			windower.send_command('gs c set castingmode DT; gs c set idlemode DT; gmalaise; iacumen; gs c autoentrust fury; hb mincure 4; hb aoe on')
             windower.send_command('wait 0.7; hb buff ' ..find_job_charname('SAM').. ' windstorm; hb buff ' ..find_job_charname('RDM','1').. ' aurorastorm; hb buff ' ..find_job_charname('RDM','2').. ' aurorastorm; hb buff ' ..find_job_charname('BRD').. ' aurorastorm; hb buff ' ..tank_char_name.. ' aurorastorm;')
+		elseif player_job.main_job == 'SCH' then
+			windower.send_command('gs c set castingmode DT; gs c set idlemode DT; hb mincure 4')
+            windower.send_command('wait 0.7; hb buff me auspice,regen5; hb buff ' ..find_job_charname('SAM').. ' windstorm2; hb buff ' ..find_job_charname('RDM','1').. ' aurorastorm2; hb buff ' ..find_job_charname('RDM','2').. ' aurorastorm2; hb buff ' ..find_job_charname('BRD').. ' aurorastorm2; hb buff ' ..tank_char_name.. ' aurorastorm2;')
         elseif player_job.main_job == 'BRD' then
             windower.send_command('wait 1; hb minwaltz 3; gs c weapons DualCarn; sing pl w3; sing n on; sing d on; hb debuff wind threnody II; sing debuff carnage elegy;')
             windower.send_command('wait 0.7; sing ballad 1 '..find_job_charname('GEO').. '; sing ballad 1 '..find_job_charname('RDM','1')..'; sing ballad 1 '..find_job_charname('RDM','2'))
@@ -663,8 +666,11 @@ function stage(cmd2)
         elseif player_job.main_job == 'RDM' then
             windower.send_command('mc buffall haste2; wait 1.0; mc buffall shell5; wait 1.0; hb buff me enthunder2; hb buff '..tank_char_name.. ' refresh3,protect5,shell5; hb mincure 4; hb buff '..find_job_charname('GEO')..' refresh3; dmain; dw3boss; gs c set weapons DualCroDay; gs c autows Seraph Blade;')
 		elseif player_job.main_job == 'GEO' then
-			windower.send_command('gs c set castingmode DT; gs c set idlemode DT; gmalaise; iacumen; gs c autoentrust fury; hb mincure 4')
+			windower.send_command('gs c set castingmode DT; gs c set idlemode DT; gmalaise; iacumen; gs c autoentrust fury; hb mincure 4; hb aoe on')
             windower.send_command('wait 0.7; hb buff ' ..find_job_charname('SAM').. ' windstorm; hb buff ' ..find_job_charname('RDM','1').. ' aurorastorm; hb buff ' ..find_job_charname('RDM','2').. ' aurorastorm; hb buff ' ..find_job_charname('BRD').. ' aurorastorm; hb buff ' ..tank_char_name.. ' aurorastorm;')
+		elseif player_job.main_job == 'SCH' then
+			windower.send_command('gs c set castingmode DT; gs c set idlemode DT; hb mincure 4')
+            windower.send_command('wait 0.7; hb buff me auspice,regen5; hb buff ' ..find_job_charname('SAM').. ' windstorm2; hb buff ' ..find_job_charname('RDM','1').. ' aurorastorm2; hb buff ' ..find_job_charname('RDM','2').. ' aurorastorm2; hb buff ' ..find_job_charname('BRD').. ' aurorastorm2; hb buff ' ..tank_char_name.. ' aurorastorm2;')
         elseif player_job.main_job == 'BRD' then
             windower.send_command('wait 1; hb minwaltz 3; gs c weapons DualCarn; sing pl w3boss; sing n on; sing d on; hb debuff wind threnody II; sing debuff carnage elegy;')
             windower.send_command('wait 0.7; sing ballad 1 '..find_job_charname('GEO').. '; sing ballad 1 '..find_job_charname('RDM','1')..'; sing ballad 1 '..find_job_charname('RDM','2'))
@@ -1074,20 +1080,20 @@ function jc(cmd2)
     elseif cmd2 == 'ambu' then
 		atc('[JC] Ambu')
 		if player_job.name == "" ..settings.char1.. "" then
-			windower.send_command("jc pld/nin" )
+			windower.send_command("jc pld/run" )
 		elseif player_job.name == "" ..settings.char2.. "" then
-			windower.send_command("jc nin/war" )
+			windower.send_command("jc sam/war" )
 		elseif player_job.name == "" ..settings.char3.. "" then
-			windower.send_command("jc blu/nin" )
+			windower.send_command("jc blu/drg" )
 		elseif player_job.name == "" ..settings.char4.. "" then
-			windower.send_command("jc brd/nin")
+			windower.send_command("jc brd/dnc")
 		elseif player_job.name == "" ..settings.char5.. "" then
 			windower.send_command("jc rdm/sch")
 		elseif player_job.name == "" ..settings.char6.. "" then
-			windower.send_command("jc smn/rdm")
+			windower.send_command("jc cor/dnc")
 		end
     elseif cmd2 == 'cait' then
-		atc('[JC] Ambu')
+		atc('[JC] Cait')
 		if player_job.name == "" ..settings.char1.. "" then
 			windower.send_command("jc sub sam; wait 1; jc run" )
 		elseif player_job.name == "" ..settings.char2.. "" then
@@ -1100,6 +1106,21 @@ function jc(cmd2)
 			windower.send_command("jc whm/sch")
 		elseif player_job.name == "" ..settings.char6.. "" then
 			windower.send_command("jc smn/whm")
+		end
+    elseif cmd2 == 'dyna' then
+		atc('[JC] Dynamis W3')
+		if player_job.name == "" ..settings.char1.. "" then
+			windower.send_command("jc pld/blu; wait 1; lua l azuresets; wait 3; azuresets set tank" )
+		elseif player_job.name == "" ..settings.char2.. "" then
+			windower.send_command("jc sam/drg" )
+		elseif player_job.name == "" ..settings.char3.. "" then
+			windower.send_command("jc cor/nin" )
+		elseif player_job.name == "" ..settings.char4.. "" then
+			windower.send_command("jc brd/dnc")
+		elseif player_job.name == "" ..settings.char5.. "" then
+			windower.send_command("jc rdm/nin")
+		elseif player_job.name == "" ..settings.char6.. "" then
+			windower.send_command("jc geo/sch")
 		end
 	else
 		atc('[JC] Nothing specified.')
@@ -3135,6 +3156,13 @@ end
 function drop(cmd2)
 	local rem = S{4069,4070,4071,4072,4073}
 	local cells = S{5365,5366,5367,5368,5369,5370,5371,5372,5373,5374,5375,5376,5377,5378,5379,5380,5381,5382,5383,5384}
+    local empy_seals = S{3110,3111,3112,3113,3114,3115,3116,3117,3118,3119,3120,3121,3122,3123,3124,3125,3126,3127,3128,
+                         3129,3130,3131,3132,3133,3134,3135,3136,3137,3138,3139,3140,3141,3142,3143,3144,3145,3146,3147,
+                         3148,3149,3150,3151,3152,3153,3154,3155,3156,3157,3158,3159,3160,3161,3162,3163,3164,3165,3166,
+                         3167,3168,3169,3170,3171,3172,3173,3174,3175,3176,3177,3178,3179,3180,3181,3182,3183,3184,3185,
+                         3186,3187,3188,3189,3190,3191,3192,3193,3194,3195,3196,3197,3198,3199,3200,3201,3202,3203,3204,
+                         3205,3206,3207,3208,3209,3210,3211,3212,3213,3214,3215,3216,3217,3218,3219,3220,3221,3222,3223,
+                         3224,3225,3226,3227,3228,3229}
 
 	if cmd2 == 'rem' then
 		atc('[Drop] Rem Chapters 6-10')
@@ -3150,6 +3178,15 @@ function drop(cmd2)
 		local items = windower.ffxi.get_items()
 		for index, item in pairs(items.inventory) do
 			if type(item) == 'table' and cells:contains(item.id) then
+				atc('[Drop] ' .. cmd2 .. ' ' .. item.id)
+				windower.ffxi.drop_item(index, item.count)
+			end
+		end
+    elseif cmd2 == 'seals' then
+		atc('[Drop] Empy seals.')
+		local items = windower.ffxi.get_items()
+		for index, item in pairs(items.inventory) do
+			if type(item) == 'table' and empy_seals:contains(item.id) then
 				atc('[Drop] ' .. cmd2 .. ' ' .. item.id)
 				windower.ffxi.drop_item(index, item.count)
 			end

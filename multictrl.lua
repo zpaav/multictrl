@@ -602,7 +602,7 @@ function stage(cmd2)
 			windower.send_command('gs c autows leaden salute; gs c set weapons DualLeadenRanged; roll roll1 tact; roll roll2 wizard;')
         elseif player_job.main_job == 'RDM' then
 			windower.send_command('mc buffall haste2; wait 1.0; mc buffall shell5; wait 1.0; hb buff me enthunder2; hb buff '..tank_char_name.. ' refresh3,protect5,shell5; hb mincure 4; hb buff '..find_job_charname('GEO')..' refresh3; dmain;')
-		elseif player_job.main_job == 'GEO' then
+		elseif player_job.main_job == 'GEO' and player_job.sub_job == 'SCH' then
 			windower.send_command('gs c set castingmode DT; gs c set idlemode DT; gfocus; iacumen; hb mincure 4; hb aoe on')
             windower.send_command('wait 0.7; hb buff ' ..find_job_charname('SAM').. ' windstorm; hb buff ' ..find_job_charname('RDM','1').. ' aurorastorm; hb buff ' ..find_job_charname('RDM','2').. ' aurorastorm; hb buff ' ..find_job_charname('BRD').. ' aurorastorm; hb buff ' ..tank_char_name.. ' aurorastorm;')
 		elseif player_job.main_job == 'SCH' then
@@ -627,7 +627,7 @@ function stage(cmd2)
             if player_job.sub_job == 'NIN' then
                 windower.send_command('gs c set weapons DualSavage;')
             end
-		elseif player_job.main_job == 'GEO' then
+		elseif player_job.main_job == 'GEO' and player_job.sub_job == 'SCH' then
    			windower.send_command('gs c set castingmode DT; gs c set idlemode DT; gfury; ibarrier; gs c autoentrust frailty; hb mincure 4; hb aoe on')
             windower.send_command('wait 0.7; hb buff ' ..find_job_charname('SAM').. ' windstorm; hb buff ' ..find_job_charname('RDM','1').. ' aurorastorm; hb buff ' ..find_job_charname('RDM','2').. ' aurorastorm; hb buff ' ..find_job_charname('BRD').. ' aurorastorm; hb buff ' ..tank_char_name.. ' aurorastorm;')
 		elseif player_job.main_job == 'SCH' then
@@ -649,7 +649,7 @@ function stage(cmd2)
 			windower.send_command('gs c set weapons DualWildfire; gs c autows Wildfire; roll melee; wait 1; roll roll2 wizard;')
         elseif player_job.main_job == 'RDM' then
 			windower.send_command('mc buffall haste2; wait 1.0; mc buffall shell5; wait 1.0; hb buff me enthunder2; hb buff '..tank_char_name.. ' refresh3,protect5,shell5; hb mincure 4; hb buff '..find_job_charname('GEO')..' refresh3; dvolte; gs c set weapons DualCroDay; gs c autows Seraph Blade;')
-		elseif player_job.main_job == 'GEO' then
+		elseif player_job.main_job == 'GEO' and player_job.sub_job == 'SCH' then
 			windower.send_command('gs c set castingmode DT; gs c set idlemode DT; gmalaise; iacumen; gs c autoentrust fury; hb mincure 4; hb aoe on')
             windower.send_command('wait 0.7; hb buff ' ..find_job_charname('SAM').. ' windstorm; hb buff ' ..find_job_charname('RDM','1').. ' aurorastorm; hb buff ' ..find_job_charname('RDM','2').. ' aurorastorm; hb buff ' ..find_job_charname('BRD').. ' aurorastorm; hb buff ' ..tank_char_name.. ' aurorastorm;')
 		elseif player_job.main_job == 'SCH' then
@@ -671,7 +671,7 @@ function stage(cmd2)
 			windower.send_command('gs c set weapons DualLeaden; gs c autows leaden salute; roll roll1 chaos; roll roll2 wizard;')
         elseif player_job.main_job == 'RDM' then
             windower.send_command('mc buffall haste2; wait 1.0; mc buffall shell5; wait 1.0; hb buff me enthunder2; hb buff '..tank_char_name.. ' refresh3,protect5,shell5; hb mincure 4; hb buff '..find_job_charname('GEO')..' refresh3; dmain; dw3boss; gs c set weapons DualCroDay; gs c autows Seraph Blade;')
-		elseif player_job.main_job == 'GEO' then
+		elseif player_job.main_job == 'GEO' and player_job.sub_job == 'SCH' then
 			windower.send_command('gs c set castingmode DT; gs c set idlemode DT; gmalaise; iacumen; gs c autoentrust fury; hb mincure 4; hb aoe on')
             windower.send_command('wait 0.7; hb buff ' ..find_job_charname('SAM').. ' windstorm; hb buff ' ..find_job_charname('RDM','1').. ' aurorastorm; hb buff ' ..find_job_charname('RDM','2').. ' aurorastorm; hb buff ' ..find_job_charname('BRD').. ' aurorastorm; hb buff ' ..tank_char_name.. ' aurorastorm;')
 		elseif player_job.main_job == 'SCH' then
@@ -1171,7 +1171,7 @@ function wsall()
     local SmartJobs = S{'WAR','COR','BRD'}
     if settings.smartws then
         if SmartJobs:contains(player_job.main_job) then
-            windower.send_command('gs c smartws Arebati')
+            windower.send_command('gs c smartws Mboze')
         end
     else
         if MeleeJobs:contains(player_job.main_job) then

@@ -578,30 +578,44 @@ function stage(cmd2)
 		atc('[Stage]: Ambu')
 		windower.send_command('gaze ap on')
 		if player_job.main_job == 'BRD' then
-			windower.send_command('wait 2.5; sing pl meleehaste2; sing n on; sing p on; gs c set weapons DualCarn; sing ballad 1 ' ..tank_char_name.. '; sing ballad 1 ' ..find_job_charname('RDM'))
+			windower.send_command('wait 2.5; sing pl meleehaste2; sing n on; sing p on; gs c set weapons DualSavage; sing ballad 1 ' ..tank_char_name.. '; sing ballad 1 ' ..find_job_charname('RDM'))
 		elseif player_job.main_job == 'PLD' then
-			windower.send_command('hb f off; hb as off; hb as attack off; gs c set weapons Aegis')
+			windower.send_command('hb buff me barthunder; gs c set runeelement tellus; gs c autows savage blade')
 		elseif player_job.main_job == 'RDM' then
-			windower.send_command('dsmall; hb aoe on; mc buffall haste2; wait 1; mc buffall shell5; hb mincure 3; hb buff '..tank_char_name..' refresh3; hb f off; hb as off; hb as attack off; hb as nolock; hb as '..tank_char_name)
+			windower.send_command('dsmall; hb aoe on; mc buffall haste2; wait 1; mc buffall shell5; hb buff '..tank_char_name..' refresh3; gs c set weapons Naegling')
+		elseif player_job.main_job == 'COR' then
+			windower.send_command('roll melee; gs c set weapons DualSavage; autoss')
+		elseif player_job.main_job == 'WAR' then
+			windower.send_command('gs c set weapons Naegling')
+		elseif player_job.main_job == 'RNG' then
+			windower.send_command('gs c set weapons DualSavage; autoss')
 		end
 		settings.autows = true
-        windower.send_command('input /autotarget off')
+        windower.send_command('input /autotarget on')
 	elseif cmd2 == 'ambu2' then
 		if player_job.main_job == 'RDM' then
 			windower.send_command('hb f off; hb as off; hb off')
 		end
-	elseif cmd2 == 'cp' then
+	elseif cmd2 == 'cp' or cmd2 == 'ml' then
 		if player_job.main_job == 'WHM' then
 			windower.send_command('hb debuff slow; hb debuff paralyze; hb buff <me> boost-str; hb buff <me> auspice; hb buff <me> regen4; gs c set castingmode DT; gs c set idlemode DT;')
         elseif player_job.main_job == 'GEO' then
 			windower.send_command('hb debuff dia2; gs c autoentrust refresh; gs c set castingmode DT; gs c set idlemode DT;')
+		elseif player_job.main_job == 'BRD' then
+			windower.send_command('hb debuff horde lullaby 2; sing pl melee acc;')
+		elseif player_job.main_job == 'COR' then
+			windower.send_command('roll roll1 chaos; roll roll2 exp;')
 		end
         settings.autows = true
+		windower.send_command('ai off; chatter on;')
     elseif cmd2 == 'wave1' then
         if player_job.main_job == 'COR' then
 			windower.send_command('gs c autows leaden salute; gs c set weapons DualLeadenRanged; roll roll1 tact; roll roll2 wizard;')
         elseif player_job.main_job == 'RDM' then
 			windower.send_command('mc buffall haste2; wait 1.0; mc buffall shell5; wait 1.0; hb buff me enthunder2; hb buff '..tank_char_name.. ' refresh3,protect5,shell5; hb mincure 4; hb buff '..find_job_charname('GEO','1',true)..' refresh3; dmain;')
+			if player_job.sub_job == 'SCH' then
+				windower.send_command('hb as attack off; wait 1; hb as nolock on;')
+			end
 		elseif player_job.main_job == 'GEO' and player_job.sub_job == 'SCH' then
 			windower.send_command('gs c set castingmode DT; gs c set idlemode DT; gmalaise; iacumen; hb mincure 4; hb aoe on')
             windower.send_command('wait 0.7; hb buff ' ..find_job_charname('SAM').. ' windstorm; hb buff ' ..find_job_charname('RDM','1',true).. ' aurorastorm; hb buff ' ..find_job_charname('BRD').. ' aurorastorm; hb buff ' ..tank_char_name.. ' aurorastorm;')
@@ -628,7 +642,9 @@ function stage(cmd2)
    			windower.send_command('mc buffall haste2; wait 1.0; mc buffall shell5; wait 1.0; hb buff me enthunder2; hb buff '..tank_char_name.. ' refresh3,protect5,shell5; hb mincure 4; hb buff '..find_job_charname('GEO','1',true)..' refresh3; dfull; gs c autows savage blade')
             if player_job.sub_job == 'NIN' then
                 windower.send_command('gs c set weapons DualSavage;')
-            end
+            elseif player_job.sub_job == 'SCH' then
+				windower.send_command('hb as attack off; wait 1; hb as nolock on;')
+			end
 		elseif player_job.main_job == 'GEO' and player_job.sub_job == 'SCH' then
    			windower.send_command('gs c set castingmode DT; gs c set idlemode DT; gfury; ibarrier; gs c autoentrust frailty; hb mincure 4; hb aoe on')
             windower.send_command('wait 0.7; hb buff ' ..find_job_charname('SAM').. ' windstorm; hb buff ' ..find_job_charname('RDM','1',true).. ' aurorastorm; hb buff ' ..find_job_charname('BRD').. ' aurorastorm; hb buff ' ..tank_char_name.. ' aurorastorm;')
@@ -653,6 +669,9 @@ function stage(cmd2)
 			windower.send_command('gs c set weapons DualWildfire; gs c autows Wildfire; roll melee; wait 1; roll roll2 wizard;')
         elseif player_job.main_job == 'RDM' then
 			windower.send_command('mc buffall haste2; wait 1.0; mc buffall shell5; wait 1.0; hb buff me enthunder2; hb buff '..tank_char_name.. ' refresh3,protect5,shell5; hb mincure 4; hb buff '..find_job_charname('GEO','1',true)..' refresh3; dvolte; gs c set weapons DualCroDay; gs c autows Seraph Blade;')
+			if player_job.sub_job == 'SCH' then
+				windower.send_command('hb as attack off; wait 1; hb as nolock on;')
+			end
 		elseif player_job.main_job == 'GEO' and player_job.sub_job == 'SCH' then
 			windower.send_command('gs c set castingmode DT; gs c set idlemode DT; gmalaise; iacumen; gs c autoentrust fury; hb mincure 4; hb aoe on')
             windower.send_command('wait 0.7; hb buff ' ..find_job_charname('SAM').. ' windstorm; hb buff ' ..find_job_charname('RDM','1',true).. ' aurorastorm; hb buff ' ..find_job_charname('BRD').. ' aurorastorm; hb buff ' ..tank_char_name.. ' aurorastorm;')
@@ -677,6 +696,9 @@ function stage(cmd2)
 			windower.send_command('gs c set weapons DualLeaden; gs c autows leaden salute; roll roll1 chaos; roll roll2 wizard;')
         elseif player_job.main_job == 'RDM' then
             windower.send_command('mc buffall haste2; wait 1.0; mc buffall shell5; wait 1.0; hb buff me enthunder2; hb buff '..tank_char_name.. ' refresh3,protect5,shell5; hb mincure 4; hb buff '..find_job_charname('GEO','1',true)..' refresh3; dmain; dw3boss; gs c set weapons DualCroDay; gs c autows Seraph Blade;')
+			if player_job.sub_job == 'SCH' then
+				windower.send_command('hb as attack off; wait 1; hb as nolock on;')
+			end
 		elseif player_job.main_job == 'GEO' and player_job.sub_job == 'SCH' then
 			windower.send_command('gs c set castingmode DT; gs c set idlemode DT; gmalaise; iacumen; gs c autoentrust fury; hb mincure 4; hb aoe on')
             windower.send_command('wait 0.7; hb buff ' ..find_job_charname('SAM').. ' windstorm; hb buff ' ..find_job_charname('RDM','1',true).. ' aurorastorm; hb buff ' ..find_job_charname('BRD').. ' aurorastorm; hb buff ' ..tank_char_name.. ' aurorastorm;')
@@ -895,6 +917,7 @@ function stage(cmd2)
 			windower.send_command('gs c set JugMode ScissorlegXerin')
 		end
 		windower.send_command('gs c othertargetws Mboze')
+		settings.autows = true
 	elseif cmd2 == 'mbozepre' then
 		windower.send_command('gaze ap off')
 		if player_job.main_job == 'RDM' then
@@ -1127,7 +1150,7 @@ function jc(cmd2)
 		if player_job.name == "" ..settings.char1.. "" then
 			windower.send_command("jc pld/run" )
 		elseif player_job.name == "" ..settings.char2.. "" then
-			windower.send_command("jc sam/war" )
+			windower.send_command("jc rng/nin" )
 		elseif player_job.name == "" ..settings.char3.. "" then
 			windower.send_command("jc war/drg" )
 		elseif player_job.name == "" ..settings.char4.. "" then
@@ -1135,7 +1158,7 @@ function jc(cmd2)
 		elseif player_job.name == "" ..settings.char5.. "" then
 			windower.send_command("jc rdm/sch")
 		elseif player_job.name == "" ..settings.char6.. "" then
-			windower.send_command("jc cor/dnc")
+			windower.send_command("jc cor/nin")
 		end
     elseif cmd2 == 'cait' then
 		atc('[JC] Cait')
@@ -3072,6 +3095,7 @@ function enter()
 	local adoulin_beam_zones = S{265,268,269,272,273}
 	local wkr_zones = S{261,262,263,265,266,267}
     local orb_zones = S{163,165,206,168,139,144,146}
+	local htmb_zones = S{168}
 
 	if haveBuff('Invisible') then
 		windower.send_command('cancel invisible')
@@ -3641,7 +3665,7 @@ end
 
 function wsproc(cmd2)
 	local player_job = windower.ffxi.get_player()
-	local ProcJobs = S{'WAR','BLU','RUN','THF','DRK','SAM','MNK','PUP'}		
+	local ProcJobs = S{'WAR','BLU','RUN','THF','DRK','SAM','MNK','PUP','BRD'}		
 
 	if cmd2 == 'phy' then
 		if ProcJobs:contains(player_job.main_job) then
@@ -3652,10 +3676,10 @@ function wsproc(cmd2)
 				windower.send_command('gs c autows brainshaker')
 			elseif player_job.main_job == "RUN" or player_job.main_job == "DRK" then
 				windower.send_command('gs c autows shockwave')
-            elseif player_job.main_job == "THF" then
+            elseif player_job.main_job == "THF" or player_job.main_job == "BRD" then
 				windower.send_command('gs c autows wasp sting')
             elseif player_job.main_job == "SAM" then
-				windower.send_command('gs c autows Tachi: Hobaku')
+				windower.send_command('gs c set weapons Norifusa; gs c autows Tachi: Hobaku')
             elseif player_job.main_job == "MNK" or player_job.main_job == "PUP" then
 				windower.send_command('gs c autows Shoulder Tackle')
 			end
@@ -3671,10 +3695,10 @@ function wsproc(cmd2)
 				windower.send_command('gs c autows shining strike')
 			elseif player_job.main_job == "RUN" or player_job.main_job == "DRK" then
 				windower.send_command('gs c autows freezebite')
-            elseif player_job.main_job == "THF" then
+            elseif player_job.main_job == "THF" or player_job.main_job == "BRD" then
 				windower.send_command('gs c autows gust slash')
             elseif player_job.main_job == "SAM" then
-				windower.send_command('gs c autows Tachi: Goten')
+				windower.send_command('gs c set weapons Norifusa; gs c autows Tachi: Goten')
             elseif player_job.main_job == "MNK" or player_job.main_job == "PUP" then
 				windower.send_command('gs c autows Shoulder Tackle')
 			end
@@ -3694,10 +3718,10 @@ function wsproc(cmd2)
                 else
                     windower.send_command('gs c autows Torcleaver')
                 end
-            elseif player_job.main_job == "THF" then
+            elseif player_job.main_job == "THF" or player_job.main_job == "BRD" then
 				windower.send_command('gs c autows rudra\'s storm')
             elseif player_job.main_job == "SAM" then
-				windower.send_command('gs c autows Tachi: Fudo')
+				windower.send_command('gs c set weapons Masamune; gs c autows Tachi: Fudo')
             elseif player_job.main_job == "MNK" or player_job.main_job == "PUP" then
 				windower.send_command('gs c autows Victory Smite')
 			end

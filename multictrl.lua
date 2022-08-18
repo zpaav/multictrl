@@ -3389,7 +3389,7 @@ end
 
 function wstype(cmd2)
 	local player_job = windower.ffxi.get_player()
-	local WSjobs = S{'COR','DRG','SAM','BLU','DRK','WAR'}		
+	local WSjobs = S{'COR','DRG','SAM','BLU','DRK','WAR','RNG'}		
 
 	if cmd2 == 'leaden' then
 		if WSjobs:contains(player_job.main_job) then
@@ -3411,7 +3411,7 @@ function wstype(cmd2)
 		end
 	elseif cmd2 == 'savage' then
 		if WSjobs:contains(player_job.main_job) then
-			if player_job.main_job == 'COR' then
+			if player_job.main_job == 'COR' or player_job.main_job == 'RNG' then
 				if player_job.sub_job == 'NIN' or player_job.sub_job == 'DNC' then
 					atc('WS-Type: Savage Blade')
 					windower.send_command('gs c autows Savage Blade')
@@ -3422,7 +3422,7 @@ function wstype(cmd2)
 					windower.send_command('gs c set weapons Naegling')
 				end
 			else
-				atc('WS-Type: Savage - Not COR, no WS change.')
+				atc('WS-Type: Savage - Not COR/RNG, no WS change.')
 			end
 		else
 			atc('WS-Type: Savage - Skipping')
@@ -3462,6 +3462,24 @@ function wstype(cmd2)
 			end
 		else
 			atc('WS-Type: Wildfire - Skipping')
+		end	
+	elseif cmd2 == 'trueflight' then
+		if WSjobs:contains(player_job.main_job) then
+			if player_job.main_job == 'RNG' then
+				if player_job.sub_job == 'NIN' or player_job.sub_job == 'DNC' then
+					atc('WS-Type: TrueFlight')
+					windower.send_command('gs c autows Trueflight')
+					windower.send_command('gs c set weapons DualGastra')
+				else
+					atc('WS-Type: TrueFlight')
+					windower.send_command('gs c autows Trueflight')
+					windower.send_command('gs c set weapons Gastraphetes')
+				end
+			else
+				atc('WS-Type: TrueFlight - Not RNG, no WS change.')
+			end
+		else
+			atc('WS-Type: TrueFlight - Skipping')
 		end	
 	elseif cmd2 == 'mace' then
 		if WSjobs:contains(player_job.main_job) then
@@ -3603,6 +3621,30 @@ function wstype(cmd2)
 			windower.send_command('gs c autows Tachi: Jinpu')
         else
             atc('WS-Type: Jinpu - Skipping')
+        end
+    elseif cmd2 == 'kagero' then
+        if player_job.main_job == 'SAM' then
+			atc('WS is Kagero')
+			windower.send_command('gs c set weapons Dojikiri')
+			windower.send_command('gs c autows Tachi: Kagero')
+        else
+            atc('WS-Type: Kagero - Skipping')
+        end
+    elseif cmd2 == 'goten' then
+        if player_job.main_job == 'SAM' then
+			atc('WS is Goten')
+			windower.send_command('gs c set weapons Dojikiri')
+			windower.send_command('gs c autows Tachi: Goten')
+        else
+            atc('WS-Type: Goten - Skipping')
+        end
+    elseif cmd2 == 'koki' then
+        if player_job.main_job == 'SAM' then
+			atc('WS is Koki')
+			windower.send_command('gs c set weapons Dojikiri')
+			windower.send_command('gs c autows Tachi: Koki')
+        else
+            atc('WS-Type: Koki - Skipping')
         end
     elseif cmd2 == 'fudo' then
         if player_job.main_job == 'SAM' then

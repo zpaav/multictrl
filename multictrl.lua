@@ -156,6 +156,11 @@ windower.register_event('addon command', function(input, ...)
 		local mob_id = target and target.valid_target and target.is_npc and target.id
 		cor:schedule(0, cmd2, mob_id)
 		send_to_IPC:schedule(1, cmd,cmd2,mob_id)
+	elseif cmd == 'blu' then				    		-- Mob ID
+		local target = windower.ffxi.get_mob_by_target('t')
+		local mob_id = target and target.valid_target and target.is_npc and target.id
+		blu:schedule(0, cmd2,mob_id)
+		send_to_IPC:schedule(1, cmd,cmd2,mob_id)
 	elseif cmd == 'cc' then				    		-- Mob ID
 		local target = windower.ffxi.get_mob_by_target('t')
 		local mob_id = target and target.valid_target and target.is_npc and target.id
@@ -626,9 +631,9 @@ function stage(cmd2)
             windower.send_command('wait 0.7; hb buff me auspice,regen5; hb buff ' ..find_job_charname('SAM').. ' windstorm2; hb buff ' ..find_job_charname('RDM','1').. ' aurorastorm2; hb buff ' ..find_job_charname('RDM','2').. ' aurorastorm2; hb buff ' ..find_job_charname('BRD').. ' aurorastorm2; hb buff ' ..tank_char_name.. ' aurorastorm2;')
         elseif player_job.main_job == 'BRD' then
             windower.send_command('wait 1; gs c set treasuremode tag; hb minwaltz 3; gs c weapons DualCarn; sing pl melee; sing n on; sing d on; hb debuff wind threnody II; sing debuff carnage elegy;')
-            windower.send_command('wait 0.7; sing ballad 1 '..find_job_charname('GEO','1',true).. '; sing ballad 1 '..find_job_charname('RDM','1',true))
-            windower.send_command('wait 0.7; sing sirvente '..tank_char_name..'; sing ballad 1 '..tank_char_name)
-            windower.send_command('wait 0.7; sing ballad 1 '..find_job_charname('WHM')..'; sing ballad 2 '..find_job_charname('SCH'))
+            windower.send_command('wait 1.5; sing ballad 1 '..find_job_charname('GEO','1',true).. '; sing ballad 1 '..find_job_charname('RDM','1',true))
+            windower.send_command('wait 1.5; sing sirvente '..tank_char_name..'; sing ballad 1 '..tank_char_name)
+            windower.send_command('wait 1.5; sing ballad 1 '..find_job_charname('WHM')..'; sing ballad 2 '..find_job_charname('SCH'))
         elseif player_job.main_job == 'SAM' then
             windower.send_command('gs c set hybridmode normal; gs c set weapons Masamune; gs c set DefenseDownMode tag')
         end
@@ -1278,11 +1283,11 @@ function cc(cmd2)
 			end
 		elseif player_job.main_job == "RDM" or player_job.main_job == "GEO" then
 			if player_job.sub_job == "BLM" then
-				atcwarn("CC: Sleepga.")
+				atcwarn("CC: Sleepga II.")
 				if cmd2 and not (player_job.target_locked) then
-					windower.send_command('input /ma \'Sleepga\' ' .. cmd2)
+					windower.send_command('input /ma \'Sleepga II\' ' .. cmd2)
 				else
-					windower.send_command('input /ma \'Sleepga\' <t>')
+					windower.send_command('input /ma \'Sleepga II\' <t>')
 				end
             else
             	atcwarn("CC: Sleep II.")
@@ -1673,6 +1678,8 @@ function brd(cmd2)
 			--windower.send_command('sing off; input /ja "Nightingale" <me>; wait 1.5; input /ja "Troubadour" <me>')
 		elseif cmd2 == 'zerg' then
 			windower.send_command('sing off; gs c set autozergmode on')
+		elseif cmd2 == 'dummy' then
+			windower.send_command("input /ma 'Puppet's Operetta' <me>")
 		else
 			atc('[BRD] Invalid command')
 		end
@@ -2441,6 +2448,87 @@ function burn(cmd2,cmd3)
 		atc('[BurnSet] Invalid command')
 	end
 	display_box()
+end
+
+function blu(cmd2,cmd3)
+	local player_job = windower.ffxi.get_player()
+	local world = res.zones[windower.ffxi.get_info().zone].name
+
+	if player_job.main_job == 'BLU' and not(areas.Cities:contains(world)) then
+		if cmd2 then
+			if cmd2 and cmd2:lower() == 'tenebral' then
+				atc('[BLU] Tenebral Crush')
+				if not (player_job.target_locked) then
+					windower.send_command("input /ma 'Tenebral Crush' " .. cmd3)
+				else
+					windower.send_command('input /ma "Tenebral Crush" <t>')
+				end
+			elseif cmd2 and cmd2:lower() == 'anvil' then
+				atc('[BLU] Anvil Lightning')
+				if not (player_job.target_locked) then
+					windower.send_command("input /ma 'Anvil Lightning' " .. cmd3)
+				else
+					windower.send_command('input /ma "Anvil Lightning" <t>')
+				end
+			elseif cmd2 and cmd2:lower() == 'spectral' then
+				atc('[BLU] Spectral Floe')
+				if not (player_job.target_locked) then
+					windower.send_command("input /ma 'Spectral Floe' " .. cmd3)
+				else
+					windower.send_command('input /ma "Spectral Floe" <t>')
+				end
+			elseif cmd2 and cmd2:lower() == 'entomb' then
+				atc('[BLU] Entomb')
+				if not (player_job.target_locked) then
+					windower.send_command("input /ma 'Entomb' " .. cmd3)
+				else
+					windower.send_command('input /ma "Entomb" <t>')
+				end
+			elseif cmd2 and cmd2:lower() == 'searing' then
+				atc('[BLU] Searing Tempest')
+				if not (player_job.target_locked) then
+					windower.send_command("input /ma 'Searing Tempest' " .. cmd3)
+				else
+					windower.send_command('input /ma "Searing Tempest" <t>')
+				end
+			elseif cmd2 and cmd2:lower() == 'spate' then
+				atc('[BLU] Scouring Spate')
+				if not (player_job.target_locked) then
+					windower.send_command("input /ma 'Scouring Spate' " .. cmd3)
+				else
+					windower.send_command('input /ma "Scouring Spate" <t>')
+				end
+			elseif cmd2 and cmd2:lower() == 'silent' then
+				atc('[BLU] Silent Storm')
+				if not (player_job.target_locked) then
+					windower.send_command("input /ma 'Silent Storm' " .. cmd3)
+				else
+					windower.send_command('input /ma "Silent Storm" <t>')
+				end
+			elseif cmd2 and cmd2:lower() == 'blinding' then
+				atc('[BLU] Blinding Fulgor')
+				if not (player_job.target_locked) then
+					windower.send_command("input /ma 'Blinding Fulgor' " .. cmd3)
+				else
+					windower.send_command('input /ma "Blinding Fulgor" <t>')
+				end
+			elseif cmd2 and cmd2:lower() == 'subduction' then
+				atc('[BLU] Subduction')
+				if not (player_job.target_locked) then
+					windower.send_command("input /ma 'Subduction' " .. cmd3)
+				else
+					windower.send_command('input /ma "Subduction" <t>')
+				end
+			else 
+				atc('[BLU] Invalid Command')
+			end
+			windower.send_command('wait 1.9; mc cc ' .. cmd3)
+		end
+	elseif areas.Cities:contains(world) then
+		atc('[BLU] Abort: In city zone.')
+	else
+		atc('[BLU] Skipping - Not BLU.')
+	end
 end
 
 function smn(cmd2,leader_smn,cmd3)
@@ -3411,11 +3499,16 @@ function wstype(cmd2)
 		end
 	elseif cmd2 == 'savage' then
 		if WSjobs:contains(player_job.main_job) then
-			if player_job.main_job == 'COR' or player_job.main_job == 'RNG' then
-				if player_job.sub_job == 'NIN' or player_job.sub_job == 'DNC' then
+			if player_job.main_job == 'COR' or player_job.main_job == 'RNG' or player_job.main_job == 'BLU' then
+				if player_job.sub_job == 'NIN' or player_job.sub_job == 'DNC' or player_job.main_job == 'BLU' then
 					atc('WS-Type: Savage Blade')
-					windower.send_command('gs c autows Savage Blade')
-					windower.send_command('gs c set weapons DualSavage')
+					if player_job.main_job == 'BLU' then
+						windower.send_command('gs c set weapons NaegThib')
+						windower.send_command('gs c autows Savage Blade')
+					else
+						windower.send_command('gs c autows Savage Blade')
+						windower.send_command('gs c set weapons DualSavage')
+					end
 				else
 					atc('WS-Type: Savage Blade')
 					windower.send_command('gs c autows Savage Blade')
@@ -3517,6 +3610,7 @@ function wstype(cmd2)
 			elseif player_job.main_job == 'BLU' then
 				atc('WS is Savage')
 				windower.send_command('gs c set weapons TizThib')
+				windower.send_command('gs c autows Expiacion')
 			elseif player_job.main_job == 'WAR' then
 				atc('WS is Savage')
 				windower.send_command('gs c set weapons Naegling; gs c autows tp 1000')
@@ -4036,6 +4130,8 @@ windower.register_event('ipc message', function(msg, ...)
 	elseif cmd == 'buy' then
 		coroutine.sleep(delay+delay)
 		buy(cmd2, cmd3)	
+	elseif cmd == 'blu' then
+		blu(cmd2, cmd3)	
 	elseif cmd == 'cc' then
 		cc(cmd2)	
     elseif cmd == 'fin' then

@@ -613,6 +613,78 @@ function stage(cmd2)
 		end
         settings.autows = true
 		windower.send_command('ai off; chatter on;')
+	-- Sortie SC setup
+	elseif cmd2 == 'skillchain' then
+		atc('[Stage]: Sortie - Skillchain')
+		if player_job.main_job == 'WHM' then
+			windower.send_command('lua u maa; mc buffall haste; hb buff me regen4')
+        elseif player_job.main_job == 'GEO' then
+			windower.send_command('lua u maa; irefresh; ghaste')
+		elseif player_job.main_job == 'BRD' then
+			windower.send_command('gs c set weapons DualCarn; sing pl mage')
+		elseif player_job.main_job == 'COR' then
+			windower.send_command('roll melee; gs c set weapons DualLeaden')
+		elseif player_job.main_job == 'RUN' then
+			windower.send_command('lua u maa;')
+		elseif player_job.main_job == 'BLU' then
+			windower.send_command('lua u maa;')
+		end
+        settings.autows = false
+		settings.autosc = true
+	-- Sortie MB Setup
+	elseif cmd2 == 'magicburst' then
+		atc('[Stage]: Sortie - Magic Burst')
+		if player_job.main_job == 'WHM' then
+			windower.send_command('lua l maa; mc buffall haste; hb buff me regen4')
+        elseif player_job.main_job == 'GEO' then
+			windower.send_command('lua u maa; irefresh; ghaste')
+		elseif player_job.main_job == 'BRD' then
+			windower.send_command('gs c set weapons DualCarn; sing pl mage')
+		elseif player_job.main_job == 'COR' then
+			windower.send_command('roll melee; gs c set weapons DualLeaden')
+		elseif player_job.main_job == 'RUN' then
+			windower.send_command('lua l maa;')
+		elseif player_job.main_job == 'BLU' then
+			windower.send_command('lua l maa;')
+		end
+        settings.autows = false
+		settings.autosc = true
+	-- Sortie Cleave MAB UP
+	elseif cmd2 == 'cleave' then
+		atc('[Stage]: Sortie - Cleave MAB')
+		if player_job.main_job == 'WHM' then
+			windower.send_command('lua u maa; mc buffall haste; hb buff me regen4')
+        elseif player_job.main_job == 'GEO' then
+			windower.send_command('lua u maa; iacumen; gmalaise')
+		elseif player_job.main_job == 'BRD' then
+			windower.send_command('gs c set weapons DualCarn; sing pl cleave')
+		elseif player_job.main_job == 'COR' then
+			windower.send_command('roll magic;')
+		elseif player_job.main_job == 'RUN' then
+			windower.send_command('lua u maa;')
+		elseif player_job.main_job == 'BLU' then
+			windower.send_command('lua u maa; azuresets set magic; gs c set weapons Magic')
+		end
+        settings.autows = true
+		settings.autosc = false
+	-- Sortie Melee Bosses
+	elseif cmd2 == 'melee' then
+		atc('[Stage]: Sortie - Melee (BOSS) Savage Spam')
+		if player_job.main_job == 'WHM' then
+			windower.send_command('lua u maa; mc buffall haste; hb buff me regen4')
+        elseif player_job.main_job == 'GEO' then
+			windower.send_command('lua u maa; iattune; gfury; gs c autoentrust refresh')
+		elseif player_job.main_job == 'BRD' then
+			windower.send_command('gs c set weapons DualSavage; sing pl melee')
+		elseif player_job.main_job == 'COR' then
+			windower.send_command('roll melee; gs c set weapons DualSavage')
+		elseif player_job.main_job == 'RUN' then
+			windower.send_command('lua u maa; gs c set weapons Lionheart')
+		elseif player_job.main_job == 'BLU' then
+			windower.send_command('lua u maa; azuresets set melee; gs c set weapons DualSavage')
+		end
+        settings.autows = true
+		settings.autosc = false
     elseif cmd2 == 'wave1' then
         if player_job.main_job == 'COR' then
 			windower.send_command('gs c autows leaden salute; gs c set weapons DualLeadenRanged; roll roll1 tact; roll roll2 wizard;')
@@ -741,8 +813,8 @@ function stage(cmd2)
 			windower.send_command('wait 1.5; gaze ap on; gs c set weapons Naegling;')
 		end
 		settings.autows = true
-	elseif cmd2 == 'cleave' then
-		atc('[Stage]: Cleaving')
+	elseif cmd2 == 'exp' then
+		atc('[Stage]: EXP Cleaving')
 		if player_job.main_job == 'BRD' then
 			windower.send_command('wait 2.5; sing n off; sing pl mage')
 		elseif player_job.main_job == 'BLU' then
@@ -2692,7 +2764,7 @@ end
 function autosc(cmd2, leader_rng)
 	currentPC=windower.ffxi.get_player()
 	
-	local rangedjobs = S{'COR','SCH','BLM','RUN'}
+	local rangedjobs = S{'COR','SCH','BLM','RUN','BRD'}
 
 	if cmd2 == nil then
 		if settings.autosc then
@@ -2803,9 +2875,19 @@ function autosc(cmd2, leader_rng)
 					atc('[AUTOSC] BLM PreNuke')
 					windower.send_command:schedule(4.1, 'gs c elemental aja Ongo')
 				end
+			--Sortie 4 Step: Aeolian Edge x4.
+			elseif cmd2 and cmd2:lower() == 'aeolian' then
+				windower.send_command('gs c set autobuffmode off; gs c set autowsmode off')
+				if currentPC.main_job == 'COR' then
+					windower.send_command:schedule(0.2, 'input /ws "Aeolian Edge" <t>')
+					windower.send_command:schedule(5.9, 'input /ws "Aeolian Edge" <t>')
+				elseif currentPC.main_job == 'BRD' then
+					windower.send_command:schedule(2.8, 'input /ws "Aeolian Edge" <t>')
+					windower.send_command:schedule(8.7, 'input /ws "Aeolian Edge" <t>')
+				end
 			end
 		else
-			atc('[AUTOSC] Not COR/RUN/SCH/BLM job, skipping.')
+			atc('[AUTOSC] Not COR/RUN/SCH/BLM/BRD job, skipping.')
 		end
 	end
 	display_box()

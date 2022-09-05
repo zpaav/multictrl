@@ -29,4 +29,6 @@ return {
 	[256] = {'Dangueubert'},
 	[257] = {'Cunegonde'},
 	[67] = {'Ornamental Door'},
+	[275] = {'Diaphanous Gadget','Diaphanous Gadget #A','Diaphanous Gadget #B','Diaphanous Gadget #C','Diaphanous Gadget #D'},
+	[133] = {'Diaphanous Gadget','Diaphanous Gadget #A','Diaphanous Gadget #B','Diaphanous Gadget #C','Diaphanous Gadget #D'},
 }

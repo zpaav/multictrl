@@ -584,11 +584,11 @@ function stage(cmd2)
 		windower.send_command('gaze ap on')
 		windower.send_command('gs c othertargetws Bozzetto Retributionist')
 		if player_job.main_job == 'BRD' then
-			windower.send_command('wait 2.5; sing d on; sing pl meleehaste2; sing n on; sing p on; sing ballad 1 ' ..tank_char_name.. '; sing sirvente ' ..tank_char_name..'; sing ballad 1 ' ..find_job_charname('RDM'))
+			windower.send_command('wait 2.5; sing d on; sing pl meleehaste2; sing n on; sing p on; sing ballad 1 ' ..tank_char_name.. '; sing sirvente ' ..tank_char_name..'; sing ballad 1 ' ..find_job_charname('RDM')..'; sing ballad 2 me')
 		elseif player_job.main_job == 'PLD' then
 			windower.send_command('hb buff me holy circle;')
 		elseif player_job.main_job == 'RDM' then
-			windower.send_command('dfull; hb ind on; hb aoe on; mc buffall haste2; wait 1; mc buffall shell5; hb buff '..tank_char_name..' refresh3; hb as nolock off; hb as ' ..find_job_charname('BRD'))
+			windower.send_command('dfull; hb ind on; hb aoe on; mc buffall haste2; wait 1; mc buffall shell5; hb buff '..tank_char_name..' refresh3; hb as nolock off; hb as ' ..find_job_charname('BRD')..' hb buff '..find_job_charname('BRD')..' refresh3;')
 		elseif player_job.main_job == 'BST' then
 			windower.send_command('gs c set JugMode FatsoFargann; gs c set AutoCallPet on; gs c set weapons Aymur; lua l react; hb as nolock off; hb as ' ..find_job_charname('BRD'))
 		elseif player_job.main_job == 'MNK' then
@@ -1280,17 +1280,17 @@ function jc(cmd2)
     elseif cmd2 == 'ambu' then
 		atc('[JC] Ambu')
 		if player_job.name == "" ..settings.char1.. "" then
-			windower.send_command("jc pld/run" )
+			windower.send_command("jc pld/blu" )
 		elseif player_job.name == "" ..settings.char2.. "" then
-			windower.send_command("jc rng/nin" )
+			windower.send_command("jc bst/blm" )
 		elseif player_job.name == "" ..settings.char3.. "" then
-			windower.send_command("jc war/drg" )
+			windower.send_command("jc geo/blm" )
 		elseif player_job.name == "" ..settings.char4.. "" then
-			windower.send_command("jc brd/dnc")
+			windower.send_command("jc brd/whm")
 		elseif player_job.name == "" ..settings.char5.. "" then
 			windower.send_command("jc rdm/sch")
 		elseif player_job.name == "" ..settings.char6.. "" then
-			windower.send_command("jc cor/nin")
+			windower.send_command("jc mnk/war")
 		end
     elseif cmd2 == 'cait' then
 		atc('[JC] Cait')

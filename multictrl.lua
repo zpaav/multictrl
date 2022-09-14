@@ -582,18 +582,19 @@ function stage(cmd2)
 	if cmd2 == 'ambu' then
 		atc('[Stage]: Ambu')
 		windower.send_command('gaze ap on')
+		windower.send_command('gs c othertargetws Bozzetto Retributionist')
 		if player_job.main_job == 'BRD' then
-			windower.send_command('wait 2.5; sing pl meleehaste2; sing n on; sing p on; gs c set weapons DualSavage; sing ballad 1 ' ..tank_char_name.. '; sing ballad 1 ' ..find_job_charname('RDM'))
+			windower.send_command('wait 2.5; sing d on; sing pl meleehaste2; sing n on; sing p on; sing ballad 1 ' ..tank_char_name.. '; sing sirvente ' ..tank_char_name..'; sing ballad 1 ' ..find_job_charname('RDM'))
 		elseif player_job.main_job == 'PLD' then
-			windower.send_command('hb buff me barthunder; gs c set runeelement tellus; gs c autows savage blade')
+			windower.send_command('hb buff me holy circle;')
 		elseif player_job.main_job == 'RDM' then
-			windower.send_command('dsmall; hb aoe on; mc buffall haste2; wait 1; mc buffall shell5; hb buff '..tank_char_name..' refresh3; gs c set weapons Naegling')
-		elseif player_job.main_job == 'COR' then
-			windower.send_command('roll melee; gs c set weapons DualSavage; autoss')
-		elseif player_job.main_job == 'WAR' then
-			windower.send_command('gs c set weapons Naegling')
-		elseif player_job.main_job == 'RNG' then
-			windower.send_command('gs c set weapons DualSavage; autoss')
+			windower.send_command('dfull; hb ind on; hb aoe on; mc buffall haste2; wait 1; mc buffall shell5; hb buff '..tank_char_name..' refresh3; hb as nolock off; hb as ' ..find_job_charname('BRD'))
+		elseif player_job.main_job == 'BST' then
+			windower.send_command('gs c set JugMode FatsoFargann; gs c set AutoCallPet on; gs c set weapons Aymur; lua l react; hb as nolock off; hb as ' ..find_job_charname('BRD'))
+		elseif player_job.main_job == 'MNK' then
+			windower.send_command('gs c set hybridmode normal; gs c set AutoOtherTargetWS on')
+		elseif player_job.main_job == 'GEO' then
+			windower.send_command('lua l react; gs c autoentrust refresh; hb as nolock off; hb as ' ..find_job_charname('BRD'))
 		end
 		settings.autows = true
         windower.send_command('input /autotarget on')
@@ -1206,7 +1207,7 @@ function jc(cmd2)
 		if player_job.name == "" ..settings.char1.. "" then
 			windower.send_command("jc run/drk" )
 		elseif player_job.name == "" ..settings.char2.. "" then
-			windower.send_command("jc cor/nin" )
+			windower.send_command("jc cor/dnc" )
 		elseif player_job.name == "" ..settings.char3.. "" then
 			windower.send_command("jc blu/drg" )
 		elseif player_job.name == "" ..settings.char4.. "" then

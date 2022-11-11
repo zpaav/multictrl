@@ -29,8 +29,8 @@ return {
 	[256] = {'Dangueubert'},
 	[257] = {'Cunegonde'},
 	[67] = {'Ornamental Door'},
-	[275] = {'Diaphanous Gadget','Diaphanous Gadget #A','Diaphanous Gadget #B','Diaphanous Gadget #C','Diaphanous Gadget #D','Diaphanous Gadget #E','Diaphanous Gadget #F','Diaphanous Gadget #G','Diaphanous Gadget #H','Diaphanous Bitzer #A','Diaphanous Bitzer #B','Diaphanous Bitzer #C','Diaphanous Bitzer #D','Diaphanous Bitzer'},
-	[133] = {'Diaphanous Gadget','Diaphanous Gadget #A','Diaphanous Gadget #B','Diaphanous Gadget #C','Diaphanous Gadget #D','Diaphanous Gadget #E','Diaphanous Gadget #F','Diaphanous Gadget #G','Diaphanous Gadget #H','Diaphanous Bitzer #A','Diaphanous Bitzer #B','Diaphanous Bitzer #C','Diaphanous Bitzer #D','Diaphanous Bitzer'},
+	[275] = {'Diaphanous Device','Diaphanous Device #A','Diaphanous Device #B','Diaphanous Device #C','Diaphanous Device #D','Diaphanous Gadget','Diaphanous Gadget #A','Diaphanous Gadget #B','Diaphanous Gadget #C','Diaphanous Gadget #D','Diaphanous Gadget #E','Diaphanous Gadget #F','Diaphanous Gadget #G','Diaphanous Gadget #H','Diaphanous Bitzer #A','Diaphanous Bitzer #B','Diaphanous Bitzer #C','Diaphanous Bitzer #D','Diaphanous Bitzer'},
+	[133] = {'Diaphanous Device','Diaphanous Device #A','Diaphanous Device #B','Diaphanous Device #C','Diaphanous Device #D','Diaphanous Gadget','Diaphanous Gadget #A','Diaphanous Gadget #B','Diaphanous Gadget #C','Diaphanous Gadget #D','Diaphanous Gadget #E','Diaphanous Gadget #F','Diaphanous Gadget #G','Diaphanous Gadget #H','Diaphanous Bitzer #A','Diaphanous Bitzer #B','Diaphanous Bitzer #C','Diaphanous Bitzer #D','Diaphanous Bitzer'},
 	[111] = {'Trail Markings'},
 	[112] = {'Trail Markings'},
 }

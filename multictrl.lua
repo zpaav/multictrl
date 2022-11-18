@@ -90,7 +90,7 @@ jobnames = {
 InternalCMDS = S{
 
 	--Battle
-	'on','off','stage','fight','fightmage','fightsmall','ws','food','sleep',
+	'on','off','stage','fight','fightmage','fightsmall','ws','food','autosub',
 	'wsall','zerg','wstype','buffup','rebuff','dd','attackon','mb','reraise','smartws',
 	
 	--Job
@@ -615,7 +615,7 @@ function stage(cmd2)
 		elseif player_job.main_job == 'BRD' then
 			windower.send_command('hb debuff horde lullaby 2; sing pl meleeacc; gs c set weapons DualCarn;')
 		elseif player_job.main_job == 'COR' then
-			windower.send_command('roll roll1 chaos; roll roll2 exp;')
+			windower.send_command('roll roll1 exp; roll roll2 sam;')
 		end
         settings.autows = true
 		windower.send_command('ai off; chatter on;')
@@ -2146,7 +2146,7 @@ function ws(cmd2)
 	display_box()
 end
 
-function sleep(cmd2)
+function autosub(cmd2)
 	local player_job = windower.ffxi.get_player()
 	if cmd2 == 'off' then
 		if player_job.sub_job == "SCH" then
@@ -3873,15 +3873,19 @@ function enter()
 		elseif zone == 133 or zone == 275 then
 			if possible_npc.name == "Diaphanous Bitzer" then
 				atc('Bitzer return')
-				windower.send_command('wait 0.5; setkey up down; wait 0.25; setkey up up; wait 0.7; setkey enter down; wait 0.25; setkey enter up; wait 1.0; setkey up down; wait 0.25; setkey up up; wait 0.7; setkey enter down; wait 0.25; setkey enter up;')
+				windower.send_command('wait 0.1; setkey up down; wait 0.18; setkey up up; wait 0.5; setkey enter down; wait 0.18; setkey enter up; wait 0.5; setkey up down; wait 0.18; setkey up up; wait 0.5; setkey enter down; wait 0.18; setkey enter up;')
 			else
-				windower.send_command('wait 1.1; setkey up down; wait 0.25; setkey up up; wait 0.7; setkey enter down; wait 0.25; setkey enter up;')
+				windower.send_command('wait 0.1; setkey up down; wait 0.18; setkey up up; wait 0.5; setkey enter down; wait 0.18; setkey enter up;')
 			end
+		-- Trail markings
 		elseif zone == 111 or zone == 112 then
 			windower.send_command('wait 1.8; setkey up down; wait 0.25; setkey up up; wait 0.7; setkey enter down; wait 0.25; setkey enter up;')
+		-- Odyssey
+		elseif zone == 279 or zone == 298 then
+			windower.send_command('wait 0.1; setkey up down; wait 0.18; setkey up up; wait 0.5; setkey enter down; wait 0.18; setkey enter up;')
 		--General
 		else
-			windower.send_command('wait 0.5; setkey up down; wait 0.25; setkey up up; wait 0.7; setkey enter down; wait 0.25; setkey enter up;')
+			windower.send_command('wait 1.0; setkey up down; wait 0.25; setkey up up; wait 0.7; setkey enter down; wait 0.25; setkey enter up;')
 		end
 	end
 	

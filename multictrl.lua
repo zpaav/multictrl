@@ -619,15 +619,33 @@ function stage(cmd2)
 		end
         settings.autows = true
 		windower.send_command('ai off; chatter on;')
+	elseif cmd2 == 'gboss' then
+		atc('[Stage]: Sortie - G Boss [Triboulex] -[FIRE]- MB')
+		if player_job.main_job == 'SCH' and player_job.sub_job == 'RDM' then
+			windower.send_command('lua r maa; firestorm2 me; schnuke')
+		elseif player_job.main_job == 'SCH' and player_job.sub_job == 'WHM' then
+			windower.send_command('lua u maa; lua r maaSCH; firestorm2 '..find_job_charname('BLM'))
+        elseif player_job.main_job == 'GEO' then
+			windower.send_command('lua r maa; iacumen; gmalaise; gs c autoentrustee '..find_job_charname('BLM')..'; gs c autoentrust focus; gs c set magicburstmode lock; hb buff '..tank_char_name.. ' haste; gs c set autozergmode on;')
+		elseif player_job.main_job == 'COR' then
+			windower.send_command('roll roll1 warlock; roll roll2 wizard; hb buff me haste')
+		elseif player_job.main_job == 'RUN' then
+			windower.send_command('gs c set runeelement ignis; hb buff me barblizzard; gs c set hybridmode Ongo')
+		elseif player_job.main_job == 'BLM' then
+			windower.send_command('gs c set elementalmode fire; lua r maa')
+		end
+        settings.autows = false
+		settings.autosc = true
+		windower.send_command('gs c set autowsmode off; ai off;')
 	-- Sortie E Boss (RDM RUN SCH GEO BRD COR)
-	elseif cmd2 == 'eboss' then
-		atc('[Stage]: Sortie - E Boss -[STONE]- MB')
+	elseif cmd2 == 'stone' then
+		atc('[Stage]: Sortie -[STONE]- MB')
 		if player_job.main_job == 'SCH' and player_job.sub_job == 'RDM' then
 			windower.send_command('lua r maa; sandstorm2 me; schnuke')
 		elseif player_job.main_job == 'SCH' and player_job.sub_job == 'WHM' then
-			windower.send_command('lua u maa; sandstorm2 '..find_job_charname('BLM'))
+			windower.send_command('lua u maa; lua r maaSCH; sandstorm2 '..find_job_charname('BLM'))
         elseif player_job.main_job == 'GEO' then
-			windower.send_command('lua u maa; iacumen; gmalaise; gs c autoentrust haste; gs c set magicburstmode lock; hb buff '..tank_char_name.. ' haste')
+			windower.send_command('lua r maa; iacumen; gmalaise; gs c autoentrust none; gs c set magicburstmode lock; hb buff '..tank_char_name.. ' haste')
 		elseif player_job.main_job == 'COR' then
 			windower.send_command('roll roll1 evokers; roll roll2 wizard; hb buff me haste')
 		elseif player_job.main_job == 'RUN' then
@@ -638,14 +656,14 @@ function stage(cmd2)
         settings.autows = false
 		settings.autosc = true
 		windower.send_command('gs c set autowsmode off')
-	elseif cmd2 == 'fboss' then
-		atc('[Stage]: Sortie - F Boss -[ICE]- MB')
+	elseif cmd2 == 'ice' then
+		atc('[Stage]: Sortie -[ICE]- MB')
 		if player_job.main_job == 'SCH' and player_job.sub_job == 'RDM' then
 			windower.send_command('lua r maa; hailstorm2 me; schnuke')
 		elseif player_job.main_job == 'SCH' and player_job.sub_job == 'WHM' then
-			windower.send_command('lua u maa; hailstorm2 '..find_job_charname('BLM'))
+			windower.send_command('lua u maa; lua r maaSCH; hailstorm2 '..find_job_charname('BLM'))
         elseif player_job.main_job == 'GEO' then
-			windower.send_command('lua u maa; iacumen; gmalaise; gs c autoentrust haste; gs c set magicburstmode lock; hb buff '..tank_char_name.. ' haste')
+			windower.send_command('lua r maa; iacumen; gmalaise; gs c autoentrust none; gs c set magicburstmode lock; hb buff '..tank_char_name.. ' haste')
 		elseif player_job.main_job == 'COR' then
 			windower.send_command('roll roll1 evokers; roll roll2 wizard; hb buff me haste')
 		elseif player_job.main_job == 'RUN' then
@@ -656,14 +674,14 @@ function stage(cmd2)
         settings.autows = false
 		settings.autosc = true
 		windower.send_command('gs c set autowsmode off')
-	elseif cmd2 == 'gboss' then
-		atc('[Stage]: Sortie - G Boss -[FIRE]- MB')
+	elseif cmd2 == 'fire' then
+		atc('[Stage]: Sortie -[FIRE]- MB')
 		if player_job.main_job == 'SCH' and player_job.sub_job == 'RDM' then
 			windower.send_command('lua r maa; firestorm2 me; schnuke')
 		elseif player_job.main_job == 'SCH' and player_job.sub_job == 'WHM' then
 			windower.send_command('lua u maa; firestorm2 '..find_job_charname('BLM'))
         elseif player_job.main_job == 'GEO' then
-			windower.send_command('lua u maa; iacumen; gmalaise; gs c autoentrust haste; gs c set magicburstmode lock; hb buff '..tank_char_name.. ' haste')
+			windower.send_command('lua u maa; iacumen; gmalaise; gs c autoentrust none; gs c set magicburstmode lock; hb buff '..tank_char_name.. ' haste')
 		elseif player_job.main_job == 'COR' then
 			windower.send_command('roll roll1 evokers; roll roll2 wizard; hb buff me haste')
 		elseif player_job.main_job == 'RUN' then
@@ -672,7 +690,7 @@ function stage(cmd2)
 			windower.send_command('gs c set elementalmode fire; lua r maa')
 		end
         settings.autows = false
-		settings.autosc = true
+		settings.autosc = false
 		windower.send_command('gs c set autowsmode off')
 	elseif cmd2 == 'thunder' then
 		atc('[Stage]: Sortie -[THUNDER]- MB')
@@ -681,7 +699,7 @@ function stage(cmd2)
 		elseif player_job.main_job == 'SCH' and player_job.sub_job == 'WHM' then
 			windower.send_command('lua u maa; thunderstorm2 '..find_job_charname('BLM'))
         elseif player_job.main_job == 'GEO' then
-			windower.send_command('lua u maa; iacumen; gmalaise; gs c autoentrust haste; gs c set magicburstmode lock; hb buff '..tank_char_name.. ' haste')
+			windower.send_command('lua u maa; iacumen; gmalaise; gs c autoentrust none; gs c set magicburstmode lock; hb buff '..tank_char_name.. ' haste')
 		elseif player_job.main_job == 'COR' then
 			windower.send_command('roll roll1 evokers; roll roll2 wizard; hb buff me haste')
 		elseif player_job.main_job == 'RUN' then
@@ -699,7 +717,7 @@ function stage(cmd2)
 		elseif player_job.main_job == 'SCH' and player_job.sub_job == 'WHM' then
 			windower.send_command('lua u maa; rainstorm2 '..find_job_charname('BLM'))
         elseif player_job.main_job == 'GEO' then
-			windower.send_command('lua u maa; iacumen; gmalaise; gs c autoentrust haste; gs c set magicburstmode lock; hb buff '..tank_char_name.. ' haste')
+			windower.send_command('lua u maa; iacumen; gmalaise; gs c autoentrust none; gs c set magicburstmode lock; hb buff '..tank_char_name.. ' haste')
 		elseif player_job.main_job == 'COR' then
 			windower.send_command('roll roll1 evokers; roll roll2 wizard; hb buff me haste')
 		elseif player_job.main_job == 'RUN' then
@@ -824,9 +842,15 @@ function stage(cmd2)
 		end
 	elseif cmd2 == 'ongo2' then
         if player_job.main_job == 'SMN' then
-			windower.send_command('gs c set avatar diabolos; gs c set autowardmode offense')
+			windower.send_command('gs c set avatar diabolos; gs c set autobpmode on;')
         elseif player_job.main_job == 'BRD' then
-			windower.send_command('sing pl mage')
+			windower.send_command('sing pl mage; hb buff '..tank_char_name..' mage\'s ballad iii,lightning carol')
+		elseif player_job.main_job == 'PLD' then
+			windower.send_command('gs c set weapons Aegis')
+		elseif player_job.main_job == 'DRK' then
+			windower.send_command('hb ind on; hb debuff poison2; hb debuff bio2')
+		elseif player_job.main_job == 'WHM' then
+			windower.send_command('hb buff '..tank_char_name.. ' shell5,regen4; hb buff me barthundra;')
         end
 	elseif cmd2 == 'ongo3' then
         if player_job.main_job == 'PUP' then
@@ -1129,6 +1153,45 @@ function stage(cmd2)
 			windower.send_command('roll melee; gs c set weapons Naegling; gs c set autoshot on; tproll')
 		end
 		settings.autows = true
+	elseif cmd2 == 'mboze1' then
+		windower.send_command('gaze ap off')
+		if player_job.main_job == 'WHM' then
+			windower.send_command('hb buff <me> barstonra; hb buff <me> boost-vit; gs c set castingmode DT; gs c set idlemode DT; hb mincuraga 3; hb debuff silence; hb debuff slow; hb debuff dia2; hb debuff paralyze; hb buff <me> auspice; hb buff ' ..find_job_charname('dd').. ' haste')
+		elseif player_job.main_job == 'DRK' then
+			windower.send_command('gs c set weapons Caladbolg; gs c set hybridmode SubtleBlow;')
+		elseif player_job.main_job == 'BRD' then
+			windower.send_command('wait 2.5; sing pl mboze; sing n off; sing p off; sing debuffing off; gs c set idlemode DT; sing debuff wind threnody 2; hb debuff wind threnody ii;')-- hb debuff pining nocturne; hb debuff Foe Requiem VII;')
+		elseif player_job.main_job == 'BLU' then
+			windower.send_command('gs c set castingmode resistant; gs c set AutoBLUSpam on; gs c set weapons MACC; hb debuff silent storm') --azuresets set mboze; 
+		end
+		windower.send_command('gs c othertargetws Mboze')
+		settings.autows = true
+	elseif cmd2 == 'mboze2' then
+		windower.send_command('gaze ap off')
+		if player_job.main_job == 'RDM' then
+			windower.send_command('hb debuff silence; hb debuff slow2; hb debuff dia3; hb debuff paralyze2; hb buff ' ..find_job_charname('dd').. ' haste2')
+		elseif  player_job.main_job == 'SAM' then
+			windower.send_command('gs c set hybridmode SubtleBlow;')
+		elseif player_job.main_job == 'COR' then
+			windower.send_command('roll melee; gs c set weapons Naegling; gs c set castingmode resistant;')
+		elseif player_job.main_job == 'BST' then
+			windower.send_command('gs c set JugMode FatsoFargann')
+		end
+		windower.send_command('gs c othertargetws Mboze')
+		settings.autows = true
+	elseif cmd2 == 'mboze3' then
+		windower.send_command('gaze ap off')
+		if player_job.main_job == 'SCH' then
+			windower.send_command('hb buff <me> regen5; schheal')
+		elseif player_job.main_job == 'WAR' then
+			windower.send_command('gs c set hybridmode SubtleBlow; gs c set weapons Naegling; gs c autows Savage Blade')
+		elseif player_job.main_job == 'SMN' then
+			windower.send_command('gs c set AutoBPMode on; gs c set AutoWardMode Ward_Offense; gs c set avatar cait sith;')
+		elseif player_job.main_job == 'GEO' then
+			windower.send_command('gs c autoindi refresh; gs c autogeo fury; gs c autogeotar '..find_job_charname('dd')..'; gs c autoentrust haste')
+		end
+		windower.send_command('gs c othertargetws Mboze')
+		settings.autows = true
 	elseif cmd2 == 'mboze' then
 		windower.send_command('gaze ap off')
 		if player_job.main_job == 'WHM' then
@@ -1320,6 +1383,51 @@ function jc(cmd2)
 		elseif player_job.name == "" ..settings.char6.. "" then
 			windower.send_command("jc sam/war")
 		end
+	elseif cmd2 == 'mboze1' then
+		atc('[JC] Mboze farm #1')
+		if player_job.name == "" ..settings.char1.. "" then
+			windower.send_command("jc blu/rdm" )
+		elseif player_job.name == "" ..settings.char2.. "" then
+			windower.send_command("jc mnk/rdm" )
+		elseif player_job.name == "" ..settings.char3.. "" then
+			windower.send_command("jc drk/rdm" )
+		elseif player_job.name == "" ..settings.char4.. "" then
+			windower.send_command("jc brd/rdm")
+		elseif player_job.name == "" ..settings.char5.. "" then
+			windower.send_command("jc run/whm")
+		elseif player_job.name == "" ..settings.char6.. "" then
+			windower.send_command("jc whm/rdm")
+		end
+	elseif cmd2 == 'mboze2' then
+		atc('[JC] Mboze farm #2')
+		if player_job.name == "" ..settings.char1.. "" then
+			windower.send_command("jc pld/rdm" )
+		elseif player_job.name == "" ..settings.char2.. "" then
+			windower.send_command("jc sam/rdm" )
+		elseif player_job.name == "" ..settings.char3.. "" then
+			windower.send_command("jc rdm/rdm" )
+		elseif player_job.name == "" ..settings.char4.. "" then
+			windower.send_command("jc cor/rdm")
+		elseif player_job.name == "" ..settings.char5.. "" then
+			windower.send_command("jc bst/rdm")
+		elseif player_job.name == "" ..settings.char6.. "" then
+			windower.send_command("jc nin/rdm")
+		end
+	elseif cmd2 == 'mboze3' then
+		atc('[JC] Mboze farm #3')
+		if player_job.name == "" ..settings.char1.. "" then
+			windower.send_command("jc war/rdm" )
+		elseif player_job.name == "" ..settings.char2.. "" then
+			windower.send_command("jc pup/rdm" )
+		elseif player_job.name == "" ..settings.char3.. "" then
+			windower.send_command("jc sch/rdm" )
+		elseif player_job.name == "" ..settings.char4.. "" then
+			windower.send_command("jc blm/rdm")
+		elseif player_job.name == "" ..settings.char5.. "" then
+			windower.send_command("jc geo/rdm")
+		elseif player_job.name == "" ..settings.char6.. "" then
+			windower.send_command("jc smn/rdm")
+		end
 	elseif cmd2 == 'ongo1' then
 		--RUN+COR+BLM+RDM+BLU+*NIN*
 		atc('[JC] Ongo farm #1')
@@ -1338,7 +1446,7 @@ function jc(cmd2)
 		end
 	elseif cmd2 == 'ongo2' then
 		--PLD+RNG+SMN+WHM+BRD+*DRK*
-		atc('[JC] Sortie farm.')
+		atc('[JC] Ongo farm #2')
 		if player_job.name == "" ..settings.char1.. "" then
 			windower.send_command("jc pld/rdm" )
 		elseif player_job.name == "" ..settings.char2.. "" then
@@ -1354,7 +1462,7 @@ function jc(cmd2)
 		end
 	elseif cmd2 == 'ongo3' then
 		--PUP+SCH+GEO+BST+*MNK*+*THF*
-		atc('[JC] Sortie farm.')
+		atc('[JC] Ongo farm #2')
 		if player_job.name == "" ..settings.char1.. "" then
 			windower.send_command("jc thf/rdm" )
 		elseif player_job.name == "" ..settings.char2.. "" then
@@ -2235,9 +2343,6 @@ function food(cmd2)
         elseif S{'RUN'}:contains(player_job.main_job) then
             atc('[Food] - Sortie')
             windower.send_command('input /item "Om. Sandwich" <me>')
-        elseif S{'COR'}:contains(player_job.main_job) then
-            atc('[Food] - Sortie')
-            windower.send_command('input /item "Grape Daifuku" <me>')
         end
 	else
         atc('[Food]: No group specified')
@@ -3194,12 +3299,12 @@ function autosc(cmd2, leader_rng)
 					windower.send_command:schedule(3.9, 'input /ws "Aeolian Edge" <t>')
 					windower.send_command:schedule(11.6, 'input /ws "Aeolian Edge" <t>')
 				end
-			--Sortie E boss
+			--Sortie E Boss
 			elseif cmd2 and cmd2:lower() == 'earth' then
 				atc('[AUTOSC] Engaged - Earth SC/MB')
 				if currentPC.main_job == 'COR' then
 					atc('[AUTOSC] COR Earth Shot')
-						windower.send_command:schedule(8.7, 'input /ja "Earth Shot" <bt>')
+						windower.send_command:schedule(7.9, 'input /ja "Earth Shot" <bt>')
 				elseif currentPC.main_job == 'BLM' then
 					atc('[AUTOSC] BLM Pre Nuke')
 					windower.send_command('gs c set elementalmode earth')
@@ -3212,13 +3317,15 @@ function autosc(cmd2, leader_rng)
 						windower.send_command:schedule(8.2, 'input /ja "Gambit" <bt>')
 					elseif abil_recasts[119] < latency then
 						windower.send_command:schedule(8.2, 'input /ja "Rayke" <bt>')
+					elseif abil_recasts[25] < latency then
+						windower.send_command:schedule(10.3, 'input /ja "Lunge" <bt>')
 					end
 				end
 			elseif cmd2 and cmd2:lower() == 'ice' then
 				atc('[AUTOSC] Engaged - Blizzard SC/MB')
 				if currentPC.main_job == 'COR' then
 					atc('[AUTOSC] COR Ice Shot')
-						windower.send_command:schedule(8.7, 'input /ja "Ice Shot" <bt>')
+						windower.send_command:schedule(7.9, 'input /ja "Ice Shot" <bt>')
 				elseif currentPC.main_job == 'BLM' then
 					atc('[AUTOSC] BLM Pre Nuke')
 					windower.send_command('gs c set elementalmode ice')
@@ -3231,13 +3338,16 @@ function autosc(cmd2, leader_rng)
 						windower.send_command:schedule(8.2, 'input /ja "Gambit" <bt>')
 					elseif abil_recasts[119] < latency then
 						windower.send_command:schedule(8.2, 'input /ja "Rayke" <bt>')
+					elseif abil_recasts[25] < latency then
+						windower.send_command:schedule(10.3, 'input /ja "Lunge" <bt>')
 					end
 				end
+			--Sortie G Boss
 			elseif cmd2 and cmd2:lower() == 'fire' then
 				atc('[AUTOSC] Engaged - Fire SC/MB')
 				if currentPC.main_job == 'COR' then
 					atc('[AUTOSC] COR Fire Shot')
-						windower.send_command:schedule(8.7, 'input /ja "Fire Shot" <bt>')
+						windower.send_command:schedule(7.9, 'input /ja "Fire Shot" <bt>')
 				elseif currentPC.main_job == 'BLM' then
 					atc('[AUTOSC] BLM Pre Nuke')
 					windower.send_command('gs c set elementalmode fire')
@@ -3250,6 +3360,8 @@ function autosc(cmd2, leader_rng)
 						windower.send_command:schedule(8.2, 'input /ja "Gambit" <bt>')
 					elseif abil_recasts[119] < latency then
 						windower.send_command:schedule(8.2, 'input /ja "Rayke" <bt>')
+					elseif abil_recasts[25] < latency then
+						windower.send_command:schedule(10.3, 'input /ja "Lunge" <bt>')
 					end
 				end
 			end
@@ -3418,6 +3530,10 @@ function get(cmd2)
 		atc('GET: Moglophone II.')
 		get_poke_check_id('17789078')
 		windower.send_command('wait 3; setkey down down; wait 0.05; setkey down up; wait 1; setkey down down; wait 0.05; setkey down up; wait 1; setkey down down; wait 0.05; setkey down up; wait 1; setkey down down; wait 0.05; setkey down up; wait 3.5; setkey enter down; wait 0.5; setkey enter up; wait 2.0; setkey enter down; wait 0.5; setkey enter up; wait 1.3; ')
+	elseif cmd2 == 'ionis' and zone == 256 then
+		atc('GET: Ionis')
+		get_poke_check('Fleuricette')
+		windower.send_command('wait 0.25; setkey enter down; wait 0.1; setkey enter up; wait 0.5; setkey up down; wait 0.1; setkey up up; wait 0.5; setkey enter down; wait 0.1; setkey enter up;')
 	elseif cmd2 == 'pot' and zone == 291 then
 		atc('GET: Potpourri KI')
 		get_poke_check('Emporox')
@@ -4499,7 +4615,7 @@ end
 
 function wsproc(cmd2)
 	local player_job = windower.ffxi.get_player()
-	local ProcJobs = S{'WAR','BLU','RUN','THF','DRK','SAM','MNK','PUP','BRD','COR'}		
+	local ProcJobs = S{'WAR','BLU','RUN','THF','DRK','SAM','MNK','PUP','BRD','COR','DRG','DNC'}		
 
 	if cmd2 == 'phy' then
 		if ProcJobs:contains(player_job.main_job) then
@@ -4508,6 +4624,10 @@ function wsproc(cmd2)
 				windower.send_command('gs c autows flat blade')
 			elseif player_job.main_job == "BLU" then
 				windower.send_command('gs c autows brainshaker')
+			elseif player_job.main_job == "DRG" then
+				windower.send_command('gs c autows flat blade')
+			elseif player_job.main_job == "DNC" then
+				windower.send_command('gs c autows wasp sting')
 			elseif player_job.main_job == "RUN" or player_job.main_job == "DRK" then
 				windower.send_command('gs c autows shockwave')
             elseif player_job.main_job == "THF" or player_job.main_job == "BRD" then
@@ -4529,6 +4649,10 @@ function wsproc(cmd2)
 				windower.send_command('gs c autows burning blade')
 			elseif player_job.main_job == "BLU" then
 				windower.send_command('gs c autows shining strike')
+			elseif player_job.main_job == "DRG" then
+				windower.send_command('gs c autows burning blade')
+			elseif player_job.main_job == "DNC" then
+				windower.send_command('gs c autows gust slash')
 			elseif player_job.main_job == "RUN" or player_job.main_job == "DRK" then
 				windower.send_command('gs c autows freezebite')
             elseif player_job.main_job == "THF" or player_job.main_job == "BRD" then
@@ -4550,6 +4674,10 @@ function wsproc(cmd2)
 				windower.send_command('gs c autows Upheaval')
 			elseif player_job.main_job == "BLU" then
 				windower.send_command('gs c autows Expiacion')
+			elseif player_job.main_job == "DRG" then
+				windower.send_command('gs c autows savage blade')
+			elseif player_job.main_job == "DNC" then
+				windower.send_command('gs c autows rudra\'s storm')
 			elseif player_job.main_job == "RUN" or player_job.main_job == "DRK" then
                 if player_job.main_job == "RUN" then
                     windower.send_command('gs c autows Dimidiation')

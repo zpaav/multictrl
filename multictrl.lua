@@ -622,63 +622,63 @@ function stage(cmd2)
 	elseif cmd2 == 'eboss' then
 		atc('[Stage]: Sortie - E Boss [Dhartok/Gartell] -[STONE]- MB')
 		if player_job.main_job == 'SCH' and player_job.sub_job == 'RDM' then
-			windower.send_command('sandstorm2 me; schnuke')
+			windower.send_command('sandstorm2 me; schnuke; gs c set magicburstmode lock')
 		elseif player_job.main_job == 'SCH' and player_job.sub_job == 'WHM' then
-			windower.send_command('sandstorm2 '..find_job_charname('BLM'))
+			windower.send_command('sandstorm2 '..find_job_charname('BLM')..'; gs c set magicburstmode lock')
         elseif player_job.main_job == 'GEO' then
-			windower.send_command('iacumen; gmalaise; gs c autoentrust none; gs c set magicburstmode lock; hb buff '..tank_char_name.. ' haste')
+			windower.send_command('iacumen; gmalaise; gs c autoentrust none; hb buff '..tank_char_name.. ' haste; gs c set magicburstmode lock')
 		elseif player_job.main_job == 'COR' then
-			windower.send_command('roll roll1 evokers; roll roll2 wizard; hb buff me haste')
+			windower.send_command('roll roll1 evokers; roll roll2 wizard; hb buff me haste; hb mincuraga 3')
 		elseif player_job.main_job == 'RUN' then
-			windower.send_command('gs c set runeelement tellus')
+			windower.send_command('gs c set runeelement tellus; gs c set hybridmode Ongo')
 		elseif player_job.main_job == 'BLM' then
-			windower.send_command('gs c set elementalmode earth;')
+			windower.send_command('gs c set elementalmode earth; gs c set magicburstmode lock')
 		end
         settings.autows = false
 		settings.autosc = true
-		windower.send_command('gs c set autowsmode off; lua u maa')
+		windower.send_command('gs c set autowsmode off; lua u maa; ai on; lua l mobtimer; wait 2; mobtimer start')
 	elseif cmd2 == 'fboss' then
 		atc('[Stage]: Sortie - F Boss [Gartell] -[ICE]- MB')
 		if player_job.main_job == 'SCH' and player_job.sub_job == 'RDM' then
-			windower.send_command('hailstorm2 me; schnuke')
+			windower.send_command('hailstorm2 me; schnuke; gs c set magicburstmode lock')
 		elseif player_job.main_job == 'SCH' and player_job.sub_job == 'WHM' then
-			windower.send_command('hailstorm2 '..find_job_charname('BLM'))
+			windower.send_command('hailstorm2 '..find_job_charname('BLM')..'; gs c set magicburstmode lock')
         elseif player_job.main_job == 'GEO' then
-			windower.send_command('iacumen; gmalaise; gs c autoentrust none; gs c set magicburstmode lock; hb buff '..tank_char_name.. ' haste')
+			windower.send_command('iacumen; gmalaise; gs c autoentrust none; hb buff '..tank_char_name.. ' haste; gs c set magicburstmode lock')
 		elseif player_job.main_job == 'COR' then
-			windower.send_command('roll roll1 evokers; roll roll2 wizard; hb buff me haste')
+			windower.send_command('roll roll1 evokers; roll roll2 wizard; hb buff me haste; hb mincuraga 3')
 		elseif player_job.main_job == 'RUN' then
-			windower.send_command('gs c set runeelement gelus')
+			windower.send_command('gs c set runeelement gelus; gs c set hybridmode Ongo')
 		elseif player_job.main_job == 'BLM' then
-			windower.send_command('gs c set elementalmode ice;')
+			windower.send_command('gs c set elementalmode ice; gs c set magicburstmode lock')
 		end
         settings.autows = false
 		settings.autosc = true
-		windower.send_command('gs c set autowsmode off; lua u maa')
+		windower.send_command('gs c set autowsmode off; lua u maa; ai on; lua l mobtimer; wait 2; mobtimer start')
 	elseif cmd2 == 'gboss' then
 		atc('[Stage]: Sortie - G Boss [Triboulex] -[FIRE]- MB')
 		if player_job.main_job == 'SCH' and player_job.sub_job == 'RDM' then
-			windower.send_command('lua r maa; firestorm2 me; schnuke')
+			windower.send_command('firestorm2 me; schnuke; gs c set magicburstmode lock')
 		elseif player_job.main_job == 'SCH' and player_job.sub_job == 'WHM' then
-			windower.send_command('lua u maa; lua r maaSCH; firestorm2 '..find_job_charname('BLM'))
+			windower.send_command('firestorm2 '..find_job_charname('BLM')..'; gs c set magicburstmode lock')
         elseif player_job.main_job == 'GEO' then
-			windower.send_command('lua r maa; iacumen; gmalaise; gs c autoentrustee '..find_job_charname('BLM')..'; gs c autoentrust focus; gs c set magicburstmode lock; hb buff '..tank_char_name.. ' haste; gs c set autozergmode on;')
+			windower.send_command('iacumen; gmalaise; gs c autoentrustee '..find_job_charname('BLM')..'; gs c autoentrust focus; hb buff '..tank_char_name.. ' haste; gs c set autozergmode on; gs c set magicburstmode lock;')
 		elseif player_job.main_job == 'COR' then
-			windower.send_command('roll roll1 warlock; roll roll2 wizard; hb buff me haste')
+			windower.send_command('roll roll1 warlock; roll roll2 wizard; hb buff me haste; hb mincuraga 3')
 		elseif player_job.main_job == 'RUN' then
-			windower.send_command('gs c set runeelement ignis; hb buff me barblizzard; gs c set hybridmode Ongo')
+			windower.send_command('gs c set runeelement ignis; barblizzard; gs c set hybridmode Ongo')
 		elseif player_job.main_job == 'BLM' then
-			windower.send_command('gs c set elementalmode fire; lua r maa')
+			windower.send_command('gs c set elementalmode fire; gs c set magicburstmode lock')
 		end
         settings.autows = false
 		settings.autosc = true
-		windower.send_command('gs c set autowsmode off; ai off;')
+		windower.send_command('gs c set autowsmode off; ai off; lua u maa; lua l mobtimer; wait 2; mobtimer start')
 	elseif cmd2 == 'stone' then
 		atc('[Stage]: Sortie -[STONE]- MB')
 		if player_job.main_job == 'SCH' and player_job.sub_job == 'RDM' then
 			windower.send_command('lua r maa; sandstorm2 me; schnuke')
 		elseif player_job.main_job == 'SCH' and player_job.sub_job == 'WHM' then
-			windower.send_command('lua u maa; lua r maaSCH; sandstorm2 '..find_job_charname('BLM'))
+			windower.send_command('lua u maa; sandstorm2 '..find_job_charname('BLM'))
         elseif player_job.main_job == 'GEO' then
 			windower.send_command('lua r maa; iacumen; gmalaise; gs c autoentrust none; gs c set magicburstmode lock; hb buff '..tank_char_name.. ' haste')
 		elseif player_job.main_job == 'COR' then
@@ -696,7 +696,7 @@ function stage(cmd2)
 		if player_job.main_job == 'SCH' and player_job.sub_job == 'RDM' then
 			windower.send_command('lua r maa; hailstorm2 me; schnuke')
 		elseif player_job.main_job == 'SCH' and player_job.sub_job == 'WHM' then
-			windower.send_command('lua u maa; lua r maaSCH; hailstorm2 '..find_job_charname('BLM'))
+			windower.send_command('lua u maa; hailstorm2 '..find_job_charname('BLM'))
         elseif player_job.main_job == 'GEO' then
 			windower.send_command('lua r maa; iacumen; gmalaise; gs c autoentrust none; gs c set magicburstmode lock; hb buff '..tank_char_name.. ' haste')
 		elseif player_job.main_job == 'COR' then
@@ -716,7 +716,7 @@ function stage(cmd2)
 		elseif player_job.main_job == 'SCH' and player_job.sub_job == 'WHM' then
 			windower.send_command('lua u maa; firestorm2 '..find_job_charname('BLM'))
         elseif player_job.main_job == 'GEO' then
-			windower.send_command('lua u maa; iacumen; gmalaise; gs c autoentrust none; gs c set magicburstmode lock; hb buff '..tank_char_name.. ' haste')
+			windower.send_command('lua r maa; iacumen; gmalaise; gs c autoentrust none; gs c set magicburstmode lock; hb buff '..tank_char_name.. ' haste')
 		elseif player_job.main_job == 'COR' then
 			windower.send_command('roll roll1 evokers; roll roll2 wizard; hb buff me haste')
 		elseif player_job.main_job == 'RUN' then
@@ -734,7 +734,7 @@ function stage(cmd2)
 		elseif player_job.main_job == 'SCH' and player_job.sub_job == 'WHM' then
 			windower.send_command('lua u maa; thunderstorm2 '..find_job_charname('BLM'))
         elseif player_job.main_job == 'GEO' then
-			windower.send_command('lua u maa; iacumen; gmalaise; gs c autoentrust none; gs c set magicburstmode lock; hb buff '..tank_char_name.. ' haste')
+			windower.send_command('lua r maa; iacumen; gmalaise; gs c autoentrust none; gs c set magicburstmode lock; hb buff '..tank_char_name.. ' haste')
 		elseif player_job.main_job == 'COR' then
 			windower.send_command('roll roll1 evokers; roll roll2 wizard; hb buff me haste')
 		elseif player_job.main_job == 'RUN' then
@@ -752,7 +752,7 @@ function stage(cmd2)
 		elseif player_job.main_job == 'SCH' and player_job.sub_job == 'WHM' then
 			windower.send_command('lua u maa; rainstorm2 '..find_job_charname('BLM'))
         elseif player_job.main_job == 'GEO' then
-			windower.send_command('lua u maa; iacumen; gmalaise; gs c autoentrust none; gs c set magicburstmode lock; hb buff '..tank_char_name.. ' haste')
+			windower.send_command('lua r maa; iacumen; gmalaise; gs c autoentrust none; gs c set magicburstmode lock; hb buff '..tank_char_name.. ' haste')
 		elseif player_job.main_job == 'COR' then
 			windower.send_command('roll roll1 evokers; roll roll2 wizard; hb buff me haste')
 		elseif player_job.main_job == 'RUN' then
@@ -3213,7 +3213,7 @@ end
 function autosc(cmd2, leader_char)
 	currentPC=windower.ffxi.get_player()
 	
-	local rangedjobs = S{'COR','SCH','BLM','RUN','BRD','RDM'}
+	local rangedjobs = S{'COR','SCH','BLM','RUN','BRD','RDM','GEO'}
 
 	if cmd2 == nil then
 		if settings.autosc then
@@ -3341,24 +3341,24 @@ function autosc(cmd2, leader_char)
 					atc('[AUTOSC] COR Earth Shot')
 						windower.send_command:schedule(7.9, 'input /ja "Earth Shot" <bt>')
 				elseif currentPC.main_job == 'BLM' then
-					atc('[AUTOSC] BLM Pre Nuke')
+					atc('[AUTOSC] BLM Nuke')
 					windower.send_command('gs c set elementalmode earth')
-					windower.send_command:schedule(8.1, 'gs c elemental aja <bt>')
-					windower.send_command:schedule(13.1, 'gs c elemental nuke <bt>')
+					windower.send_command:schedule(7.7, 'gs c elemental aja <bt>')
+					windower.send_command:schedule(13.0, 'gs c elemental nuke <bt>')
 				elseif currentPC.main_job == 'GEO' then
-					atc('[AUTOSC] GEO Pre Nuke')
+					atc('[AUTOSC] GEO Nuke')
+					windower.send_command('gs c set elementalmode earth')
+					windower.send_command:schedule(10.2, 'gs c elemental nuke <bt>')
+					windower.send_command:schedule(14.0, 'gs c elemental nuke <bt>')
+				elseif currentPC.main_job == 'SCH' and leader_char == currentPC.name then
+					atc('[AUTOSC] SCH - (SC SCH) Nuke')
 					windower.send_command('gs c set elementalmode earth')
 					windower.send_command:schedule(9.8, 'gs c elemental nuke <bt>')
-					windower.send_command:schedule(14.8, 'gs c elemental nuke <bt>')
-				elseif currentPC.main_job == 'SCH' and leader_char == currentPC.name then
-					atc('[AUTOSC] SCH - (SC SCH) Pre Nuke')
-					windower.send_command('gs c set elementalmode earth')
-					windower.send_command:schedule(13.3, 'gs c elemental nuke <bt>')
 				elseif currentPC.main_job == 'SCH' and leader_char ~= currentPC.name then
-					atc('[AUTOSC] SCH - (Standby SCH) Pre Nuke')
+					atc('[AUTOSC] SCH - (Standby SCH) Nuke')
 					windower.send_command('gs c set elementalmode earth')
-					windower.send_command:schedule(9.3, 'gs c elemental nuke <bt>')
-					windower.send_command:schedule(14.3, 'gs c elemental nuke <bt>')
+					windower.send_command:schedule(8.9, 'gs c elemental nuke <bt>')
+					windower.send_command:schedule(14.8, 'gs c elemental nuke <bt>')
 				elseif currentPC.main_job == 'RUN' then
 					local abil_recasts = windower.ffxi.get_ability_recasts()
 					local latency = 0.7
@@ -3368,7 +3368,7 @@ function autosc(cmd2, leader_char)
 					elseif abil_recasts[119] < latency then
 						windower.send_command:schedule(8.2, 'input /ja "Rayke" <bt>')
 					elseif abil_recasts[25] < latency then
-						windower.send_command:schedule(10.3, 'input /ja "Lunge" <bt>')
+						windower.send_command:schedule(10.9, 'input /ja "Lunge" <bt>')
 					end
 				end
 			--Sortie F Boss
@@ -3378,24 +3378,24 @@ function autosc(cmd2, leader_char)
 					atc('[AUTOSC] COR Ice Shot')
 						windower.send_command:schedule(7.9, 'input /ja "Ice Shot" <bt>')
 				elseif currentPC.main_job == 'BLM' then
-					atc('[AUTOSC] BLM Pre Nuke')
+					atc('[AUTOSC] BLM Nuke')
 					windower.send_command('gs c set elementalmode ice')
-					windower.send_command:schedule(8.1, 'gs c elemental aja <bt>')
-					windower.send_command:schedule(13.1, 'gs c elemental nuke <bt>')
+					windower.send_command:schedule(7.7, 'gs c elemental aja <bt>')
+					windower.send_command:schedule(13.0, 'gs c elemental nuke <bt>')
 				elseif currentPC.main_job == 'GEO' then
-					atc('[AUTOSC] GEO Pre Nuke')
+					atc('[AUTOSC] GEO Nuke')
+					windower.send_command('gs c set elementalmode ice')
+					windower.send_command:schedule(10.2, 'gs c elemental nuke <bt>')
+					windower.send_command:schedule(14.0, 'gs c elemental nuke <bt>')
+				elseif currentPC.main_job == 'SCH' and leader_char == currentPC.name then
+					atc('[AUTOSC] SCH - (SC SCH) Nuke')
 					windower.send_command('gs c set elementalmode ice')
 					windower.send_command:schedule(9.8, 'gs c elemental nuke <bt>')
-					windower.send_command:schedule(14.8, 'gs c elemental nuke <bt>')
-				elseif currentPC.main_job == 'SCH' and leader_char == currentPC.name then
-					atc('[AUTOSC] SCH - (SC SCH) Pre Nuke')
-					windower.send_command('gs c set elementalmode ice')
-					windower.send_command:schedule(13.3, 'gs c elemental nuke <bt>')
 				elseif currentPC.main_job == 'SCH' and leader_char ~= currentPC.name then
-					atc('[AUTOSC] SCH - (Standby SCH) Pre Nuke')
+					atc('[AUTOSC] SCH - (Standby SCH) Nuke')
 					windower.send_command('gs c set elementalmode ice')
-					windower.send_command:schedule(9.3, 'gs c elemental nuke <bt>')
-					windower.send_command:schedule(14.3, 'gs c elemental nuke <bt>')
+					windower.send_command:schedule(8.9, 'gs c elemental nuke <bt>')
+					windower.send_command:schedule(14.8, 'gs c elemental nuke <bt>')
 				elseif currentPC.main_job == 'RUN' then
 					local abil_recasts = windower.ffxi.get_ability_recasts()
 					local latency = 0.7
@@ -3405,12 +3405,49 @@ function autosc(cmd2, leader_char)
 					elseif abil_recasts[119] < latency then
 						windower.send_command:schedule(8.2, 'input /ja "Rayke" <bt>')
 					elseif abil_recasts[25] < latency then
-						windower.send_command:schedule(10.3, 'input /ja "Lunge" <bt>')
+						windower.send_command:schedule(10.9, 'input /ja "Lunge" <bt>')
 					end
 				end
 			--Sortie G Boss
 			elseif cmd2 and cmd2:lower() == 'fire' then
-				atc('[AUTOSC] Engaged - Fire SC/MB')
+				atc('[AUTOSC] Begin - Fire SC/MB')
+				if currentPC.main_job == 'COR' then
+					atc('[AUTOSC] COR Fire Shot')
+						windower.send_command:schedule(7.9, 'input /ja "Fire Shot" <bt>')
+				elseif currentPC.main_job == 'BLM' then
+					atc('[AUTOSC] BLM Nuke')
+					windower.send_command('gs c set elementalmode fire')
+					windower.send_command:schedule(7.7, 'gs c elemental aja <bt>')
+					windower.send_command:schedule(13.0, 'gs c elemental nuke <bt>')
+				elseif currentPC.main_job == 'GEO' then
+					atc('[AUTOSC] GEO Nuke')
+					windower.send_command('gs c set elementalmode fire')
+					windower.send_command:schedule(10.2, 'gs c elemental nuke <bt>')
+					windower.send_command:schedule(14.0, 'gs c elemental nuke <bt>')
+				elseif currentPC.main_job == 'SCH' and leader_char == currentPC.name then
+					atc('[AUTOSC] SCH - (SC SCH) Nuke')
+					windower.send_command('gs c set elementalmode fire')
+					windower.send_command:schedule(9.8, 'gs c elemental nuke <bt>')
+				elseif currentPC.main_job == 'SCH' and leader_char ~= currentPC.name then
+					atc('[AUTOSC] SCH - (Standby SCH) Nuke')
+					windower.send_command('gs c set elementalmode fire')
+					windower.send_command:schedule(8.9, 'gs c elemental nuke <bt>')
+					windower.send_command:schedule(14.8, 'gs c elemental nuke <bt>')
+				elseif currentPC.main_job == 'RUN' then
+					local abil_recasts = windower.ffxi.get_ability_recasts()
+					local latency = 0.7
+					atc('[AUTOSC] Rayke/Gambit')
+					if abil_recasts[116] < latency then
+						windower.send_command:schedule(8.2, 'input /ja "Gambit" <bt>')
+					elseif abil_recasts[119] < latency then
+						windower.send_command:schedule(8.2, 'input /ja "Rayke" <bt>')
+					elseif abil_recasts[25] < latency then
+						windower.send_command:schedule(10.9, 'input /ja "Lunge" <bt>')
+					end
+				end
+			-- Old reference --
+			elseif cmd2 and cmd2:lower() == 'fireold' then
+				atc('[AUTOSC] OLD FIRE Begin - Fire SC/MB')
 				if currentPC.main_job == 'COR' then
 					atc('[AUTOSC] COR Fire Shot')
 						windower.send_command:schedule(7.9, 'input /ja "Fire Shot" <bt>')

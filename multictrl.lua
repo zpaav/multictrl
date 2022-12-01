@@ -91,7 +91,7 @@ InternalCMDS = S{
 
 	--Battle
 	'on','off','stage','fight','fightmage','fightsmall','ws','food','autosub',
-	'wsall','zerg','wstype','buffup','rebuff','dd','attackon','mb','reraise','smartws',
+	'wsall','zerg','wstype','buffup','rebuff','dd','attackon','reraise','smartws',
 	
 	--Job
 	'brd','bst','sch','smnburn','geoburn','burn','rng','proc','crit','wsproc','jc',
@@ -3552,10 +3552,10 @@ function get(cmd2)
 		if zone == 256 then
 			atc('GET: Ionis')
 			get_poke_check('Fleuricette')
-			windower.send_command('wait 0.25; setkey enter down; wait 0.1; setkey enter up; wait 0.5; setkey up down; wait 0.1; setkey up up; wait 0.5; setkey enter down; wait 0.1; setkey enter up;')
+			windower.send_command('wait 0.5; setkey enter down; wait 0.1; setkey enter up; wait 0.5; setkey up down; wait 0.1; setkey up up; wait 0.5; setkey enter down; wait 0.1; setkey enter up;')
 		elseif zone == 257 then
 			get_poke_check('Quiri-Aliri')
-			windower.send_command('wait 0.25; setkey enter down; wait 0.1; setkey enter up; wait 0.5; setkey up down; wait 0.1; setkey up up; wait 0.5; setkey enter down; wait 0.1; setkey enter up;')
+			windower.send_command('wait 0.5; setkey enter down; wait 0.1; setkey enter up; wait 0.5; setkey up down; wait 0.1; setkey up up; wait 0.5; setkey enter down; wait 0.1; setkey enter up;')
 		end
 	elseif cmd2 == 'pot' and zone == 291 then
 		atc('GET: Potpourri KI')
@@ -3646,25 +3646,25 @@ function get(cmd2)
 			get_poke_check('Diaphanous Device #A')
 			if npc_dialog == true then
 				atc('GET: Sortie Main teleport - From A')
-				windower.send_command('wait 1; setkey enter down; wait 0.03; setkey enter up;')
+				windower.send_command('wait 1.2; setkey enter down; wait 0.03; setkey enter up;')
 			end
 		elseif possible_npc and possible_npc.name == "Diaphanous Device #B" then
 			get_poke_check('Diaphanous Device #B')
 			if npc_dialog == true then
 				atc('GET: Sortie Main teleport - From B')
-				windower.send_command('wait 1; setkey enter down; wait 0.03; setkey enter up;')
+				windower.send_command('wait 1.2; setkey enter down; wait 0.03; setkey enter up;')
 			end
 		elseif possible_npc and possible_npc.name == "Diaphanous Device #C" then
 			get_poke_check('Diaphanous Device #C')
 			if npc_dialog == true then
 				atc('GET: Sortie Main teleport - From C')
-				windower.send_command('wait 1; setkey enter down; wait 0.03; setkey enter up;')
+				windower.send_command('wait 1.2; setkey enter down; wait 0.03; setkey enter up;')
 			end
 		elseif possible_npc and possible_npc.name == "Diaphanous Device #D" then
 			get_poke_check('Diaphanous Device #D')
 			if npc_dialog == true then
 				atc('GET: Sortie Main teleport - From D')
-				windower.send_command('wait 1; setkey enter down; wait 0.03; setkey enter up;')
+				windower.send_command('wait 1.2; setkey enter down; wait 0.03; setkey enter up;')
 			end
 		end
 	elseif cmd2 == 'sortiea' and SortieZones:contains(zone) then
@@ -3679,7 +3679,7 @@ function get(cmd2)
 			get_poke_check('Diaphanous Device')
 			if npc_dialog == true then
 				atc('GET: Sortie A teleport - From MAIN')
-				windower.send_command('wait 1; setkey enter down; wait 0.03; setkey enter up;')
+				windower.send_command('wait 1.2; setkey enter down; wait 0.03; setkey enter up;')
 			end
 		elseif possible_npc and possible_npc.name == "Diaphanous Device #A" then
 			atc('GET: You are already at Sortie A!')
@@ -3687,19 +3687,19 @@ function get(cmd2)
 			get_poke_check('Diaphanous Device #B')
 			if npc_dialog == true then
 				atc('GET: Sortie A teleport - From B')
-				windower.send_command('wait 1; setkey down down; wait 0.03; setkey down up; wait 1; setkey enter down; wait 1; setkey enter up;')
+				windower.send_command('wait 1.2; setkey down down; wait 0.03; setkey down up; wait 1; setkey enter down; wait 1; setkey enter up;')
 			end
 		elseif possible_npc and possible_npc.name == "Diaphanous Device #C" then
 			get_poke_check('Diaphanous Device #C')
 			if npc_dialog == true then
 				atc('GET: Sortie A teleport - From C')
-				windower.send_command('wait 1; setkey down down; wait 0.03; setkey down up; wait 1; setkey enter down; wait 1; setkey enter up;')
+				windower.send_command('wait 1.2; setkey down down; wait 0.03; setkey down up; wait 1; setkey enter down; wait 1; setkey enter up;')
 			end
 		elseif possible_npc and possible_npc.name == "Diaphanous Device #D" then
 			get_poke_check('Diaphanous Device #D')
 			if npc_dialog == true then
 				atc('GET: Sortie A teleport - From D')
-				windower.send_command('wait 1; setkey down down; wait 0.03; setkey down up; wait 1; setkey enter down; wait 1; setkey enter up;')
+				windower.send_command('wait 1.2; setkey down down; wait 0.03; setkey down up; wait 1; setkey enter down; wait 1; setkey enter up;')
 			end
 		end
 	elseif cmd2 == 'sortieb' and SortieZones:contains(zone) then
@@ -3714,13 +3714,13 @@ function get(cmd2)
 			get_poke_check('Diaphanous Device')
 			if npc_dialog == true then
 				atc('GET: Sortie B teleport - From MAIN')
-				windower.send_command('wait 1; setkey down down; wait 0.03; setkey down up; wait 1; setkey enter down; wait 1; setkey enter up;')
+				windower.send_command('wait 1.2; setkey down down; wait 0.03; setkey down up; wait 1; setkey enter down; wait 1; setkey enter up;')
 			end
 		elseif possible_npc and possible_npc.name == "Diaphanous Device #A" then
 			get_poke_check('Diaphanous Device #A')
 			if npc_dialog == true then
 				atc('GET: Sortie B teleport - From A')
-				windower.send_command('wait 1; setkey down down; wait 0.03; setkey down up; wait 1; setkey enter down; wait 1; setkey enter up;')
+				windower.send_command('wait 1.2; setkey down down; wait 0.03; setkey down up; wait 1; setkey enter down; wait 1; setkey enter up;')
 			end
 		elseif possible_npc and possible_npc.name == "Diaphanous Device #B" then
 			atc('GET: You are already at Sortie B!')
@@ -3728,13 +3728,13 @@ function get(cmd2)
 			get_poke_check('Diaphanous Device #C')
 			if npc_dialog == true then
 				atc('GET: Sortie B teleport - From C')
-				windower.send_command('wait 1; setkey down down; wait 0.03; setkey down up; wait 1; setkey down down; wait 0.03; setkey down up; wait 1; setkey enter down; wait 1; setkey enter up;')
+				windower.send_command('wait 1.2; setkey down down; wait 0.03; setkey down up; wait 1; setkey down down; wait 0.03; setkey down up; wait 1; setkey enter down; wait 1; setkey enter up;')
 			end
 		elseif possible_npc and possible_npc.name == "Diaphanous Device #D" then
 			get_poke_check('Diaphanous Device #D')
 			if npc_dialog == true then
 				atc('GET: Sortie B teleport - From D')
-				windower.send_command('wait 1; setkey down down; wait 0.03; setkey down up; wait 1; setkey down down; wait 0.03; setkey down up; wait 1; setkey enter down; wait 1; setkey enter up;')
+				windower.send_command('wait 1.2; setkey down down; wait 0.03; setkey down up; wait 1; setkey down down; wait 0.03; setkey down up; wait 1; setkey enter down; wait 1; setkey enter up;')
 			end
 		end
 	elseif cmd2 == 'sortiec' and SortieZones:contains(zone) then
@@ -3749,19 +3749,19 @@ function get(cmd2)
 			get_poke_check('Diaphanous Device')
 			if npc_dialog == true then
 				atc('GET: Sortie C teleport - From MAIN')
-				windower.send_command('wait 1; setkey down down; wait 0.03; setkey down up; wait 1; setkey down down; wait 0.03; setkey down up; wait 1; setkey enter down; wait 1; setkey enter up;')
+				windower.send_command('wait 1.2; setkey down down; wait 0.03; setkey down up; wait 1; setkey down down; wait 0.03; setkey down up; wait 1; setkey enter down; wait 1; setkey enter up;')
 			end
 		elseif possible_npc and possible_npc.name == "Diaphanous Device #A" then
 			get_poke_check('Diaphanous Device #A')
 			if npc_dialog == true then
 				atc('GET: Sortie C teleport - From A')
-				windower.send_command('wait 1; setkey down down; wait 0.03; setkey down up; wait 1; setkey down down; wait 0.03; setkey down up; wait 1; setkey enter down; wait 1; setkey enter up;')
+				windower.send_command('wait 1.2; setkey down down; wait 0.03; setkey down up; wait 1; setkey down down; wait 0.03; setkey down up; wait 1; setkey enter down; wait 1; setkey enter up;')
 			end
 		elseif possible_npc and possible_npc.name == "Diaphanous Device #B" then
 			get_poke_check('Diaphanous Device #B')
 			if npc_dialog == true then
 				atc('GET: Sortie C teleport - From B')
-				windower.send_command('wait 1; setkey down down; wait 0.03; setkey down up; wait 1; setkey down down; wait 0.03; setkey down up; wait 1; setkey enter down; wait 1; setkey enter up;')
+				windower.send_command('wait 1.2; setkey down down; wait 0.03; setkey down up; wait 1; setkey down down; wait 0.03; setkey down up; wait 1; setkey enter down; wait 1; setkey enter up;')
 			end			
 		elseif possible_npc and possible_npc.name == "Diaphanous Device #C" then
 			atc('GET: You are already at Sortie C!')
@@ -3769,7 +3769,7 @@ function get(cmd2)
 			get_poke_check('Diaphanous Device #D')
 			if npc_dialog == true then
 				atc('GET: Sortie C teleport - From D')
-				windower.send_command('wait 1; setkey down down; wait 0.03; setkey down up; wait 1; setkey down down; wait 0.03; setkey down up; wait 1; setkey down down; wait 0.03; setkey down up; wait 1; setkey enter down; wait 1; setkey enter up;')
+				windower.send_command('wait 1.2; setkey down down; wait 0.03; setkey down up; wait 1; setkey down down; wait 0.03; setkey down up; wait 1; setkey down down; wait 0.03; setkey down up; wait 1; setkey enter down; wait 1; setkey enter up;')
 			end
 		end
 	elseif cmd2 == 'sortied' and SortieZones:contains(zone) then
@@ -3784,25 +3784,25 @@ function get(cmd2)
 			get_poke_check('Diaphanous Device')
 			if npc_dialog == true then
 				atc('GET: Sortie D teleport - From MAIN')
-				windower.send_command('wait 1; setkey down down; wait 0.03; setkey down up; wait 1; setkey down down; wait 0.03; setkey down up; wait 1; setkey down down; wait 0.03; setkey down up; wait 1; setkey enter down; wait 1; setkey enter up;')
+				windower.send_command('wait 1.2; setkey down down; wait 0.03; setkey down up; wait 1; setkey down down; wait 0.03; setkey down up; wait 1; setkey down down; wait 0.03; setkey down up; wait 1; setkey enter down; wait 1; setkey enter up;')
 			end
 		elseif possible_npc and possible_npc.name == "Diaphanous Device #A" then
 			get_poke_check('Diaphanous Device #A')
 			if npc_dialog == true then
 				atc('GET: Sortie D teleport - From A')
-				windower.send_command('wait 1; setkey down down; wait 0.03; setkey down up; wait 1; setkey down down; wait 0.03; setkey down up; wait 1; setkey down down; wait 0.03; setkey down up; wait 1; setkey enter down; wait 1; setkey enter up;')
+				windower.send_command('wait 1.2; setkey down down; wait 0.03; setkey down up; wait 1; setkey down down; wait 0.03; setkey down up; wait 1; setkey down down; wait 0.03; setkey down up; wait 1; setkey enter down; wait 1; setkey enter up;')
 			end
 		elseif possible_npc and possible_npc.name == "Diaphanous Device #B" then
 			get_poke_check('Diaphanous Device #B')
 			if npc_dialog == true then
 				atc('GET: Sortie D teleport - From B')
-				windower.send_command('wait 1; setkey down down; wait 0.03; setkey down up; wait 1; setkey down down; wait 0.03; setkey down up; wait 1; setkey down down; wait 0.03; setkey down up; wait 1; setkey enter down; wait 1; setkey enter up;')
+				windower.send_command('wait 1.2; setkey down down; wait 0.03; setkey down up; wait 1; setkey down down; wait 0.03; setkey down up; wait 1; setkey down down; wait 0.03; setkey down up; wait 1; setkey enter down; wait 1; setkey enter up;')
 			end			
 		elseif possible_npc and possible_npc.name == "Diaphanous Device #C" then
 			get_poke_check('Diaphanous Device #C')
 			if npc_dialog == true then
 				atc('GET: Sortie D teleport - From C')
-				windower.send_command('wait 1; setkey down down; wait 0.03; setkey down up; wait 1; setkey down down; wait 0.03; setkey down up; wait 1; setkey down down; wait 0.03; setkey down up; wait 1; setkey enter down; wait 1; setkey enter up;')
+				windower.send_command('wait 1.2; setkey down down; wait 0.03; setkey down up; wait 1; setkey down down; wait 0.03; setkey down up; wait 1; setkey down down; wait 0.03; setkey down up; wait 1; setkey enter down; wait 1; setkey enter up;')
 			end			
 		elseif possible_npc and possible_npc.name == "Diaphanous Device #D" then
 			atc('GET: You are already at Sortie D!')
@@ -4009,12 +4009,13 @@ function enter()
 			else
 				atc('Not close the entry NPC, cancelling')
 			end
+		--Sortie
 		elseif zone == 133 or zone == 275 then
 			if possible_npc.name == "Diaphanous Bitzer" then
 				atc('Bitzer return')
-				windower.send_command('wait 0.1; setkey up down; wait 0.18; setkey up up; wait 0.5; setkey enter down; wait 0.18; setkey enter up; wait 0.5; setkey up down; wait 0.18; setkey up up; wait 0.5; setkey enter down; wait 0.18; setkey enter up;')
+				windower.send_command('wait 0.3; setkey up down; wait 0.18; setkey up up; wait 0.5; setkey enter down; wait 0.18; setkey enter up; wait 0.5; setkey up down; wait 0.18; setkey up up; wait 0.5; setkey enter down; wait 0.18; setkey enter up;')
 			else
-				windower.send_command('wait 0.1; setkey up down; wait 0.18; setkey up up; wait 0.5; setkey enter down; wait 0.18; setkey enter up;')
+				windower.send_command('wait 0.3; setkey up down; wait 0.18; setkey up up; wait 0.5; setkey enter down; wait 0.18; setkey enter up;')
 			end
 		-- Trail markings
 		elseif zone == 111 or zone == 112 then
@@ -4024,7 +4025,7 @@ function enter()
 			windower.send_command('wait 0.1; setkey up down; wait 0.18; setkey up up; wait 0.5; setkey enter down; wait 0.18; setkey enter up;')
 		--General
 		else
-			windower.send_command('wait 1.0; setkey up down; wait 0.25; setkey up up; wait 0.7; setkey enter down; wait 0.25; setkey enter up;')
+			windower.send_command('wait 0.85; setkey up down; wait 0.25; setkey up up; wait 0.7; setkey enter down; wait 0.25; setkey enter up;')
 		end
 	end
 	
@@ -4254,24 +4255,6 @@ function rand(leader)
 	end
 	--coroutine.sleep(runtime)
 	--windower.ffxi.run(false)
-end
-
-function mb(cmd2)
-	
-	local player_job = windower.ffxi.get_player()
-	local MBjobs = S{'SCH','GEO'}		
-
-	if MBjobs:contains(player_job.main_job) then
-		if cmd2 == 'on' then
-			atc('[MB]: ON!')
-			windower.send_command('lua r maa')
-		elseif cmd2 == 'off' then
-			atc('[MB]: OFF!')
-			windower.send_command('lua u maa')
-		end
-	else
-		atc('[MB]: Not MB jobs.')
-	end
 end
 
 function wstype(cmd2)
@@ -4859,7 +4842,10 @@ function get_poke_check(npc_name)
 		else
 			atcwarn('POKE: NPC Target is too far!')
 		end
-		coroutine.sleep(1.9)
+		coroutine.sleep(2.1)
+		if npc_dialog == false then
+			coroutine.sleep(2.0)
+		end
 	end
 end
 
@@ -4877,7 +4863,11 @@ function get_poke_check_index(npc_name)
 		else
 			atcwarn('POKE: NPC Target is too far!')
 		end
-		coroutine.sleep(1.9)
+		
+		coroutine.sleep(2.1)
+		if npc_dialog == false then
+			coroutine.sleep(2.0)
+		end
 	end
 end
 
@@ -4895,7 +4885,10 @@ function get_poke_check_id(npc_id)
 		else
 			atcwarn('POKE: NPC Target is too far!')
 		end
-		coroutine.sleep(1.9)
+		coroutine.sleep(2.1)
+		if npc_dialog == false then
+			coroutine.sleep(2.0)
+		end
 	end
 end
 

@@ -80,13 +80,6 @@ areas.Cities = S{
 
 areas.Abyssea = S{15,45,132,215,216,217,218,253,254}
 
-jobnames = {
-	[0] = {job="WHM",name=""},
-    [1] = {job="RDM",name=""},
-	[2] = {job="BRD",name=""},
-
-}
-
 InternalCMDS = S{
 
 	--Battle
@@ -98,9 +91,7 @@ InternalCMDS = S{
 	--Travel
 	'mnt','dis','warp','omen','enup','endown','ent','esc','go','enter','get','deimos','macro',
 	--Misc
-	'reload','unload','fps','lotall','cleanup','drop','buyalltemps','book',
-	--Inactive
-	--'jc',
+	'reload','unload','fps','lotall','cleanup','drop','buyalltemps','book','stylelock',
 }
 
 DelayCMDS = S{'buyalltemps','get','enter','go','book','deimos'}
@@ -689,7 +680,7 @@ function stage(cmd2)
 			windower.send_command('gs c set elementalmode earth; lua r maa')
 		end
         settings.autows = false
-		settings.autosc = true
+		settings.autosc = false
 		windower.send_command('gs c set autowsmode off')
 	elseif cmd2 == 'ice' then
 		atc('[Stage]: Sortie -[ICE]- MB')
@@ -707,7 +698,7 @@ function stage(cmd2)
 			windower.send_command('gs c set elementalmode ice; lua r maa')
 		end
         settings.autows = false
-		settings.autosc = true
+		settings.autosc = false
 		windower.send_command('gs c set autowsmode off')
 	elseif cmd2 == 'fire' then
 		atc('[Stage]: Sortie -[FIRE]- MB')
@@ -868,16 +859,16 @@ function stage(cmd2)
 			windower.send_command('gs c set runeelement tellus;')
         elseif player_job.main_job == 'BLU' then
 			windower.send_command('hb enable cure')
-		elseif player_job.main_job == 'COR' then
-			windower.send_command('roll magic')
         elseif player_job.main_job == 'RDM' then
             windower.send_command('hb buff '..find_job_charname('BLM').. ' refresh3; hb buff '..find_job_charname('BLU').. 'refresh3; ')
             windower.send_command('hb buff '..tank_char_name..' refresh3;')
-            windower.send_command('mc buffall haste2; dmain')
+            windower.send_command('mc buffall haste2; dmain; hb ind on;')
 		end
 	elseif cmd2 == 'ongo2' then
         if player_job.main_job == 'SMN' then
 			windower.send_command('gs c set avatar diabolos; gs c set autobpmode on;')
+		elseif player_job.main_job == 'COR' then
+			windower.send_command('roll magic')
         elseif player_job.main_job == 'BRD' then
 			windower.send_command('sing pl mage; hb buff '..tank_char_name..' mage\'s ballad iii,lightning carol')
 		elseif player_job.main_job == 'PLD' then
@@ -889,7 +880,7 @@ function stage(cmd2)
         end
 	elseif cmd2 == 'ongo3' then
         if player_job.main_job == 'PUP' then
-			windower.send_command('gs c set AutoManeuvers TankMEVA; gs c set petmode TankMEVA')
+			windower.send_command('gs c set AutoManeuvers TankMEVA; gs c set petmode TankMEVA; gs c set weapons Midnights; autocontrol equipset mevatank')
         elseif player_job.main_job == 'GEO' then
 			windower.send_command('gs c autogeo malaise; gs c autoindi acumen; gs c autoentrust refresh')
         end
@@ -1473,7 +1464,7 @@ function jc(cmd2)
 		elseif player_job.name == "" ..settings.char3.. "" then
 			windower.send_command("jc blu/rdm" )
 		elseif player_job.name == "" ..settings.char4.. "" then
-			windower.send_command("jc cor/rdm")
+			windower.send_command("jc war/rdm")
 		elseif player_job.name == "" ..settings.char5.. "" then
 			windower.send_command("jc rdm/whm")
 		elseif player_job.name == "" ..settings.char6.. "" then
@@ -1485,7 +1476,7 @@ function jc(cmd2)
 		if player_job.name == "" ..settings.char1.. "" then
 			windower.send_command("jc pld/rdm" )
 		elseif player_job.name == "" ..settings.char2.. "" then
-			windower.send_command("jc rng/rdm" )
+			windower.send_command("jc cor/rdm" )
 		elseif player_job.name == "" ..settings.char3.. "" then
 			windower.send_command("jc drk/rdm" )
 		elseif player_job.name == "" ..settings.char4.. "" then
@@ -1852,7 +1843,7 @@ function on()
 			windower.send_command('gs c set autosambamode haste')
 			windower.send_command('gs c set autobuffmode auto')
 		elseif player_job.main_job == "PUP" then
-			windower.send_command('gs c set autopuppetmode on')
+			windower.send_command('gs c set autopuppetmode on; gs c set autobuffmode auto')
 		end
 		
 		-- SCH sub toggles
@@ -1860,7 +1851,7 @@ function on()
 			if player_job.main_job ~= "RDM" then
 				if settings.autosub == 'sleep' then
 					windower.send_command('gs c set autosubmode sleep')
-				elseif settings.autosub == 'normal' then
+				elseif settings.autosub == 'on' then
 					windower.send_command('gs c set autosubmode on')
                 elseif settings.autosub == 'off' then
                     windower.send_command('gs c set autosubmode off')
@@ -1902,11 +1893,10 @@ end
 function off()
 	atc('OFF: Turning off addons.')
 	local player_job = windower.ffxi.get_player()
-	if player_job.main_job == "GEO" then
-		windower.send_command('geo off')
-	elseif player_job.main_job == "RUN" then
+	if player_job.main_job == "RUN" then
 		windower.send_command('gs c set autorunemode off')
 		windower.send_command('gs c set autotankmode off')
+		windower.send_command('gs c set autotankfull off')
 	elseif player_job.main_job == "PLD" then
 		windower.send_command('gs c set autorunemode off')
 		windower.send_command('gs c set autotankmode off')
@@ -1915,19 +1905,16 @@ function off()
 		windower.send_command('gs c set autojumpmode off')
 	elseif player_job.main_job == "RNG" or player_job.main_job == "COR" then
 		windower.send_command('gs c set rnghelper off')
-	elseif player_job.main_job == "RDM" then
-		windower.send_command('gs c set autoarts off')
-	elseif player_job.main_job == "WHM" then
-		windower.send_command('gs c set autosubmode off')
 	elseif player_job.main_job == "SMN" then
-		windower.send_command('gs c set autowardmode off; gs c set autobpmode off')
-	elseif player_job.main_job == "SCH" then
-		--windower.send_command('gs c set autoapmode off')
+		windower.send_command('gs c set autowardmode off; gs c set autobpmode off; gs c set autoavatar off;')
 	elseif player_job.main_job == "PUP" then
 		windower.send_command('gs c set autopuppetmode off')
 	elseif player_job.main_job == "BST" then
 		windower.send_command('gs c set autocallpet off')
+	elseif player_job.main_job == "SCH" or player_job.sub_job == "SCH" then
+		windower.send_command('gs c set autosubmode off')
 	end
+
 	windower.send_command('hb off')
 	windower.send_command('roller off')
 	windower.send_command('singer off')
@@ -2272,6 +2259,57 @@ end
 
 function lotall()
 	windower.send_command('tr lotall;')
+end
+
+function stylelock()
+	atc('Lockstyle SET.')
+	local player_job = windower.ffxi.get_player()
+
+	if player_job.main_job == "WAR" then
+		windower.send_command('input /lockstyleset 1;')
+	elseif player_job.main_job == "MNK" then
+		windower.send_command('input /lockstyleset 2;')
+	elseif player_job.main_job == "WHM" then
+		windower.send_command('input /lockstyleset 3;')
+	elseif player_job.main_job == "BLM" then
+		windower.send_command('input /lockstyleset 4;')
+	elseif player_job.main_job == "RDM" then
+		windower.send_command('input /lockstyleset 5;')
+	elseif player_job.main_job == "THF" then
+		windower.send_command('input /lockstyleset 6;')
+	elseif player_job.main_job == "PLD" then
+		windower.send_command('input /lockstyleset 7;')
+	elseif player_job.main_job == "DRK" then
+		windower.send_command('input /lockstyleset 8;')
+	elseif player_job.main_job == "BST" then
+		windower.send_command('input /lockstyleset 9;')
+	elseif player_job.main_job == "BRD" then
+		windower.send_command('input /lockstyleset 10;')
+	elseif player_job.main_job == "RNG" then
+		windower.send_command('input /lockstyleset 11;')
+	elseif player_job.main_job == "SMN" then
+		windower.send_command('input /lockstyleset 12;')
+	elseif player_job.main_job == "SAM" then
+		windower.send_command('input /lockstyleset 13;')
+	elseif player_job.main_job == "NIN" then
+		windower.send_command('input /lockstyleset 14;')
+	elseif player_job.main_job == "DRG" then
+		windower.send_command('input /lockstyleset 15;')
+	elseif player_job.main_job == "BLU" then
+		windower.send_command('input /lockstyleset 16;')
+	elseif player_job.main_job == "COR" then
+		windower.send_command('input /lockstyleset 17;')
+	elseif player_job.main_job == "PUP" then
+		windower.send_command('input /lockstyleset 18;')
+	elseif player_job.main_job == "DNC" then
+		windower.send_command('input /lockstyleset 19;')
+	elseif player_job.main_job == "SCH" then
+		windower.send_command('input /lockstyleset 20;')
+	elseif player_job.main_job == "GEO" then
+		windower.send_command('input /lockstyleset 21;')
+	elseif player_job.main_job == "RUN" then
+		windower.send_command('input /lockstyleset 22;')
+	end
 end
 
 function ws(cmd2)
@@ -3313,13 +3351,12 @@ function autosc(cmd2, leader_char)
 					windower.send_command('hb off; gs c set autotankmode off; gs c set autobuffmode off; gs c set autorunemode off; gs c set autowsmode off')
 					atc('[AUTOSC] Rayke/Gambit')
 					if abil_recasts[116] < latency then
-						windower.send_command:schedule(1.8, 'input /ja "Gambit" <t>')
+						windower.send_command:schedule(2.8, 'input /ja "Gambit" <t>')
 					elseif abil_recasts[119] < latency then
-						windower.send_command:schedule(1.8, 'input /ja "Rayke" <t>')
+						windower.send_command:schedule(2.8, 'input /ja "Rayke" <t>')
 					end
 					windower.send_command:schedule(12.0, 'input /ws "Steel Cyclone" <t>')
-					windower.send_command:schedule(14.2, 'gs c set autotankmode on; gs c set autorunemode on')
-					--windower.send_command:schedule(25, 'gs c set autowsmode on;')
+					windower.send_command:schedule(13.5, 'gs c set autotankmode on; gs c set autorunemode on')
 				elseif currentPC.main_job == 'BLM' then
 					atc('[AUTOSC] BLM PreNuke')
 					windower.send_command:schedule(4.1, 'gs c elemental aja Ongo')
@@ -3382,9 +3419,19 @@ function autosc(cmd2, leader_char)
 						windower.send_command:schedule(10.9, 'input /ja "Lunge" <bt>')
 					end
 				end
+			elseif (cmd2 and cmd2:lower() == 'fireproc') then
+				atc('[AUTOSC] Begin - Fire Proc SC/MB')
+				if currentPC.main_job == 'BLM' or currentPC.main_job == 'GEO' or currentPC.main_job == 'SCH' then
+					atc('[AUTOSC] BLM/GEO/SCH Proc Nuke + Real Nuke')
+					windower.send_command('gs c set castingmode proc; gs c set elementalmode fire')
+					windower.send_command:schedule(9.0, 'input /ma "Fire" <t>')
+					windower.send_command:schedule(10.0, 'gs c set castingmode normal; gs c elemental nuke <t>')
+				elseif currentPC.main_job == 'COR' then
+					windower.send_command:schedule(11.0, 'input /ja "Fire Shot" <t>')
+				end
 			end
 		else
-			atc('[AUTOSC] Not COR/RUN/SCH/BLM/BRD/GEO job, skipping.')
+			atc('[AUTOSC] Not COR/RUN/SCH/BLM/BRD/GEO/RDM job, skipping.')
 		end
 	end
 	display_box()
@@ -3552,10 +3599,10 @@ function get(cmd2)
 		if zone == 256 then
 			atc('GET: Ionis')
 			get_poke_check('Fleuricette')
-			windower.send_command('wait 0.5; setkey enter down; wait 0.1; setkey enter up; wait 0.5; setkey up down; wait 0.1; setkey up up; wait 0.5; setkey enter down; wait 0.1; setkey enter up;')
+			windower.send_command('wait 0.7; setkey enter down; wait 0.1; setkey enter up; wait 0.5; setkey up down; wait 0.1; setkey up up; wait 0.5; setkey enter down; wait 0.1; setkey enter up;')
 		elseif zone == 257 then
 			get_poke_check('Quiri-Aliri')
-			windower.send_command('wait 0.5; setkey enter down; wait 0.1; setkey enter up; wait 0.5; setkey up down; wait 0.1; setkey up up; wait 0.5; setkey enter down; wait 0.1; setkey enter up;')
+			windower.send_command('wait 0.7; setkey enter down; wait 0.1; setkey enter up; wait 0.5; setkey up down; wait 0.1; setkey up up; wait 0.5; setkey enter down; wait 0.1; setkey enter up;')
 		end
 	elseif cmd2 == 'pot' and zone == 291 then
 		atc('GET: Potpourri KI')
@@ -3965,8 +4012,10 @@ function enter()
 		
 		if possible_npc then
 			get_poke_check_index(possible_npc.index)
+		-- else
+			-- get_npc_dialogue('npc',3)
 		else
-			get_npc_dialogue('npc',3)
+			atc("[ENTER] No NPC's nearby to poke, cancelling.")
 		end	
 	end
 	
@@ -4719,6 +4768,7 @@ function calc_lazy_distance(a,b)
     return (a.x-b.x)^2 + (a.y-b.y)^2
 end
 
+--Find NPC that's in list to poke
 function find_npc_to_poke()
     local npc_list = npc_map[windower.ffxi.get_info()['zone']]
     
@@ -4734,7 +4784,8 @@ function find_npc_to_poke()
 		local current_dist = calc_lazy_distance(player, current)
 		return npc_of_interest_dist < current_dist and npc_of_interest or current
 	end)
-    if closest_npc and calc_lazy_distance(player, closest_npc) < 6^2 then
+    --if closest_npc and calc_lazy_distance(player, closest_npc) < 6^2 then
+	if closest_npc and calc_lazy_distance(player, closest_npc) < 45^2 then
         return closest_npc
     end
 

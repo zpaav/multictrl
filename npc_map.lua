@@ -1,6 +1,9 @@
 return {
 	[31] = {'Spatial Displacement'},
+	[50] = {'Ironbound Gate','Gate: The Pit'},
+	[61] = {'Engraved Tablet'},
 	[67] = {'Ornamental Door'},
+	[71] = {'Gate: The Pit'},
 	[72] = {'Gilded Doors',},
 	[111] = {'Trail Markings'},
 	[112] = {'Trail Markings'},

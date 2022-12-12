@@ -2393,14 +2393,15 @@ function food(cmd2)
     elseif cmd2 == 'wave3' then
         if S{'SAM','NIN','COR'}:contains(player_job.main_job) or player_job.main_job == 'RDM' then
             atc('[Food] - Wave 3')
-            windower.send_command('input /item "Rolan. Daifuku" <me>')
+            windower.send_command('gs c autofood Rolan. Daifuku; gs c set autofoodmode on;')
         elseif player_job.main_job == 'BRD' then
             atc('[Food] - Wave 3')
-            windower.send_command('input /item "Grape Daifuku" <me>')
+            windower.send_command('gs c autofood Grape Daifuku; gs c set autofoodmode on;')
         elseif Tanks:contains(player_job.main_job) then
             atc('[Food] - Wave 3')
-            windower.send_command('input /item "Om. Sandwich" <me>')
+            windower.send_command('gs c autofood Om. Sandwich; gs c set autofoodmode on;')
         end
+		
     elseif cmd2 == 'bumba' then
         if S{'WAR','DRG','COR','BRD'}:contains(player_job.main_job) then
             atc('[Food] - Bumba')
@@ -2412,11 +2413,17 @@ function food(cmd2)
 	elseif cmd2 == 'sortie' then
         if S{'BLM','GEO','SCH'}:contains(player_job.main_job) then
             atc('[Food] - Sortie')
-            windower.send_command('input /item "Tropical Crepe" <me>')
+            windower.send_command('gs c autofood Tropical Crepe; gs c set autofoodmode on;')
         elseif S{'RUN'}:contains(player_job.main_job) then
             atc('[Food] - Sortie')
-            windower.send_command('input /item "Om. Sandwich" <me>')
+            windower.send_command('gs c autofood Om. Sandwich; gs c set autofoodmode on;')
         end
+	elseif cmd2 == 'on' then
+		atc('[Food] - ON')
+		windower.send_command('gs c set autofoodmode on;')
+	elseif cmd2 == 'off' then
+		atc('[Food] - OFF')
+		windower.send_command('gs c set autofoodmode off;')
 	else
         atc('[Food]: No group specified')
 	end
@@ -4097,7 +4104,7 @@ end
 
 function cleanup()
 	local items = S{'Grape Daifuku','Rolan. Daifuku','Om. Sandwich','Pluton case','Pluton box','Boulder case','Boulder box','Beitetsu parcel','Beitetsu box','Abdhaljs Seal',}
-	local meds = S{'Echo Drops','Holy Water','Remedy','Panacea','Reraiser','Hi-Reraiser','Super Reraiser','Instant Reraise','Scapegoat','Silent Oil','Prism Powder'}
+	local meds = S{'Echo Drops','Holy Water','Remedy','Panacea','Reraiser','Hi-Reraiser','Super Reraiser','Instant Reraise','Scapegoat','Silent Oil','Prism Powder','El. Pachira Fruit'}
 	local case_stuff = S{'case','box','parcel'}
     
     --get

@@ -1372,17 +1372,17 @@ function stage(cmd2)
 	elseif cmd2 == 'gog' then
 		windower.send_command('autoitem off')
 		if player_job.main_job == 'RDM' then
-			windower.send_command('gaze ap off; mc haste; dsmall; hb buff ' .. settings.char3 .. ' refresh3; hb buff ' .. settings.char4 .. ' refresh3;')
-		elseif player_job.main_job == 'PUP' then
-			windower.send_command('gs c set hybridmode HybridPET; gs c set petmode melee; input /ja "Activate" <me>;')
+			windower.send_command('gaze ap off; mc buffall haste2; dmain; hb ind on; hb buff ' ..find_job_charname('BLU').. ' refresh3; hb buff ' ..tank_char_name.. ' refresh3;')
+		elseif player_job.main_job == 'PLD' then
+			windower.send_command('')
 		elseif player_job.main_job == 'BLU' then
-			windower.send_command('azuresets set melee; gs c set weapons magic;')
+			windower.send_command('azuresets set melee; gs c set weapons magic; gs c autowsone black halo; gs c autowstwo judgment; gs c set AutoSwitchWS on')
 		elseif player_job.main_job == 'MNK' then
-			windower.send_command('gs c set hybridmode Tank; gs c set weaponskillmode tank')
-		elseif player_job.main_job == 'THF' then
-			windower.send_command('gs c weapons KajaKnuckles;')
+			windower.send_command('gs c set hybridmode DT; gs c set AutoSwitchWS on')
+		elseif player_job.main_job == 'BRD' then
+			windower.send_command('sing pl meleeacc; sing ballad 2 '..tank_char_name..'; sing ballad 2 '..find_job_charname('RDM')..'; sing p on; sing n on;')
 		elseif player_job.main_job == 'WAR' then
-			windower.send_command('gs c weapons Loxotic;')
+			windower.send_command('gs c weapons Loxotic; gs c autowsone judgment; gs c autowstwo black halo; gs c set AutoSwitchWS on')
 		end
 	elseif cmd2 == 'dae' then
 		windower.send_command('autoitem off')
@@ -3445,13 +3445,13 @@ function autosc(cmd2, leader_char)
 					atc('[AUTOSC] SCH - (SC SCH) Nuke')
 					windower.send_command('gs c set elementalmode '..element..'; gs c set autobuffmode off; gs c set autosubmode off;')
 					windower.send_command:schedule(9.8, 'gs c elemental nuke <bt>')
-					windower.send_command:schedule(10.8, 'gs c set autobuffmode auto; gs c set autosubmode on;')
+					windower.send_command:schedule(10.8, 'gs c set autobuffmode nuking; gs c set autosubmode on;')
 				elseif currentPC.main_job == 'SCH' and leader_char ~= currentPC.name then
 					atc('[AUTOSC] SCH - (Standby SCH) Nuke')
 					windower.send_command('gs c set elementalmode '..element..'; gs c set autobuffmode off; gs c set autosubmode off;')
 					windower.send_command:schedule(8.9, 'gs c elemental nuke <bt>')
 					windower.send_command:schedule(14.8, 'gs c elemental nuke <bt>')
-					windower.send_command:schedule(15.8, 'gs c set autobuffmode auto; gs c set autosubmode on;')
+					windower.send_command:schedule(15.8, 'gs c set autobuffmode nuking; gs c set autosubmode on;')
 				elseif currentPC.main_job == 'RUN' then
 					local abil_recasts = windower.ffxi.get_ability_recasts()
 					local latency = 0.7

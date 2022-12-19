@@ -197,8 +197,8 @@ windower.register_event('addon command', function(input, ...)
 		foff(cmd2)
 	elseif cmd == 'as' then							-- Leader
 		local leader = windower.ffxi.get_player()
-		as:schedule(0, cmd2,leader.name)
-		send_to_IPC:schedule(0, cmd,cmd2,leader.name)
+		as:schedule(0, leader.name,cmd2,cmd3)
+		send_to_IPC:schedule(0, cmd,leader.name,cmd2,cmd3)
 	elseif cmd == 'smn' then						-- Leader
 		local leader = windower.ffxi.get_player()
 		smn:schedule(0, cmd2, leader.name, cmd3)
@@ -579,18 +579,15 @@ function stage(cmd2)
 		atc('[Stage]: Ambu')
 		windower.send_command('gaze ap on')
 		if player_job.main_job == 'BRD' then
-			windower.send_command('sing clear all; mc brd reset')
-			windower.send_command('wait 3; sing pl ambu; sing sirvente '..tank_char_name..'; sing ballad 1 '..tank_char_name)
-		elseif player_job.main_job == 'PLD' then
-			windower.send_command('')
+			windower.send_command('wait 3; gs c set weapons DualCarn; sing pl meleehaste2; sing ballad 1 '..tank_char_name)
+		elseif player_job.main_job == 'RDM' then
+			windower.send_command('mc buffall haste2; hb buff '..tank_char_name..' refresh3; dmain; hb f off')
 		elseif player_job.main_job == 'WHM' then
 			windower.send_command('gs c set castingmode DT; gs c set idlemode DT; hb buff ' ..tank_char_name.. ' regen4;')
-		elseif player_job.main_job == 'RNG' then
-			windower.send_command('gs c set weapons Fomalhaut; gs c set rnghelper on; gs c autows Last Stand;')
 		elseif player_job.main_job == 'COR' then
-			windower.send_command('gs c set weapons Fomalhaut; gs c set rnghelper on; gs c autows Last Stand;')
+			windower.send_command('gs c set weapons DualSavage;')
 		elseif player_job.main_job == 'GEO' then
-			windower.send_command('gs c autoentrust refresh; hb buff '..find_job_charname('COR').. ' flurry; hb buff '..find_job_charname('RNG')..' flurry; hb debuff dia2; hb ind on;')
+			windower.send_command('lua r react; hb disable cure; hb disable na; hb disable curaga; hb f off')
 		end
 		settings.autows = true
         windower.send_command('input /autotarget on')
@@ -601,10 +598,15 @@ function stage(cmd2)
 	elseif cmd2 == 'cp' or cmd2 == 'ml' then
 		if player_job.main_job == 'WHM' then
 			windower.send_command('hb debuff slow; hb debuff paralyze; hb buff <me> boost-str; hb buff <me> auspice; hb buff <me> regen4; gs c set castingmode DT; gs c set idlemode DT;')
+		elseif player_job.main_job == 'SCH' then
+			windower.send_command('schheal; hb buff <me> regen5;')
         elseif player_job.main_job == 'GEO' then
 			windower.send_command('hb debuff dia2; gs c autoentrust refresh; gs c set castingmode DT; gs c set idlemode DT;')
 		elseif player_job.main_job == 'BRD' then
-			windower.send_command('hb debuff horde lullaby 2; sing pl meleeacc; gs c set weapons DualCarn;')
+			windower.send_command('wait 1; hb debuff horde lullaby 2; sing pl meleeacc; gs c set weapons DualCarn;')
+            windower.send_command('wait 1.5; sing ballad 1 '..find_job_charname('GEO','1',true).. '; sing ballad 1 '..find_job_charname('RDM','1',true))
+            windower.send_command('wait 1.5; sing ballad 1 '..tank_char_name)
+            windower.send_command('wait 1.5; sing ballad 1 '..find_job_charname('WHM')..'; sing ballad 2 '..find_job_charname('SCH'))
 		elseif player_job.main_job == 'COR' then
 			windower.send_command('roll roll1 exp; roll roll2 sam;')
 		end
@@ -884,6 +886,21 @@ function stage(cmd2)
         elseif player_job.main_job == 'GEO' then
 			windower.send_command('gs c autogeo malaise; gs c autoindi acumen; gs c autoentrust refresh')
         end
+	--DRK PLD SCH BRD BST MNK
+	elseif cmd2 == 'kalunga1' then
+        if player_job.main_job == 'PLD' then
+			windower.send_command('')
+		elseif player_job.main_job == 'MNK' then
+			windower.send_command('')
+        elseif player_job.main_job == 'BRD' then
+			windower.send_command('sing pl meleeacc; sing ballad 2 '..find_job_charname('SCH')..'; sing ballad 1 '..tank_char_name..'; sing p on; sing n on;')
+		elseif player_job.main_job == 'DRK' then
+			windower.send_command('gs c set hybridmode SubtleBlow')
+		elseif player_job.main_job == 'BST' then
+			windower.send_command('')
+		elseif player_job.main_job == 'SCH' then
+			windower.send_command('hb buff '..tank_char_name.. ' shell5,regen5;')
+		end
     elseif cmd2 == 'wave1' then
         if player_job.main_job == 'COR' then
 			windower.send_command('gs c autows leaden salute; gs c set weapons DualLeadenRanged; roll roll1 tact; roll roll2 wizard;')
@@ -1394,7 +1411,22 @@ end
 function jc(cmd2)
 	local player_job = windower.ffxi.get_player()
 
-	if cmd2 == 'ody' then
+    if cmd2 == 'ambu' then
+		atc('[JC] Ambu')
+		if player_job.name == "" ..settings.char1.. "" then
+			windower.send_command("jc pld/run" )
+		elseif player_job.name == "" ..settings.char2.. "" then
+			windower.send_command("jc cor/nin" )
+		elseif player_job.name == "" ..settings.char3.. "" then
+			windower.send_command("jc blu/drg" )
+		elseif player_job.name == "" ..settings.char4.. "" then
+			windower.send_command("jc brd/dnc")
+		elseif player_job.name == "" ..settings.char5.. "" then
+			windower.send_command("jc rdm/blm")
+		elseif player_job.name == "" ..settings.char6.. "" then
+			windower.send_command("jc geo/whm")
+		end
+	elseif cmd2 == 'ody' then
 		atc('[JC] Odyssey C farm.')
 		if player_job.name == "" ..settings.char1.. "" then
 			windower.send_command("jc run/pld" )
@@ -1488,7 +1520,7 @@ function jc(cmd2)
 		end
 	elseif cmd2 == 'ongo3' then
 		--PUP+SCH+GEO+BST+*MNK*+*THF*
-		atc('[JC] Ongo farm #2')
+		atc('[JC] Ongo farm #3')
 		if player_job.name == "" ..settings.char1.. "" then
 			windower.send_command("jc thf/rdm" )
 		elseif player_job.name == "" ..settings.char2.. "" then
@@ -1499,6 +1531,22 @@ function jc(cmd2)
 			windower.send_command("jc geo/rdm")
 		elseif player_job.name == "" ..settings.char5.. "" then
 			windower.send_command("jc bst/rdm")
+		elseif player_job.name == "" ..settings.char6.. "" then
+			windower.send_command("jc mnk/rdm")
+		end
+	elseif cmd2 == 'kalunga1' then
+		--DRK PLD SCH BRD BST MNK
+		atc('[JC] Kalunga farm #1')
+		if player_job.name == "" ..settings.char1.. "" then
+			windower.send_command("jc pld/rdm" )
+		elseif player_job.name == "" ..settings.char2.. "" then
+			windower.send_command("jc bst/rdm" )
+		elseif player_job.name == "" ..settings.char3.. "" then
+			windower.send_command("jc drk/rdm" )
+		elseif player_job.name == "" ..settings.char4.. "" then
+			windower.send_command("jc sch/rdm")
+		elseif player_job.name == "" ..settings.char5.. "" then
+			windower.send_command("jc brd/rdm")
 		elseif player_job.name == "" ..settings.char6.. "" then
 			windower.send_command("jc mnk/rdm")
 		end
@@ -1589,21 +1637,6 @@ function jc(cmd2)
 			windower.send_command("jc brd/rdm")
 		elseif player_job.name == "" ..settings.char5.. "" then
 			windower.send_command("jc whm/thf")
-		elseif player_job.name == "" ..settings.char6.. "" then
-			windower.send_command("jc geo/rdm")
-		end
-    elseif cmd2 == 'ambu' then
-		atc('[JC] Ambu')
-		if player_job.name == "" ..settings.char1.. "" then
-			windower.send_command("jc pld/blu" )
-		elseif player_job.name == "" ..settings.char2.. "" then
-			windower.send_command("jc rng/war" )
-		elseif player_job.name == "" ..settings.char3.. "" then
-			windower.send_command("jc cor/war" )
-		elseif player_job.name == "" ..settings.char4.. "" then
-			windower.send_command("jc brd/whm")
-		elseif player_job.name == "" ..settings.char5.. "" then
-			windower.send_command("jc whm/sch")
 		elseif player_job.name == "" ..settings.char6.. "" then
 			windower.send_command("jc geo/rdm")
 		end
@@ -2695,83 +2728,92 @@ local function as_helper(cmd)
     end
 end
 
-function as(cmd,namearg)
+function as(namearg,cmd,cmd2)
 
 	currentPC=windower.ffxi.get_player()
-	if cmd == 'melee' then
-		if currentPC.name:lower() == namearg:lower() then
-			atc('[Assist] Leader for assisting - Melee ONLY')
-			as_helper('lead_reset')
-		else
-			local player_job = windower.ffxi.get_player()
-			local MeleeJobs = S{'WAR','SAM','DRG','DRK','NIN','MNK','COR','BLU','PUP','DNC','RUN','PLD','THF','BST','RNG'}		
-			if MeleeJobs:contains(player_job.main_job) then
-				atc('[Assist] Attack -> ' ..namearg)
+	if check_leader_in_same_party(namearg) == true then
+		if cmd == 'melee' then
+			if currentPC.name:lower() == namearg:lower() then
+				atc('[Assist] Leader for assisting - Melee ONLY')
+				as_helper('lead_reset')
+			else
+				local player_job = windower.ffxi.get_player()
+				local MeleeJobs = S{'WAR','SAM','DRG','DRK','NIN','MNK','COR','BLU','PUP','DNC','RUN','PLD','THF','BST','RNG'}		
+				if MeleeJobs:contains(player_job.main_job) then
+					atc('[Assist] Attack -> ' ..namearg)
+					windower.send_command('hb as ' .. namearg)
+					windower.send_command('hb f ' .. namearg)
+					windower.send_command('wait 0.5; hb as nolock off; hb as attack on;')
+					windower.send_command('wait 0.5; hb on; gaze ap on')
+				else
+					atc('[Assist] Disabling attack, not melee job.')
+					windower.send_command('hb assist attack off')
+				end
+			end
+		elseif cmd == 'mag' then
+			if currentPC.name:lower() == namearg:lower() then
+				atc('[Assist] Leader for assisting - Melee+Mage BRD/RDM')
+				as_helper('lead_reset')
+			else
+				local player_job = windower.ffxi.get_player()
+				local MeleeJobs = S{'WAR','SAM','DRG','DRK','NIN','MNK','COR','BLU','PUP','DNC','RUN','PLD','THF','BST','RNG','BRD'}		
+				if MeleeJobs:contains(player_job.main_job) then
+					atc('[Assist] Attack -> ' ..namearg)
+					windower.send_command('hb as ' .. namearg)
+					windower.send_command('hb f ' .. namearg)
+					windower.send_command('wait 0.5; hb as nolock off; hb as attack on;')
+					windower.send_command('wait 0.5; hb on; gaze ap on')
+				else
+					atc('[Assist] Disabling attack, not melee job.')
+					windower.send_command('hb assist attack off')
+				end
+			end
+		elseif cmd == 'all' then
+			if currentPC.name:lower() == namearg:lower() then
+				atc('[Assist] Leader for assisting attack - ALL JOBS')
+				as_helper('lead_reset')
+			else
+				atc('[Assist] Attack -> ' .. namearg)
 				windower.send_command('hb as ' .. namearg)
 				windower.send_command('hb f ' .. namearg)
 				windower.send_command('wait 0.5; hb as nolock off; hb as attack on;')
 				windower.send_command('wait 0.5; hb on; gaze ap on')
-			else
-				atc('[Assist] Disabling attack, not melee job.')
-				windower.send_command('hb assist attack off')
 			end
-		end
-	elseif cmd == 'mag' then
-		if currentPC.name:lower() == namearg:lower() then
-			atc('[Assist] Leader for assisting - Melee+Mage BRD/RDM')
-			as_helper('lead_reset')
-		else
-			local player_job = windower.ffxi.get_player()
-			local MeleeJobs = S{'WAR','SAM','DRG','DRK','NIN','MNK','COR','BLU','PUP','DNC','RUN','PLD','THF','BST','RNG','BRD'}		
-			if MeleeJobs:contains(player_job.main_job) then
-				atc('[Assist] Attack -> ' ..namearg)
-				windower.send_command('hb as ' .. namearg)
-				windower.send_command('hb f ' .. namearg)
-				windower.send_command('wait 0.5; hb as nolock off; hb as attack on;')
-				windower.send_command('wait 0.5; hb on; gaze ap on')
+		elseif cmd == 'on' then
+			if currentPC.name:lower() == namearg:lower() then
+				atc('[Assist] Leader for assisting in spells - ALL JOBS')
+				as_helper('lead_reset')
 			else
-				atc('[Assist] Disabling attack, not melee job.')
-				windower.send_command('hb assist attack off')
+				atc('[Assist] Spell only / no target or lock  -> ' ..namearg)
+				windower.send_command('hb as ' .. namearg .. '; hb as nolock on;')
 			end
+		elseif cmd == 'lock' then
+			if currentPC.name:lower() == namearg:lower() then
+				atc('[Assist] Leader for assisting with lock - ALL JOBS')
+				as_helper('lead_reset')
+			else
+				atc('[Assist] Lock on assist -> ' ..namearg)
+				windower.send_command('hb as ' .. namearg .. '; hb as nolock off; gaze ap off')
+			end
+		elseif cmd == 'same' then
+			if currentPC.name:lower() == namearg:lower() then
+				atc('[Assist] Leader for assisting with same target(set target) - ALL JOBS')
+				as_helper('lead_reset')
+			elseif cmd2 == 'on' then
+				atc('[Assist] Same target attack [ON] -> ' ..namearg)
+				windower.send_command('hb as sametarget on;')
+			elseif cmd2 == 'off' then
+				atc('[Assist] Same target attack [OFF] -> ' ..namearg)
+				windower.send_command('hb as sametarget off;')
+			else
+				atc('[Assist] ABORT: No argument specified for Same Target [ON/OFF]' ..namearg)
+			end
+		elseif cmd == 'off' then
+			atc('[Assist] OFF')
+			as_helper('reset')
 		end
-	elseif cmd == 'all' then
-		if currentPC.name:lower() == namearg:lower() then
-			atc('[Assist] Leader for assisting attack - ALL JOBS')
-			as_helper('lead_reset')
-		else
-			atc('[Assist] Attack -> ' .. namearg)
-			windower.send_command('hb as ' .. namearg)
-            windower.send_command('hb f ' .. namearg)
-			windower.send_command('wait 0.5; hb as nolock off; hb as attack on;')
-			windower.send_command('wait 0.5; hb on; gaze ap on')
-		end
-	elseif cmd == 'on' then
-		if currentPC.name:lower() == namearg:lower() then
-			atc('[Assist] Leader for assisting in spells - ALL JOBS')
-			as_helper('lead_reset')
-		else
-			atc('[Assist] Spell only / no target or lock  -> ' ..namearg)
-			windower.send_command('hb as ' .. namearg .. '; hb as nolock on;')
-		end
-	elseif cmd == 'lock' then
-		if currentPC.name:lower() == namearg:lower() then
-			atc('[Assist] Leader for assisting with lock - ALL JOBS')
-			as_helper('lead_reset')
-		else
-			atc('[Assist] Lock on assist -> ' ..namearg)
-			windower.send_command('hb as ' .. namearg .. '; hb as nolock off; gaze ap off')
-		end
-    elseif cmd == 'same' then
-		if currentPC.name:lower() == namearg:lower() then
-			atc('[Assist] Leader for assisting with same target(set target) - ALL JOBS')
-			as_helper('lead_reset')
-		else
-			atc('[Assist] Same target on attack/engage -> ' ..namearg)
-			windower.send_command('hb as sametarget;')
-		end
-	elseif cmd == 'off' then
-		atc('[Assist] OFF')
-		as_helper('reset')
+	else
+		atc('[Assist] ABORT: You are not in the party or alliance!')
 	end
 end
 
@@ -3610,6 +3652,12 @@ function get(cmd2)
 		elseif zone == 257 then
 			get_poke_check('Quiri-Aliri')
 			windower.send_command('wait 0.7; setkey enter down; wait 0.1; setkey enter up; wait 0.5; setkey up down; wait 0.1; setkey up up; wait 0.5; setkey enter down; wait 0.1; setkey enter up;')
+		end
+	elseif cmd2 == 'signet' then
+		if zone == 241 then
+			atc('GET: Signet')
+			get_poke_check('Harara, W.W.')
+			windower.send_command('wait 0.7; setkey enter down; wait 0.1; setkey enter up; wait 0.5;')
 		end
 	elseif cmd2 == 'pot' and zone == 291 then
 		atc('GET: Potpourri KI')
@@ -4821,6 +4869,18 @@ function check_party()
 	end
 end
 
+function check_leader_in_same_party(leader)
+	player = windower.ffxi.get_player()
+	for k, v in pairs(windower.ffxi.get_party()) do
+		if type(v) == 'table' then
+			if v.name == leader then
+				atc('[CheckLeader] ' ..v.name .. ' is in party and is leader.')
+				return true
+			end
+		end
+	end
+end
+
 local function get_delay()
     local self = windower.ffxi.get_player().name
     local members = {}
@@ -5024,7 +5084,7 @@ windower.register_event('ipc message', function(msg, ...)
 		coroutine.sleep(delay)
 		rand(cmd2)
 	elseif cmd == 'as' then
-		as(cmd2, cmd3)
+		as(cmd2, cmd3, cmd4)
 	elseif cmd == 'send' then
 		coroutine.sleep(delay)
 		send(send_cmd)

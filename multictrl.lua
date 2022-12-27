@@ -1363,14 +1363,16 @@ function stage(cmd2)
 		if player_job.main_job == 'WHM' then
 			windower.send_command('hb buff <me> barstonra; hb buff <me> barpetra; gs c set castingmode DT; gs c set idlemode DT; hb buff <me> auspice;')
 		elseif player_job.main_job == 'RUN' then
-			windower.send_command('gaze ap off; gs c set runeelement flabra')
+			windower.send_command('gaze ap off; gs c set runeelement flabra; gs c set hybridmode DTLite;')
 		elseif player_job.main_job == 'BRD' then
 			windower.send_command('wait 2.5; sing pl ouryu; hb debuff dia2')
+		elseif player_job.main_job == 'COR' then
+			windower.send_command('gs c set weapons DualSavage; gs c autows Savage Blade')
 		elseif player_job.main_job == 'GEO' then
 			windower.send_command('gs c set castingmode DT; gs c set idlemode DT; gs c autoentrust attunement')
 		end
+		settings.autows = true
 	elseif cmd2 == 'gog' then
-		windower.send_command('autoitem off')
 		if player_job.main_job == 'RDM' then
 			windower.send_command('gaze ap off; mc buffall haste2; dmain; hb ind on; hb buff ' ..find_job_charname('BLU').. ' refresh3; hb buff ' ..tank_char_name.. ' refresh3;')
 		elseif player_job.main_job == 'PLD' then
@@ -1685,6 +1687,21 @@ function jc(cmd2)
 		elseif player_job.name == "" ..settings.char6.. "" then
 			windower.send_command("jc cor/nin")
 		end
+    elseif cmd2 == 'ouryu' then
+		atc('[JC] Ouryu')
+		if player_job.name == "" ..settings.char1.. "" then
+			windower.send_command("jc run/drk;" )
+		elseif player_job.name == "" ..settings.char2.. "" then
+			windower.send_command("jc sam/war" )
+		elseif player_job.name == "" ..settings.char3.. "" then
+			windower.send_command("jc cor/dnc" )
+		elseif player_job.name == "" ..settings.char4.. "" then
+			windower.send_command("jc brd/whm")
+		elseif player_job.name == "" ..settings.char5.. "" then
+			windower.send_command("jc whm/sch")
+		elseif player_job.name == "" ..settings.char6.. "" then
+			windower.send_command("jc geo/rdm")
+		end
 	else
 		atc('[JC] Nothing specified.')
 	end
@@ -1805,7 +1822,7 @@ function poke(cmd2)
 end
 
 function mnt()
-	windower.send_command('input /mount \'Red Crab\'')
+	windower.send_command('input /mount '..settings.mount)
 end
 
 function dis()

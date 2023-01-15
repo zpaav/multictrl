@@ -1202,9 +1202,9 @@ function stage(cmd2)
 	elseif cmd2 == 'mboze1' then
 		windower.send_command('gaze ap off')
 		if player_job.main_job == 'WHM' then
-			windower.send_command('hb buff <me> barstonra; hb buff <me> boost-vit; gs c set castingmode DT; gs c set idlemode DT; hb mincuraga 3; hb debuff silence; hb debuff slow; hb debuff dia2; hb debuff paralyze; hb buff <me> auspice; hb buff ' ..find_job_charname('dd').. ' haste')
-		elseif player_job.main_job == 'DRK' then
-			windower.send_command('gs c set weapons Caladbolg; gs c set hybridmode SubtleBlow;')
+			windower.send_command('hb buff <me> barstonra; hb buff <me> boost-vit; gs c set castingmode DT; gs c set idlemode DT; hb mincuraga 3; hb debuff silence; hb debuff slow; hb debuff dia2; hb debuff paralyze; hb buff <me> auspice; hb buff ' ..find_job_charname('dd').. ' haste; hb buff '..tank_char_name..' haste;')
+		elseif player_job.main_job == 'WAR' then
+			windower.send_command('gs c set hybridmode SubtleBlow; gs c set weapons Naegling; gs c autows Savage Blade')
 		elseif player_job.main_job == 'BRD' then
 			windower.send_command('wait 2.5; sing pl mboze; sing n off; sing p off; sing debuffing off; gs c set idlemode DT; sing debuff wind threnody 2; hb debuff wind threnody ii;')-- hb debuff pining nocturne; hb debuff Foe Requiem VII;')
 		elseif player_job.main_job == 'BLU' then
@@ -1229,12 +1229,14 @@ function stage(cmd2)
 		windower.send_command('gaze ap off')
 		if player_job.main_job == 'SCH' then
 			windower.send_command('hb buff <me> regen5; schheal')
-		elseif player_job.main_job == 'WAR' then
-			windower.send_command('gs c set hybridmode SubtleBlow; gs c set weapons Naegling; gs c autows Savage Blade')
+		elseif player_job.main_job == 'DRK' then
+			windower.send_command('gs c set hybridmode SubtleBlow;')
 		elseif player_job.main_job == 'SMN' then
 			windower.send_command('gs c set AutoBPMode on; gs c set AutoWardMode Ward_Offense; gs c set avatar cait sith;')
 		elseif player_job.main_job == 'GEO' then
 			windower.send_command('gs c autoindi refresh; gs c autogeo fury; gs c autogeotar '..find_job_charname('dd')..'; gs c autoentrust haste')
+		elseif player_job.main_job == 'NIN' then
+			windower.send_command('hb ind on; hb debuff yurin: ichi')
 		end
 		windower.send_command('gs c othertargetws Mboze')
 		settings.autows = true
@@ -1362,17 +1364,17 @@ function stage(cmd2)
 		end
         settings.autows = true
 	elseif cmd2 == 'ouryu' then
-		windower.send_command('gaze ap on')
+		windower.send_command('gaze ap on; ai off')
 		if player_job.main_job == 'WHM' then
-			windower.send_command('hb buff <me> barstonra; hb buff <me> barpetra; gs c set castingmode DT; gs c set idlemode DT; hb buff <me> auspice;')
+			windower.send_command('hb buff <me> barstonra; hb buff <me> barpetra; gs c set castingmode DT; gs c set idlemode DT; hb buff <me> auspice; hb buff '..find_job_charname('COR')..' haste')
 		elseif player_job.main_job == 'RUN' then
 			windower.send_command('gaze ap off; gs c set runeelement flabra; gs c set hybridmode DTLite;')
 		elseif player_job.main_job == 'BRD' then
-			windower.send_command('wait 2.5; sing pl ouryu; hb debuff dia2')
+			windower.send_command('wait 2.5; sing pl ouryu; hb debuff dia2; hb buff '..tank_char_name..' haste')
 		elseif player_job.main_job == 'COR' then
-			windower.send_command('gs c set weapons DualSavage; gs c autows Savage Blade')
+			windower.send_command('gs c set weapons DualSavage; gs c autows Savage Blade; roll melee')
 		elseif player_job.main_job == 'GEO' then
-			windower.send_command('gs c set castingmode DT; gs c set idlemode DT; gs c autoentrust attunement')
+			windower.send_command('gs c set castingmode DT; gs c set idlemode DT; gs c autoentrust attunement; hb buff '..find_job_charname('SAM')..' haste')
 		end
 		settings.autows = true
 	elseif cmd2 == 'gog' then
@@ -1471,7 +1473,7 @@ function jc(cmd2)
 		elseif player_job.name == "" ..settings.char2.. "" then
 			windower.send_command("jc mnk/rdm" )
 		elseif player_job.name == "" ..settings.char3.. "" then
-			windower.send_command("jc drk/rdm" )
+			windower.send_command("jc war/rdm" )
 		elseif player_job.name == "" ..settings.char4.. "" then
 			windower.send_command("jc brd/rdm")
 		elseif player_job.name == "" ..settings.char5.. "" then
@@ -1492,18 +1494,18 @@ function jc(cmd2)
 		elseif player_job.name == "" ..settings.char5.. "" then
 			windower.send_command("jc bst/rdm")
 		elseif player_job.name == "" ..settings.char6.. "" then
-			windower.send_command("jc nin/rdm")
+			windower.send_command("jc pup/rdm")
 		end
 	elseif cmd2 == 'mboze3' then
 		atc('[JC] Mboze farm #3')
 		if player_job.name == "" ..settings.char1.. "" then
-			windower.send_command("jc war/rdm" )
+			windower.send_command("jc thf/rdm" )
 		elseif player_job.name == "" ..settings.char2.. "" then
-			windower.send_command("jc pup/rdm" )
+			windower.send_command("jc nin/rdm" )
 		elseif player_job.name == "" ..settings.char3.. "" then
-			windower.send_command("jc sch/rdm" )
+			windower.send_command("jc drk/rdm" )
 		elseif player_job.name == "" ..settings.char4.. "" then
-			windower.send_command("jc blm/rdm")
+			windower.send_command("jc sch/rdm")
 		elseif player_job.name == "" ..settings.char5.. "" then
 			windower.send_command("jc geo/rdm")
 		elseif player_job.name == "" ..settings.char6.. "" then
@@ -2556,14 +2558,11 @@ function buy(cmd2,leader_buy)
 			windower.send_command('powder buy 3315; wait 10; fa prize powder')
 		elseif cmd2 == 'ss' then
 			windower.send_command('sellnpc s')
-			local targetid = windower.ffxi.get_mob_by_name('Corua')
-			windower.send_command('settarget ' .. targetid.id)
-			windower.send_command('wait 2.1; input /lockon; wait 1; setkey enter down; wait 0.5; setkey enter up;')
+			get_poke_check:schedule(1.7,'Olwyn')
 		elseif cmd2 == 'sp' then
 			windower.send_command('sellnpc p')
-			local targetid = windower.ffxi.get_mob_by_name('Corua')
-			windower.send_command('settarget ' .. targetid.id)
-			windower.send_command('wait 2.1; input /lockon; wait 1; setkey enter down; wait 0.5; setkey enter up; wait 10; fa prize powder')
+			get_poke_check:schedule(1.7,'Olwyn')
+			windower.send_command('wait 10; fa prize powder')
 		elseif cmd2 == 're' then
 			windower.send_command('lua r sparks; wait 0.5; lua r powder;')
 		elseif cmd2 == 'allshields' and player.name == leader_buy then
@@ -3713,6 +3712,12 @@ function get(cmd2)
 		atc('GET: Assault tag.')
 		get_poke_check('Rytaal')
 		windower.send_command('wait 1; setkey enter down; wait 0.5; setkey enter up;')
+	elseif cmd2 == 'htmb' and zone == 231 then
+		atc('GET: HTMB NPC.')
+		get_poke_check('Trisvain')
+	elseif cmd2 == 'soupox' and zone == 281 then
+		atc('GET: Soupox NPC.')
+		get_poke_check('Soupox')
 	elseif cmd2 == 'nyzul' and zone == 50 then
 		atc('GET: Nyzul tag.')
 		get_poke_check('Sorrowful Sage')
@@ -4271,6 +4276,8 @@ function drop(cmd2)
                          3186,3187,3188,3189,3190,3191,3192,3193,3194,3195,3196,3197,3198,3199,3200,3201,3202,3203,3204,
                          3205,3206,3207,3208,3209,3210,3211,3212,3213,3214,3215,3216,3217,3218,3219,3220,3221,3222,3223,
                          3224,3225,3226,3227,3228,3229}
+	local crystals = S{4096,4097,4098,4099,4100,4101,4102,4103}
+	local escha_trash = S{9084,9085,9210,9212}
 
 	if cmd2 == 'rem' then
 		atc('[Drop] Rem Chapters 6-10')
@@ -4295,6 +4302,24 @@ function drop(cmd2)
 		local items = windower.ffxi.get_items()
 		for index, item in pairs(items.inventory) do
 			if type(item) == 'table' and empy_seals:contains(item.id) then
+				atc('[Drop] ' .. cmd2 .. ' ' .. item.id)
+				windower.ffxi.drop_item(index, item.count)
+			end
+		end
+    elseif cmd2 == 'crystals' then
+		atc('[Drop] Crystals')
+		local items = windower.ffxi.get_items()
+		for index, item in pairs(items.inventory) do
+			if type(item) == 'table' and crystals:contains(item.id) then
+				atc('[Drop] ' .. cmd2 .. ' ' .. item.id)
+				windower.ffxi.drop_item(index, item.count)
+			end
+		end
+	elseif cmd2 == 'escha' then
+		atc('[Drop] Escha Trash')
+		local items = windower.ffxi.get_items()
+		for index, item in pairs(items.inventory) do
+			if type(item) == 'table' and escha_trash:contains(item.id) then
 				atc('[Drop] ' .. cmd2 .. ' ' .. item.id)
 				windower.ffxi.drop_item(index, item.count)
 			end

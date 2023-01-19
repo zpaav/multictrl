@@ -4277,7 +4277,7 @@ function drop(cmd2)
                          3205,3206,3207,3208,3209,3210,3211,3212,3213,3214,3215,3216,3217,3218,3219,3220,3221,3222,3223,
                          3224,3225,3226,3227,3228,3229}
 	local crystals = S{4096,4097,4098,4099,4100,4101,4102,4103}
-	local escha_trash = S{9084,9085,9210,9212}
+	local escha_trash = S{9084,9085,9210,9212,9214,9215,9216}
 
 	if cmd2 == 'rem' then
 		atc('[Drop] Rem Chapters 6-10')
@@ -4472,7 +4472,7 @@ function wstype(cmd2)
 		end
 	elseif cmd2 == 'laststand' then
 		if WSjobs:contains(player_job.main_job) then
-			if player_job.main_job == 'COR' then
+			if player_job.main_job == 'COR' or player_job.main_job == 'RNG' then
 				if player_job.sub_job == 'NIN' or player_job.sub_job == 'DNC' then
 					atc('WS-Type: Last Stand')
 					windower.send_command('gs c autows Last Stand')
@@ -4490,7 +4490,7 @@ function wstype(cmd2)
 		end
 	elseif cmd2 == 'wildfire' then
 		if WSjobs:contains(player_job.main_job) then
-			if player_job.main_job == 'COR' then
+			if player_job.main_job == 'COR' or player_job.main_job == 'RNG' then
 				if player_job.sub_job == 'NIN' or player_job.sub_job == 'DNC' then
 					atc('WS-Type: Wildfire')
 					windower.send_command('gs c autows Wildfire')
@@ -4789,7 +4789,7 @@ end
 
 function wsproc(cmd2)
 	local player_job = windower.ffxi.get_player()
-	local ProcJobs = S{'WAR','BLU','RUN','THF','DRK','SAM','MNK','PUP','BRD','COR','DRG','DNC'}		
+	local ProcJobs = S{'WAR','BLU','RUN','THF','DRK','SAM','MNK','PUP','BRD','COR','DRG','DNC','RNG'}		
 
 	if cmd2 == 'phy' then
 		if ProcJobs:contains(player_job.main_job) then
@@ -4800,10 +4800,12 @@ function wsproc(cmd2)
 				windower.send_command('gs c autows brainshaker')
 			elseif player_job.main_job == "BRD" then
 				windower.send_command('gs c set weapons Carnwenhan; gs c autows wasp sting')
-			elseif player_job.main_job == "DRG" or player_job.main_job == "RNG" then
-				windower.send_command('gs c autows flat blade')
+			elseif player_job.main_job == "DRG" then
+				windower.send_command('gs c set weapons Naegling; gs c autows flat blade')
 			elseif player_job.main_job == "DNC" then
 				windower.send_command('gs c autows wasp sting')
+			elseif player_job.main_job == "RNG" then
+				windower.send_command('gs c set weapons DualSavage; gs c autows flat blade')
 			elseif player_job.main_job == "RUN" or player_job.main_job == "DRK" then
 				windower.send_command('gs c autows shockwave')
             elseif player_job.main_job == "THF" or player_job.main_job == "BRD" then
@@ -4827,10 +4829,12 @@ function wsproc(cmd2)
 				windower.send_command('gs c autows shining strike')
 			elseif player_job.main_job == "BRD" then
 				windower.send_command('gs c set weapons Carnwenhan; gs c autows gust slash')
-			elseif player_job.main_job == "DRG" or player_job.main_job == "RNG" then
-				windower.send_command('gs c autows burning blade')
+			elseif player_job.main_job == "DRG" then
+				windower.send_command('gs c set weapons Naegling; gs c autows burning blade')
 			elseif player_job.main_job == "DNC" then
 				windower.send_command('gs c autows gust slash')
+			elseif player_job.main_job == "RNG" then
+				windower.send_command('gs c set weapons DualSavage; gs c autows burning blade')
 			elseif player_job.main_job == "RUN" or player_job.main_job == "DRK" then
 				windower.send_command('gs c autows freezebite')
             elseif player_job.main_job == "THF" or player_job.main_job == "BRD" then
@@ -4855,7 +4859,9 @@ function wsproc(cmd2)
 			elseif player_job.main_job == "BRD" then
 				windower.send_command('gs c set weapons Carnwenhan; gs c autows Rudra\s Storm')
 			elseif player_job.main_job == "DRG" or player_job.main_job == "RNG" then
-				windower.send_command('gs c autows savage blade')
+				windower.send_command('gs c set weapons Naegling; gs c autows Savage Blade')
+			elseif player_job.main_job == "RNG" then
+				windower.send_command('gs c set weapons DualSavage; gs c autows Savage Blade')
 			elseif player_job.main_job == "DNC" then
 				windower.send_command('gs c autows rudra\'s storm')
 			elseif player_job.main_job == "RUN" or player_job.main_job == "DRK" then

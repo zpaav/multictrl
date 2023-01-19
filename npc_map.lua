@@ -38,7 +38,7 @@ return {
 	[272] = {'???'},
 	[273] = {'???'},
 	[275] = {'Diaphanous Device','Diaphanous Device #A','Diaphanous Device #B','Diaphanous Device #C','Diaphanous Device #D','Diaphanous Gadget','Diaphanous Gadget #A','Diaphanous Gadget #B','Diaphanous Gadget #C','Diaphanous Gadget #D','Diaphanous Gadget #E','Diaphanous Gadget #F','Diaphanous Gadget #G','Diaphanous Gadget #H','Diaphanous Bitzer #A','Diaphanous Bitzer #B','Diaphanous Bitzer #C','Diaphanous Bitzer #D','Diaphanous Bitzer'},
-	[279] = {'Translocator #1','Translocator #2','Veridical Conflux #1','Veridical Conflux #2','Veridical Conflux #3','Veridical Conflux #4','Veridical Conflux #5','Veridical Conflux #6','Veridical Conflux #7','Veridical Conflux #8','Veridical Conflux #9','Veridical Conflux #10','Otherworldly Vortex'},
+	[279] = {'Translocator #1','Translocator #2','Veridical Conflux #1','Veridical Conflux #2','Veridical Conflux #3','Veridical Conflux #4','Veridical Conflux #5','Veridical Conflux #6','Veridical Conflux #7','Veridical Conflux #8','Veridical Conflux #9','Veridical Conflux #10','Veridical Conflux #11','Otherworldly Vortex'},
 	[283] = {'Dusky Forest','Reglert'},
-	[298] = {'Translocator #1','Translocator #2','Veridical Conflux #1','Veridical Conflux #2','Veridical Conflux #3','Veridical Conflux #4','Veridical Conflux #5','Veridical Conflux #6','Veridical Conflux #7','Veridical Conflux #8','Veridical Conflux #9','Veridical Conflux #10','Otherworldly Vortex'},
+	[298] = {'Translocator #1','Translocator #2','Veridical Conflux #1','Veridical Conflux #2','Veridical Conflux #3','Veridical Conflux #4','Veridical Conflux #5','Veridical Conflux #6','Veridical Conflux #7','Veridical Conflux #8','Veridical Conflux #9','Veridical Conflux #10','Veridical Conflux #11','Otherworldly Vortex'},
 }

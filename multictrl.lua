@@ -1712,7 +1712,7 @@ function jc(cmd2)
 		elseif player_job.name == "" ..settings.char5.. "" then
 			windower.send_command("jc whm/sch")
 		elseif player_job.name == "" ..settings.char6.. "" then
-			windower.send_command("jc cor/nin")
+			windower.send_command("jc geo/rdm")
 		end
     elseif cmd2 == 'ouryu' then
 		atc('[JC] Ouryu')

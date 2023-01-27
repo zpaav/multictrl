@@ -1036,7 +1036,7 @@ function stage(cmd2)
 		atc('[Stage] Shinryu')
 		windower.send_command('lua r gazecheck; wait 3; gaze ag off; wait 1; gaze ap on;')
 		if player_job.main_job == 'WHM' then
-			windower.send_command('hb buff <me> barfira; hb buff <me> barparalyzra; hb buff <me> aquaveil; gs c set castingmode DT; gs c set idlemode DT; hb buff <me> auspice; hb as off; hb buff ' ..find_job_charname('MNK').. ' haste; hb debuff dia2; hb buff ' ..find_job_charname('BRD').. ' haste;')
+			windower.send_command('hb buff <me> barfira; hb buff <me> barparalyzra; hb buff <me> aquaveil; gs c set castingmode DT; gs c set idlemode DT; hb buff <me> auspice; hb buff ' ..find_job_charname('MNK').. ' haste; hb debuff dia2; hb buff ' ..find_job_charname('BRD').. ' haste;')
 		elseif player_job.main_job == 'BRD' then -- sub DNC
 			windower.send_command('wait 2.5; sing pl shin; sing n on; sing p on; gs c set weapons DualCarn; sing ballad 1 ' ..find_job_charname('WHM').. '; sing ballad 2 ' ..find_job_charname('SCH').. '; sing ballad 2 ' ..find_job_charname('GEO')..'; lua r react;')
 		elseif player_job.main_job == 'THF' then

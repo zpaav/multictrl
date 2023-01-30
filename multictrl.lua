@@ -5219,7 +5219,7 @@ end)
 
 windower.register_event("lose buff", function(buff_id)
 	if buff_id == 254 then
-		off()
+		off:schedule(3)
     end
 end)
 

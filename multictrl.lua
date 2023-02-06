@@ -2010,7 +2010,7 @@ function fon()
 	currentPC=windower.ffxi.get_player()
 	
 	windower.send_command('hb follow off')
-	windower.send_command('hb f dist 1.8')
+	windower.send_command('hb f dist 1.5')
 
 	for k, v in pairs(windower.ffxi.get_party()) do
 		if type(v) == 'table' then
@@ -2022,7 +2022,7 @@ function fon()
 					atc('FON: ' .. v.name .. ' is not in zone, not following.')
 				else
 					if ptymember and ptymember.valid_target then
-						windower.send_command('send ' .. v.name .. ' hb f dist 1.8')
+						windower.send_command('send ' .. v.name .. ' hb f dist 1.5')
 						windower.send_command('send ' .. v.name .. ' hb follow ' .. currentPC.name)
 					else
 						atc('FON: ' .. v.name .. ' is not in range, not following.')
@@ -4132,6 +4132,8 @@ function enter()
 		--Qufim enter to Shinryu
 		elseif zone == 126 then
 			windower.send_command('wait 3; setkey up down; wait 0.25; setkey up up; wait 1.1; setkey enter down; wait 0.35; setkey enter up;')
+		elseif zone == 33 then
+			windower.send_command('wait 4; setkey up down; wait 0.25; setkey up up; wait 1.1; setkey enter down; wait 0.35; setkey enter up;')
 		--Ouryu
 		elseif zone == 31 then 
 			windower.send_command('wait 17; setkey down down; wait 0.75; setkey down up; wait 0.6; setkey enter down; wait 0.25; setkey enter up; wait 0.75; setkey up down; wait 0.5; setkey up up; wait 0.6; setkey enter down; wait 0.25; setkey enter up')
@@ -4209,10 +4211,10 @@ function cleanup()
     --get
 	for k,v in pairs(items) do
         if k:contains('case') or k:contains('box') or k:contains('parcel') then
-            windower.send_command('get "' ..k.. '" 200')
+            windower.send_command('get "' ..k.. '" 600')
             coroutine.sleep(0.5)
         else
-            windower.send_command('get "' ..k.. '" 200')
+            windower.send_command('get "' ..k.. '" 600')
             coroutine.sleep(0.5)
         end
 	end
@@ -4220,20 +4222,20 @@ function cleanup()
     --put
     for k,v in pairs(items) do
         if k:contains('case') or k:contains('box') or k:contains('parcel') then
-            windower.send_command('put "' ..k.. '" case 200')
+            windower.send_command('put "' ..k.. '" case 600')
             coroutine.sleep(0.5)
         else
-            windower.send_command('put "' ..k.. '" sack 200')
+            windower.send_command('put "' ..k.. '" sack 600')
             coroutine.sleep(0.5)
         end
 	end
 	
 	for k,v in pairs(meds) do
         if k:contains('case') or k:contains('box') or k:contains('parcel') then
-            windower.send_command('get "' ..k.. '" 200')
+            windower.send_command('get "' ..k.. '" 600')
             coroutine.sleep(0.5)
         else
-            windower.send_command('get "' ..k.. '" 200')
+            windower.send_command('get "' ..k.. '" 600')
             coroutine.sleep(0.5)
         end
 	end
@@ -4241,10 +4243,10 @@ function cleanup()
     --put
     for k,v in pairs(meds) do
         if k:contains('case') or k:contains('box') or k:contains('parcel') then
-            windower.send_command('put "' ..k.. '" case 200')
+            windower.send_command('put "' ..k.. '" case 600')
             coroutine.sleep(0.5)
         else
-            windower.send_command('put "' ..k.. '" sack 200')
+            windower.send_command('put "' ..k.. '" sack 600')
             coroutine.sleep(0.5)
         end
 	end

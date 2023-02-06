@@ -1,5 +1,6 @@
 return {
 	[31] = {'Spatial Displacement'},
+	[33] = {'Swirling Vortex'},
 	[50] = {'Ironbound Gate','Gate: The Pit'},
 	[51] = {'Engraved Tablet'},
 	[61] = {'Engraved Tablet'},

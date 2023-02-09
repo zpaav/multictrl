@@ -4068,21 +4068,16 @@ function enter(leader)
 	end
 	
 	if npc_dialog == true then
-		--Shinryu
 		if zone == 255 then
-			if possible_npc and possible_npc.name == "Transcendental Radiance" then
-				windower.send_command('wait 2.3; setkey right down; wait 0.75; setkey right up; wait 0.6; setkey enter down; wait 0.25; setkey enter up; wait 0.75; setkey left down; wait 0.5; setkey left up; wait 0.6; setkey enter down; wait 0.25; setkey enter up')
-			else
-				windower.send_command('wait 0.85; setkey up down; wait 0.25; setkey up up; wait 0.7; setkey enter down; wait 0.25; setkey enter up;')
-			end
+			windower.send_command('wait 0.85; setkey up down; wait 0.25; setkey up up; wait 0.7; setkey enter down; wait 0.25; setkey enter up;')
 		--Qufim enter to Shinryu
 		elseif zone == 126 then
 			windower.send_command('wait 3; setkey up down; wait 0.25; setkey up up; wait 1.1; setkey enter down; wait 0.35; setkey enter up;')
 		elseif zone == 33 then
 			windower.send_command('wait 4; setkey up down; wait 0.25; setkey up up; wait 1.1; setkey enter down; wait 0.35; setkey enter up;')
 		--Ouryu
-		elseif zone == 31 then 
-			windower.send_command('wait 17; setkey down down; wait 0.75; setkey down up; wait 0.6; setkey enter down; wait 0.25; setkey enter up; wait 0.75; setkey up down; wait 0.5; setkey up up; wait 0.6; setkey enter down; wait 0.25; setkey enter up')
+		-- elseif zone == 31 then 
+			-- windower.send_command('wait 17; setkey down down; wait 0.75; setkey down up; wait 0.6; setkey enter down; wait 0.25; setkey enter up; wait 0.75; setkey up down; wait 0.5; setkey up up; wait 0.6; setkey enter down; wait 0.25; setkey enter up')
 		--Walk of Echos
 		elseif zone == 137 then
 			windower.send_command('wait 2.0; setkey up down; wait 0.25; setkey up up; wait 0.7; setkey enter down; wait 0.25; setkey enter up;')
@@ -4092,9 +4087,9 @@ function enter(leader)
 			else
 				windower.send_command('wait 3.5; setkey right down; wait 0.5; setkey right up; wait 0.6; setkey enter down; wait 0.25; setkey enter up;')
 			end
-		--6 Avatars
-		elseif cloister_zones:contains(zone) then
-			windower.send_command('wait 6; setkey down down; wait 0.75; setkey down up; wait 0.6; setkey enter down; wait 0.25; setkey enter up; wait 0.75; setkey up down; wait 0.5; setkey up up; wait 0.6; setkey enter down; wait 0.25; setkey enter up')
+		-- --6 Avatars
+		-- elseif cloister_zones:contains(zone) then
+			-- windower.send_command('wait 6; setkey down down; wait 0.75; setkey down up; wait 0.6; setkey enter down; wait 0.25; setkey enter up; wait 0.75; setkey up down; wait 0.5; setkey up up; wait 0.6; setkey enter down; wait 0.25; setkey enter up')
 		--Adoulin beam up
 		elseif adoulin_beam_zones:contains(zone) then
 			windower.send_command('wait 0.85; setkey down down; wait 0.25; setkey down up; wait 0.7; setkey enter down; wait 0.25; setkey enter up;')
@@ -4106,12 +4101,12 @@ function enter(leader)
 		elseif zone == 256 or zone == 257 then
 			windower.send_command('wait 1.3; setkey enter down; wait 0.5; setkey enter up;')
 		--Jade
-		elseif zone == 67 then
-			if possible_npc then
-				windower.send_command('wait 12.3; setkey down down; wait 0.15; setkey down up; wait 0.7; setkey enter down; wait 0.25; setkey enter up; wait 1.1; setkey up down; wait 1.1; setkey up up; wait 0.7; setkey enter down; wait 0.5; setkey enter up;')
-			else
-				atc('Not close the entry NPC, cancelling')
-			end
+		-- elseif zone == 67 then
+			-- if possible_npc then
+				-- windower.send_command('wait 12.3; setkey down down; wait 0.15; setkey down up; wait 0.7; setkey enter down; wait 0.25; setkey enter up; wait 1.1; setkey up down; wait 1.1; setkey up up; wait 0.7; setkey enter down; wait 0.5; setkey enter up;')
+			-- else
+				-- atc('Not close the entry NPC, cancelling')
+			-- end
 		--Sortie
 		elseif zone == 133 or zone == 275 then
 			if possible_npc.name == "Diaphanous Bitzer" then

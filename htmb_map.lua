@@ -1,0 +1,17 @@
+return {
+	[67] = {name = {'Ornamental Door'}},
+    [139] = {name = {'Burning Circle'}},
+    [144] = {name = {'Burning Circle'}},
+	[146] = {name = {'Burning Circle'}},	
+    [163] = {name = {'Mahogany Door'}},
+    [165] = {name = {'Throne Room'}},
+    [168] = {name = {'Shimmering Circle'}},
+	[201] = {name = {'Wind Protocrystal'}, entry_command ={6, {'right', 0.75}, 0.6, {'enter', 0.25}, 0.75, {'left', 0.75}, 0.6, {'enter', 0.25}}},
+	[202] = {name = {'Lightning Protocrystal'}, entry_command ={6, {'right', 0.75}, 0.6, {'enter', 0.25}, 0.75, {'left', 0.75}, 0.6, {'enter', 0.25}}},
+	[203] = {name = {'Ice Protocrystal'}, entry_command ={6, {'right', 0.75}, 0.6, {'enter', 0.25}, 0.75, {'left', 0.75}, 0.6, {'enter', 0.25}}},
+	[206] = {name = {'Burning Circle'}, entry_command ={6, {'right', 0.75}, 0.6, {'enter', 0.25}, 0.75, {'left', 0.75}, 0.6, {'enter', 0.25}}},
+	[207] = {name = {'Fire Protocrystal'}, entry_command ={6, {'right', 0.75}, 0.6, {'enter', 0.25}, 0.75, {'left', 0.75}, 0.6, {'enter', 0.25}}},
+	[209] = {name = {'Earth Protocrystal'}, entry_command ={6, {'right', 0.75}, 0.6, {'enter', 0.25}, 0.75, {'left', 0.75}, 0.6, {'enter', 0.25}}},
+	[211] = {name = {'Water Protocrystal'}, entry_command ={6, {'right', 0.75}, 0.6, {'enter', 0.25}, 0.75, {'left', 0.75}, 0.6, {'enter', 0.25}}},
+	[255] = {name = {'Transcendental Radiance'}, entry_command = {2.5, {'right', 0.75}, 0.6, {'enter', 0.25}, 0.75, {'left', 0.75}, 0.6, {'enter', 0.25}}},
+}

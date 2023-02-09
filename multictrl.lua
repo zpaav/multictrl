@@ -11,7 +11,10 @@ config = require('config')
 packets = require('packets')
 res = require('resources')
 texts = require('texts')
-npc_map = require('npc_map')
+--npc_map = require('npc_map')
+--htmb_map = require('htmb_map')
+--macro_orb_map = require('macro_orb_map')
+entry_map = require('entry_map')
 extdata = require('extdata')
 
 -- job registry is a key->value table/db of player name->jobs we have encountered
@@ -89,20 +92,34 @@ InternalCMDS = S{
 	--Job
 	'brd','bst','sch','smnburn','geoburn','burn','rng','proc','crit','wsproc','jc',
 	--Travel
-	'mnt','dis','warp','omen','enup','endown','ent','esc','go','enter','get','deimos','macro',
+	'mnt','dis','warp','omen','enup','endown','ent','esc','go','enter','get','deimos','macro','htmb',
 	--Misc
 	'reload','unload','fps','lotall','cleanup','drop','buyalltemps','book','stylelock',
 }
 
-DelayCMDS = S{'buyalltemps','get','enter','go','book','deimos'}
+DelayCMDS = S{'buyalltemps','get','enter','go','book','deimos','macro','htmb'}
+
+local player = windower.ffxi.get_player()
+local info = windower.ffxi.get_info()
+
+if info.logged_in then
+    zone_id = info.zone
+end
 	
 isCasting = false
 isResting = false
 ipcflag = false
-currentPC=windower.ffxi.get_player()
+--player=windower.ffxi.get_player()
 new = 0
 old = 0
 log_flag = true
+cancel = false
+htmb_state = false
+htmb_entered = false
+orb_state = false
+orb_entered = false
+htmb_table = {}
+player_leader = ''
 
 windower.register_event('addon command', function(input, ...)
 	local cmd
@@ -172,14 +189,20 @@ windower.register_event('addon command', function(input, ...)
 		local mob_id = target and target.valid_target and target.is_npc and target.id
 		poke:schedule(0, mob_id)
 		send_to_IPC:schedule(1, cmd,mob_id)
+	elseif cmd == 'htmb' then
+		--local leader = windower.ffxi.get_player()
+		player_leader = player.name
+		htmb:schedule(0, player_leader)
+		--send_to_IPC:schedule(1, cmd,leader.name)
 	elseif cmd == 'deimos' then
-		local leader = windower.ffxi.get_player()
-		deimos:schedule(0, leader.name)
-		send_to_IPC:schedule(1, cmd,leader.name)
+		--local leader = windower.ffxi.get_player()
+		player_leader = player.name
+		orb_entry:schedule(0, player_leader,cmd)
+		--send_to_IPC:schedule(1, 'orb_entry',leader.name,cmd)
 	elseif cmd == 'macro' then
-		local leader = windower.ffxi.get_player()
-		macro:schedule(0, leader.name)
-		send_to_IPC:schedule(1, cmd,leader.name)
+		player_leader = player.name
+		orb_entry:schedule(0, player_leader,cmd)
+		--send_to_IPC:schedule(1, 'orb_entry',leader.name,cmd)
 	elseif cmd == 'ein' then						-- Long delay
 		ein:schedule(0, cmd2)
 		if cmd2 == 'enter' then
@@ -1803,33 +1826,33 @@ function cc(cmd2)
 	local SleepSubs = S{'BLM','RDM'}
     local world = res.zones[windower.ffxi.get_info().zone].name
 
-	if SleepJobs:contains(player_job.main_job) and not(areas.Cities:contains(world)) then
+	if (SleepJobs:contains(player_job.main_job) or SleepSubs:contains(player_job.sub_job)) and not(areas.Cities:contains(world)) then
 		
 		if player_job.main_job == "BRD" then
-			atcwarn("CC: Horde Lullaby.")
-			if cmd2 and math.sqrt(windower.get_mob_by_id(cmd2).distance) < 20 and not (player_job.target_locked) then
+			atcwarn("[CC]: Horde Lullaby.")
+			if cmd2 and not (player_job.target_locked) then
 				windower.send_command('input /ma \'Horde Lullaby II\' ' .. cmd2)
 			else
 				windower.send_command('input /ma \'Horde Lullaby II\' <t>')
 			end
 		elseif player_job.main_job == "BLM" then
-			atcwarn("CC: Sleepga II.")
-			if cmd2 and math.sqrt(windower.get_mob_by_id(cmd2).distance) < 20 and not (player_job.target_locked) then
+			atcwarn("[CC]: Sleepga II.")
+			if cmd2 and not (player_job.target_locked) then
 				windower.send_command('input /ma \'Sleepga II\' ' .. cmd2)
 			else
 				windower.send_command('input /ma \'Sleepga II\' <t>')
 			end
 		elseif player_job.main_job == "RDM" or player_job.main_job == "GEO" then
 			if player_job.sub_job == "BLM" then
-				atcwarn("CC: Sleepga II.")
-				if cmd2 and math.sqrt(windower.get_mob_by_id(cmd2).distance) < 20 and not (player_job.target_locked) then
-					windower.send_command('input /ma \'Sleepga II\' ' .. cmd2)
+				atcwarn("[CC]: Sleepga.")
+				if cmd2 and not (player_job.target_locked) then
+					windower.send_command('input /ma \'Sleepga\' ' .. cmd2)
 				else
-					windower.send_command('input /ma \'Sleepga II\' <t>')
+					windower.send_command('input /ma \'Sleepga\' <t>')
 				end
             else
-            	atcwarn("CC: Sleep II.")
-				if cmd2 and math.sqrt(windower.get_mob_by_id(cmd2).distance) < 20 and not (player_job.target_locked) then
+            	atcwarn("[CC]: Sleep II.")
+				if cmd2 and not (player_job.target_locked) then
 					windower.send_command('input /ma \'Sleep II\' ' .. cmd2)
 				else
 					windower.send_command('input /ma \'Sleep II\' <t>')
@@ -1837,7 +1860,11 @@ function cc(cmd2)
 			end
 		end
 	else
-		atcwarn("CC: Non sleepable jobs, skipping.")
+        if areas.Cities:contains(world) then
+            atcwarn("[CC]: In town area, cancelling.")
+        else
+            atcwarn("[CC]: Non sleepable jobs, skipping")
+        end
 	end
 end
 
@@ -2007,14 +2034,14 @@ end
 -- Does NOT use IPC
 function fon()
 	atc('FON: Follow ON.')
-	currentPC=windower.ffxi.get_player()
+	player=windower.ffxi.get_player()
 	
 	windower.send_command('hb follow off')
 	windower.send_command('hb f dist 1.5')
 
 	for k, v in pairs(windower.ffxi.get_party()) do
 		if type(v) == 'table' then
-			if v.name ~= currentPC.name then
+			if v.name ~= player.name then
 				ptymember = windower.ffxi.get_mob_by_name(v.name)
 				-- check if party member in same zone.
 				if v.mob == nil then
@@ -2023,7 +2050,7 @@ function fon()
 				else
 					if ptymember and ptymember.valid_target then
 						windower.send_command('send ' .. v.name .. ' hb f dist 1.5')
-						windower.send_command('send ' .. v.name .. ' hb follow ' .. currentPC.name)
+						windower.send_command('send ' .. v.name .. ' hb follow ' .. player.name)
 					else
 						atc('FON: ' .. v.name .. ' is not in range, not following.')
 					end
@@ -2036,14 +2063,14 @@ end
 -- Does NOT use IPC
 function foff()
 	atc('FOFF: Follow OFF')
-	currentPC=windower.ffxi.get_player()
+	player=windower.ffxi.get_player()
 	
 	windower.send_command('hb follow off')
 	windower.send_command('hb f dist 2')
 
 	for k, v in pairs(windower.ffxi.get_party()) do
 		if type(v) == 'table' then
-			if v.name ~= currentPC.name then
+			if v.name ~= player.name then
 				ptymember = windower.ffxi.get_mob_by_name(v.name)
 				-- check if party member in same zone.
 				if v.mob == nil then
@@ -2076,53 +2103,7 @@ function reload(addonarg)
 	end
 end
 
-function cc(cmd2)
-	local player_job = windower.ffxi.get_player()
-	local SleepJobs = S{'BRD','BLM','RDM','GEO'}
-	local SleepSubs = S{'BLM','RDM'}
-    local world = res.zones[windower.ffxi.get_info().zone].name
 
-	if (SleepJobs:contains(player_job.main_job) or SleepSubs:contains(player_job.sub_job)) and not(areas.Cities:contains(world)) then
-		
-		if player_job.main_job == "BRD" then
-			atcwarn("[CC]: Horde Lullaby.")
-			if cmd2 and not (player_job.target_locked) then
-				windower.send_command('input /ma \'Horde Lullaby II\' ' .. cmd2)
-			else
-				windower.send_command('input /ma \'Horde Lullaby II\' <t>')
-			end
-		elseif player_job.main_job == "BLM" then
-			atcwarn("[CC]: Sleepga II.")
-			if cmd2 and not (player_job.target_locked) then
-				windower.send_command('input /ma \'Sleepga II\' ' .. cmd2)
-			else
-				windower.send_command('input /ma \'Sleepga II\' <t>')
-			end
-		elseif player_job.main_job == "RDM" or player_job.main_job == "GEO" then
-			if player_job.sub_job == "BLM" then
-				atcwarn("[CC]: Sleepga.")
-				if cmd2 and not (player_job.target_locked) then
-					windower.send_command('input /ma \'Sleepga\' ' .. cmd2)
-				else
-					windower.send_command('input /ma \'Sleepga\' <t>')
-				end
-            else
-            	atcwarn("[CC]: Sleep II.")
-				if cmd2 and not (player_job.target_locked) then
-					windower.send_command('input /ma \'Sleep II\' ' .. cmd2)
-				else
-					windower.send_command('input /ma \'Sleep II\' <t>')
-				end
-			end
-		end
-	else
-        if areas.Cities:contains(world) then
-            atcwarn("[CC]: In town area, cancelling.")
-        else
-            atcwarn("[CC]: Non sleepable jobs, skipping")
-        end
-	end
-end
 
 function reraise()
     local player_job = windower.ffxi.get_player()
@@ -2771,10 +2752,10 @@ end
 
 function as(namearg,cmd,cmd2)
 
-	currentPC=windower.ffxi.get_player()
+	player=windower.ffxi.get_player()
 	if check_leader_in_same_party(namearg) == true then
 		if cmd == 'melee' then
-			if currentPC.name:lower() == namearg:lower() then
+			if player.name:lower() == namearg:lower() then
 				atc('[Assist] Leader for assisting - Melee ONLY')
 				as_helper('lead_reset')
 			else
@@ -2792,7 +2773,7 @@ function as(namearg,cmd,cmd2)
 				end
 			end
 		elseif cmd == 'mag' then
-			if currentPC.name:lower() == namearg:lower() then
+			if player.name:lower() == namearg:lower() then
 				atc('[Assist] Leader for assisting - Melee+Mage BRD/RDM')
 				as_helper('lead_reset')
 			else
@@ -2810,7 +2791,7 @@ function as(namearg,cmd,cmd2)
 				end
 			end
 		elseif cmd == 'all' then
-			if currentPC.name:lower() == namearg:lower() then
+			if player.name:lower() == namearg:lower() then
 				atc('[Assist] Leader for assisting attack - ALL JOBS')
 				as_helper('lead_reset')
 			else
@@ -2821,7 +2802,7 @@ function as(namearg,cmd,cmd2)
 				windower.send_command('wait 0.5; hb on; gaze ap on')
 			end
 		elseif cmd == 'on' then
-			if currentPC.name:lower() == namearg:lower() then
+			if player.name:lower() == namearg:lower() then
 				atc('[Assist] Leader for assisting in spells - ALL JOBS')
 				as_helper('lead_reset')
 			else
@@ -2829,7 +2810,7 @@ function as(namearg,cmd,cmd2)
 				windower.send_command('hb as ' .. namearg .. '; hb as nolock on;')
 			end
 		elseif cmd == 'lock' then
-			if currentPC.name:lower() == namearg:lower() then
+			if player.name:lower() == namearg:lower() then
 				atc('[Assist] Leader for assisting with lock - ALL JOBS')
 				as_helper('lead_reset')
 			else
@@ -2837,7 +2818,7 @@ function as(namearg,cmd,cmd2)
 				windower.send_command('hb as ' .. namearg .. '; hb as nolock off; gaze ap off')
 			end
 		elseif cmd == 'same' then
-			if currentPC.name:lower() == namearg:lower() then
+			if player.name:lower() == namearg:lower() then
 				atc('[Assist] Leader for assisting with same target(set target) - ALL JOBS')
 				as_helper('lead_reset')
 			elseif cmd2 == 'on' then
@@ -3181,7 +3162,7 @@ function blu(cmd2,cmd3)
 end
 
 function smn(cmd2,leader_smn,cmd3)
-	currentPC=windower.ffxi.get_player()
+	player=windower.ffxi.get_player()
 
 	if cmd2 and cmd2:lower() == 'on' then
 		atc('[SMN] Helper for SMN ON')
@@ -3221,13 +3202,13 @@ function smn(cmd2,leader_smn,cmd3)
 			if cmd3 and cmd3:lower() == 'off' then
 				atc('[SMN] Auto OFF')
 				settings.smnauto = false
-				if currentPC.main_job == 'SMN' then
+				if player.main_job == 'SMN' then
 					windower.send_command('gs c set AutoAvatarMode off; gs c set AutoBPMode off; gs c set AutoSMNSCMode off;')
 				end
 			-- if settings.smnauto then
 				-- atc('SMN Auto DISABLED')
 				-- settings.smnauto = false
-				-- if currentPC.main_job == 'SMN' then
+				-- if player.main_job == 'SMN' then
 					-- windower.send_command('gs c set AutoAvatarMode off; gs c set AutoBPMode off')
 				-- end
 			elseif cmd3 and cmd3:lower() == 'on' then
@@ -3237,11 +3218,11 @@ function smn(cmd2,leader_smn,cmd3)
 						atc('[SMN] Auto ON')
 						settings.smnauto = true
 						-- Leader does AutoBP and Ramuh
-						if currentPC.name:lower() == settings.smnlead and currentPC.main_job == 'SMN' then
+						if player.name:lower() == settings.smnlead and player.main_job == 'SMN' then
 							windower.send_command('gs c set avatar Ramuh; gs c set AutoBPMode on; gs c set AutoSMNSCMode on;')
 						-- Other SMN's use Ifrit and just autoavatar
 						else
-							if currentPC.main_job == 'SMN' then
+							if player.main_job == 'SMN' then
 								windower.send_command('gs c set avatar Ifrit; gs c set AutoBPMode off; gs c set AutoAvatarMode on')
 							end
 						end
@@ -3250,7 +3231,7 @@ function smn(cmd2,leader_smn,cmd3)
 					end
 				--BP Spam
 				else
-					if currentPC.main_job == 'SMN'  then
+					if player.main_job == 'SMN'  then
 						windower.send_command('gs c set avatar Ramuh; gs c set AutoBPMode on')
 					end
 					settings.smnauto = true
@@ -3260,7 +3241,7 @@ function smn(cmd2,leader_smn,cmd3)
 			settings.smnlead = cmd3
 		end
 		-- SMN Auto/manual logic
-		if currentPC.main_job == 'SMN' then
+		if player.main_job == 'SMN' then
 			if cmd2 then
 				if cmd2:lower() == 'assault' then
 					windower.send_command('input /ja "Assault" <t>')
@@ -3270,7 +3251,7 @@ function smn(cmd2,leader_smn,cmd3)
 					windower.send_command('input /ja "Retreat" <me>')
 				elseif cmd2:lower() == 'vs' then
 					if settings.smnsc then
-						if currentPC.name ~= leader_smn then
+						if player.name ~= leader_smn then
 							windower.send_command('wait 4.0; input /ja "Flaming Crush" <t>')
 						end
 					else
@@ -3278,7 +3259,7 @@ function smn(cmd2,leader_smn,cmd3)
 					end
 				elseif cmd2:lower() == 'fc' then
 					if settings.smnsc then
-						if currentPC.name ~= leader_smn then
+						if player.name ~= leader_smn then
 							windower.send_command('wait 4.0; input /ja "Volt Strike" <t>')
 						end
 					else
@@ -3286,7 +3267,7 @@ function smn(cmd2,leader_smn,cmd3)
 					end
 				elseif cmd2:lower() == 'ha' then
 					if settings.smnsc then
-						if currentPC.name ~= leader_smn then
+						if player.name ~= leader_smn then
 							windower.send_command('wait 4.0; input /ja "Flaming Crush" <t>')
 						end
 					else
@@ -3294,7 +3275,7 @@ function smn(cmd2,leader_smn,cmd3)
 					end				
 				elseif cmd2:lower() == 'ramuh' then
 					if settings.smnsc then
-						if currentPC.name ~= leader_smn then
+						if player.name ~= leader_smn then
 							windower.send_command('input /ma "Ifrit" <me>')
 						end
 					else
@@ -3302,7 +3283,7 @@ function smn(cmd2,leader_smn,cmd3)
 					end
 				elseif cmd2:lower() == 'ifrit' then
 					if settings.smnsc then
-						if currentPC.name ~= leader_smn then
+						if player.name ~= leader_smn then
 							windower.send_command('input /ma "Ramuh" <me>')
 						end
 					else
@@ -3310,7 +3291,7 @@ function smn(cmd2,leader_smn,cmd3)
 					end
 				elseif cmd2:lower() == 'siren' then
 					if settings.smnsc then
-						if currentPC.name ~= leader_smn then
+						if player.name ~= leader_smn then
 							windower.send_command('input /ma "Ifrit" <me>')
 						end
 					else
@@ -3339,7 +3320,7 @@ function smn(cmd2,leader_smn,cmd3)
 end	
 
 function autosc(cmd2, leader_char)
-	currentPC=windower.ffxi.get_player()
+	player=windower.ffxi.get_player()
 	
 	local rangedjobs = S{'COR','SCH','BLM','RUN','BRD','RDM','GEO'}
 
@@ -3355,13 +3336,13 @@ function autosc(cmd2, leader_char)
 	
 	
 	if settings.autosc then
-		if rangedjobs:contains(currentPC.main_job) then
+		if rangedjobs:contains(player.main_job) then
 			if cmd2 and cmd2:lower() == 'freezebite' then
-				if currentPC.main_job == 'SCH' then				
+				if player.main_job == 'SCH' then				
 					atc('[AUTOSC] ENDING SCH - Water [Fragmentation]')
 					windower.send_command('input /ja "Immanence" <me>')
 					windower.send_command:schedule(3.4, 'gs c elemental tier1 Raskovniche')
-				elseif currentPC.main_job == 'COR' then
+				elseif player.main_job == 'COR' then
 					atc('[AUTOSC] COR Last Stand')
 					local abil_recasts = windower.ffxi.get_ability_recasts()
 					local latency = 0.7
@@ -3370,10 +3351,10 @@ function autosc(cmd2, leader_char)
 					end
 					windower.send_command:schedule(10.1, 'input /ws "Last Stand" <t>')
 					windower.send_command:schedule(13.5, 'autora start')
-				elseif currentPC.main_job == 'BLM' then
+				elseif player.main_job == 'BLM' then
 					atc('[AUTOSC] BLM PreNuke')
 					windower.send_command:schedule(3.9, 'gs c elemental aja Raskovniche')
-				elseif currentPC.main_job == 'RUN' then
+				elseif player.main_job == 'RUN' then
 					local abil_recasts = windower.ffxi.get_ability_recasts()
 					local latency = 0.7
 					atc('[AUTOSC] Rayke/Gambit')
@@ -3391,11 +3372,11 @@ function autosc(cmd2, leader_char)
 					end
 				end
 			elseif cmd2 and cmd2:lower() == 'frostbite' then
-				if currentPC.main_job == 'SCH' then				
+				if player.main_job == 'SCH' then				
 					atc('[AUTOSC] ENDING SCH - Water [Fragmentation]')
 					windower.send_command('input /ja "Immanence" <me>')
 					windower.send_command:schedule(3.4, 'gs c elemental tier1 Marmorkrebs')
-				elseif currentPC.main_job == 'COR' then
+				elseif player.main_job == 'COR' then
 					atc('[AUTOSC] COR Last Stand')
 					local abil_recasts = windower.ffxi.get_ability_recasts()
 					local latency = 0.7
@@ -3404,10 +3385,10 @@ function autosc(cmd2, leader_char)
 					end
 					windower.send_command:schedule(10.1, 'input /ws "Last Stand" <t>')
 					windower.send_command:schedule(13.5, 'autora start')
-				elseif currentPC.main_job == 'BLM' then
+				elseif player.main_job == 'BLM' then
 					atc('[AUTOSC] BLM PreNuke')
 					windower.send_command:schedule(3.9, 'gs c elemental aja Marmorkrebs')
-				elseif currentPC.main_job == 'RUN' then
+				elseif player.main_job == 'RUN' then
 					local abil_recasts = windower.ffxi.get_ability_recasts()
 					local latency = 0.7
 					atc('[AUTOSC] Rayke/Gambit')
@@ -3424,7 +3405,7 @@ function autosc(cmd2, leader_char)
 				end
 			--Upheaval > Gambit/Rayke/Earth Shot > Leaden Saluate > Steel Cyclone > Wild fire.
 			elseif cmd2 and cmd2:lower() == 'upheaval' then
-				if currentPC.main_job == 'COR' then
+				if player.main_job == 'COR' then
 					atc('[AUTOSC] COR Leaden and Earth Shot')
 					local abil_recasts = windower.ffxi.get_ability_recasts()
 					local latency = 0.7
@@ -3435,7 +3416,7 @@ function autosc(cmd2, leader_char)
 					windower.send_command:schedule(7.2, 'autora start')
 					windower.send_command:schedule(16.3, 'input /ws "Wildfire" <t>')
 					windower.send_command:schedule(20.1, 'autora start')
-				elseif currentPC.main_job == 'RUN' then
+				elseif player.main_job == 'RUN' then
 					local abil_recasts = windower.ffxi.get_ability_recasts()
 					local latency = 0.7
 					windower.send_command('hb off; gs c set autotankmode off; gs c set autobuffmode off; gs c set autorunemode off; gs c set autowsmode off')
@@ -3447,17 +3428,17 @@ function autosc(cmd2, leader_char)
 					end
 					windower.send_command:schedule(12.0, 'input /ws "Steel Cyclone" <t>')
 					windower.send_command:schedule(13.5, 'gs c set autotankmode on; gs c set autorunemode on')
-				elseif currentPC.main_job == 'BLM' then
+				elseif player.main_job == 'BLM' then
 					atc('[AUTOSC] BLM PreNuke')
 					windower.send_command:schedule(4.1, 'gs c elemental aja Ongo')
 				end
 			--Sortie 4 Step: Aeolian Edge x4.
 			elseif cmd2 and cmd2:lower() == 'aeolian' then
 				windower.send_command('gs c set autobuffmode off; gs c set autowsmode off')
-				if currentPC.main_job == 'COR' then
+				if player.main_job == 'COR' then
 					windower.send_command:schedule(0.2, 'input /ws "Aeolian Edge" <t>')
 					windower.send_command:schedule(8.1, 'input /ws "Aeolian Edge" <t>')
-				elseif currentPC.main_job == 'BRD' then
+				elseif player.main_job == 'BRD' then
 					windower.send_command:schedule(3.9, 'input /ws "Aeolian Edge" <t>')
 					windower.send_command:schedule(11.6, 'input /ws "Aeolian Edge" <t>')
 				end
@@ -3466,34 +3447,34 @@ function autosc(cmd2, leader_char)
 				local element = cmd2:gsub("^%l", string.upper)
 				
 				atc('[AUTOSC] Begin - '..element..' SC/MB')
-				if currentPC.main_job == 'COR' then
+				if player.main_job == 'COR' then
 					atc('[AUTOSC] COR '..element..' Shot')
 					windower.send_command:schedule(5.9, 'gs c set autobuffmode off; hb off;')
 					windower.send_command:schedule(7.9, 'input /ja "'..element..' Shot" <bt>')
 					windower.send_command:schedule(8.8, 'gs c set autobuffmode auto; hb on;')
-				elseif currentPC.main_job == 'BLM' then
+				elseif player.main_job == 'BLM' then
 					atc('[AUTOSC] BLM Nuke')
 					windower.send_command('gs c set elementalmode '..element..'; gs c set autobuffmode off')
 					windower.send_command:schedule(7.7, 'gs c elemental aja <bt>')
 					windower.send_command:schedule(13.0, 'gs c elemental nuke <bt>')
 					windower.send_command:schedule(14.0, 'gs c set autobuffmode auto')
-				elseif currentPC.main_job == 'GEO' then
+				elseif player.main_job == 'GEO' then
 					atc('[AUTOSC] GEO Nuke')
 					windower.send_command('gs c set elementalmode '..element)
 					windower.send_command:schedule(10.2, 'gs c elemental nuke <bt>')
 					windower.send_command:schedule(14.0, 'gs c elemental nuke <bt>')
-				elseif currentPC.main_job == 'SCH' and leader_char == currentPC.name then
+				elseif player.main_job == 'SCH' and leader_char == player.name then
 					atc('[AUTOSC] SCH - (SC SCH) Nuke')
 					windower.send_command('gs c set elementalmode '..element..'; gs c set autobuffmode off; gs c set autosubmode off;')
 					windower.send_command:schedule(9.8, 'gs c elemental nuke <bt>')
 					windower.send_command:schedule(10.8, 'gs c set autobuffmode nuking; gs c set autosubmode on;')
-				elseif currentPC.main_job == 'SCH' and leader_char ~= currentPC.name then
+				elseif player.main_job == 'SCH' and leader_char ~= player.name then
 					atc('[AUTOSC] SCH - (Standby SCH) Nuke')
 					windower.send_command('gs c set elementalmode '..element..'; gs c set autobuffmode off; gs c set autosubmode off;')
 					windower.send_command:schedule(8.9, 'gs c elemental nuke <bt>')
 					windower.send_command:schedule(14.8, 'gs c elemental nuke <bt>')
 					windower.send_command:schedule(15.8, 'gs c set autobuffmode nuking; gs c set autosubmode on;')
-				elseif currentPC.main_job == 'RUN' then
+				elseif player.main_job == 'RUN' then
 					local abil_recasts = windower.ffxi.get_ability_recasts()
 					local latency = 0.7
 					atc('[AUTOSC] Rayke/Gambit')
@@ -3511,12 +3492,12 @@ function autosc(cmd2, leader_char)
 				end
 			elseif (cmd2 and cmd2:lower() == 'fireproc') then
 				atc('[AUTOSC] Begin - Fire Proc SC/MB')
-				if currentPC.main_job == 'BLM' or currentPC.main_job == 'GEO' or currentPC.main_job == 'SCH' then
+				if player.main_job == 'BLM' or player.main_job == 'GEO' or player.main_job == 'SCH' then
 					atc('[AUTOSC] BLM/GEO/SCH Proc Nuke + Real Nuke')
 					windower.send_command('gs c set castingmode proc; gs c set elementalmode fire')
 					windower.send_command:schedule(9.0, 'input /ma "Fire" <t>')
 					windower.send_command:schedule(10.0, 'gs c set castingmode normal; gs c elemental nuke <t>')
-				elseif currentPC.main_job == 'COR' then
+				elseif player.main_job == 'COR' then
 					windower.send_command:schedule(11.0, 'input /ja "Fire Shot" <t>')
 				end
 			end
@@ -4005,99 +3986,66 @@ function ent()
 	windower.send_command('wait 1.5; setkey enter down; wait 0.5; setkey enter up;')
 end
 
-function macro(leader)
-	local zone = windower.ffxi.get_info()['zone']
-	local player = windower.ffxi.get_player()
-	local macro_zones = S{163,165,206,168,139,144,146}
-		
-	if macro_zones:contains(zone) then
-		if leader == player.name then
-			atc('[Macro Orb] - Leader with Orb.')
-			local possible_npc = find_npc_to_poke()
-			if possible_npc then
-				windower.send_command('wait 1; tradenpc 1 "macrocosmic orb" "'..possible_npc.name..'"; wait 10.5; setkey down down; wait 0.25; setkey down up; wait 1.5; setkey enter down; wait 0.25; setkey enter up; wait 0.75; setkey left down; wait 1.05; setkey left up; wait 0.5; setkey enter down; wait 0.25; setkey enter up;')
-				coroutine.sleep(25)
-				if haveBuff('Battlefield') then
-					local items = windower.ffxi.get_items()
-					for index, item in pairs(items.inventory) do
-						if type(item) == 'table' and item.id == 4063 then
-							atc('[Dropping]: ' .. item.id .. ' - ' .. item.extdata)
-							windower.ffxi.drop_item(index, item.count)
-						end
-					end
+
+function orb_entry(leader, orb_type)
+	if orb_type and ((orb_type == 'macro' and not (macro_orb_map[zone_id])) or (orb_type == 'deimos' and not (deimos_orb_map[zone_id]))) then
+		if orb_type == 'macro' then
+			atc('[ORB_ENTRY] Not in Macrocosmic Orb zone, cancelling.')
+		elseif orb_type == 'deimos' then
+			atc('[ORB_ENTRY] Not in Deimos Orb zone, cancelling.')
+		end
+		return
+	end
+	
+	if (leader == player.name and not orb_entered) or (leader ~= player.name and haveBuff('Battlefield')) then
+	local possible_npc = find_npc_to_poke(orb_type)
+		if possible_npc and trade_orb(possible_npc.index, orb_type) then
+			if leader == player.name and not orb_state then
+				if orb_type == 'macro' then
+					keypress_cmd(macro_orb_map[zone_id].entry_command)
+				elseif orb_type == 'deimos' then
+					keypress_cmd(deimos_orb_map[zone_id].entry_command)
 				end
-			end
-		else
-			atc('[Macro Orb] - Others to enter.')
-			coroutine.sleep(25)
-			if haveBuff('Battlefield') then
-				local possible_npc = find_npc_to_poke()
-				if possible_npc then
-					get_poke_check_index(possible_npc.index)
-					if npc_dialog == true then
-						windower.send_command('wait 5; setkey down down; wait 0.25; setkey down up; wait 1.5; setkey enter down; wait 0.25; setkey enter up;')
-					end
-				end
+				orb_state=true
 			else
-				atc('[Macro Orb] No battlefield, leader not in entry, cancelling.')
+				if orb_type == 'macro' then
+					keypress_cmd(macro_orb_map[zone_id].follower_command)
+				elseif orb_type == 'deimos' then
+					keypress_cmd(deimos_orb_map[zone_id].follower_command)
+				end
 			end
 		end
-	else
-		atc('[Macro Orb] Not in Macro Orb zone, cancelling.')
+	end
+	
+end
+
+function htmb(leader)
+	if not (htmb_map[zone_id]) then
+		atc('[HTMB] Not in HTMB zone, cancelling.')
+		return
+	end
+	
+	if (leader == player.name and not htmb_entered) or (leader ~= player.name and haveBuff('Battlefield')) then
+		local possible_npc = find_npc_to_poke("htmb")
+		if possible_npc and get_poke_check_index(possible_npc.index) then
+			keypress_cmd(htmb_map[zone_id].entry_command)
+			if leader == player.name and not htmb_state	then		
+				htmb_state=true
+			end
+		end
 	end
 end
 
-function deimos(leader)
-	local zone = windower.ffxi.get_info()['zone']
-	local player = windower.ffxi.get_player()
-	local deimos_zones = S{163,168,139,144,146}
-		
-	if deimos_zones:contains(zone) then
-		if leader == player.name then
-			atc('[Deimos Orb] - Leader with Orb.')
-			local possible_npc = find_npc_to_poke()
-			if possible_npc then
-				windower.send_command('wait 1; tradenpc 1 "deimos orb" '..possible_npc.name..'; wait 5.5; setkey down down; wait 0.25; setkey down up; wait 1.5; setkey enter down; wait 0.25; setkey enter up;')
-				coroutine.sleep(25)
-				if haveBuff('Battlefield') then
-					local items = windower.ffxi.get_items()
-					for index, item in pairs(items.inventory) do
-						if type(item) == 'table' and item.id == 3352 then
-							atc('[Dropping]: ' .. item.id .. ' - ' .. item.extdata)
-							windower.ffxi.drop_item(index, item.count)
-						end
-					end
-				end
-			end
-		else
-			atc('[Deimos Orb] - Others to enter.')
-			coroutine.sleep(11)
-			if haveBuff('Battlefield') then
-				local possible_npc = find_npc_to_poke()
-				if possible_npc then
-					get_poke_check_index(possible_npc.index)
-					if npc_dialog == true then
-						windower.send_command('wait 5.5; setkey down down; wait 0.25; setkey down up; wait 1.5; setkey enter down; wait 0.25; setkey enter up;')
-					end
-				end
-			else
-				atc('[Deimos Orb] No battlefield, leader not in entry, cancelling.')
-			end
-		end
-	else
-		atc('[Deimos Orb] Not in Deimos Orb zone, cancelling.')
-	end
-end
-
-function enter()
+function enter(leader)
 	atc('[ENTER] Enter menu.')
 	local zone = windower.ffxi.get_info()['zone']
 	local cloister_zones = S{201,202,203,207,209,211}
 	local adoulin_beam_zones = S{265,268,269,272,273}
 	local wkr_zones = S{261,262,263,265,266,267}
     local orb_zones = S{163,165,206,168,139,144,146}
-	local htmb_zones = S{168}
 
+	local player = windower.ffxi.get_player()
+	
 	if haveBuff('Invisible') then
 		windower.send_command('cancel invisible')
 		coroutine.sleep(2.0)
@@ -4114,8 +4062,6 @@ function enter()
 		
 		if possible_npc then
 			get_poke_check_index(possible_npc.index)
-		-- else
-			-- get_npc_dialogue('npc',3)
 		else
 			atc("[ENTER] No NPC's nearby to poke, cancelling.")
 		end	
@@ -4897,14 +4843,34 @@ end
 ---------------------------------
 --Helper functions--
 ---------------------------------
+function keypress_cmd(key_table)
+	local keypress_string = ''
+	for _,press in ipairs(key_table) do
+		if type(press)=='table'then
+			keypress_string = keypress_string ..'setkey '..press[1]..' down; wait '..press[2]..'; setkey '..press[1]..' up; '
+		else
+			keypress_string = keypress_string ..'wait '..press..'; '
+		end
+	end
+	windower.send_command(keypress_string)
+end
 
 function calc_lazy_distance(a,b)
     return (a.x-b.x)^2 + (a.y-b.y)^2
 end
 
 --Find NPC that's in list to poke
-function find_npc_to_poke()
-    local npc_list = npc_map[windower.ffxi.get_info()['zone']]
+function find_npc_to_poke(npc_type)
+	if npc_type == "htmb" then
+		npc_list = htmb_map[zone_id] and htmb_map[zone_id].name
+	elseif npc_type == "macro" then
+		npc_list = macro_orb_map[zone_id] and macro_orb_map[zone_id].name
+	elseif npc_type == "deimos" then
+		npc_list = deimos_orb_map[zone_id] and deimos_orb_map[zone_id].name
+	else
+		npc_list = npc_map[zone_id] and npc_map[zone_id].name
+	end
+    --local npc_list = npc_map[windower.ffxi.get_info()['zone']]
     
     if not npc_list or #npc_list == 0 then
         return nil
@@ -4925,28 +4891,28 @@ function find_npc_to_poke()
 
 end
 
-function check_party()
+-- function check_party()
 
-	currentPC=windower.ffxi.get_player()
-	for k, v in pairs(windower.ffxi.get_party()) do
-		if type(v) == 'table' then
-			if v.name ~= currentPC.name then
-				ptymember = windower.ffxi.get_mob_by_name(v.name)
-				-- check if party member in same zone.
-				if v.mob == nil then
-					-- Not in zone.
-					atc('Check: ' .. v.name .. ' is not in zone, not following.')
-				else
-					if ptymember.valid_target then
+	-- player=windower.ffxi.get_player()
+	-- for k, v in pairs(windower.ffxi.get_party()) do
+		-- if type(v) == 'table' then
+			-- if v.name ~= player.name then
+				-- ptymember = windower.ffxi.get_mob_by_name(v.name)
+				-- -- check if party member in same zone.
+				-- if v.mob == nil then
+					-- -- Not in zone.
+					-- atc('Check: ' .. v.name .. ' is not in zone, not following.')
+				-- else
+					-- if ptymember.valid_target then
 
-					else
-						atc('Check: ' .. v.name .. ' is not in range, not following.')
-					end
-				end
-			end
-		end
-	end
-end
+					-- else
+						-- atc('Check: ' .. v.name .. ' is not in range, not following.')
+					-- end
+				-- end
+			-- end
+		-- end
+	-- end
+-- end
 
 function check_leader_in_same_party(leader)
 	player = windower.ffxi.get_player()
@@ -5025,6 +4991,31 @@ local function distance_check_npc(npc)
     end
 end
 
+function trade_orb(npc_index, orb_type)
+	npc_dialog = false
+	count = 0
+
+	while npc_dialog == false and count < 3
+	do
+		count = count + 1
+        npcstats = windower.ffxi.get_mob_by_index(npc_index)
+		if npcstats and distance_check_npc(npcstats) and npcstats.valid_target then
+			atc('Trade #: ' ..count.. ' [NPC: ' .. npcstats.name.. ' ID: ' .. npcstats.id.. ']')
+			if orb_type == 'macro' then
+				windower.send_command('tradenpc 1 "macrocosmic orb" "'..npcstats.name..'"')
+			elseif orb_type == 'deimos' then
+				windower.send_command('tradenpc 1 "deimos orb" "'..npcstats.name..'"')
+			end
+		end
+		
+		coroutine.sleep(2.1)
+		if npc_dialog == false then
+			coroutine.sleep(2.0)
+		end
+	end
+	return npc_dialog
+end
+
 function get_poke_check(npc_name)
 	npc_dialog = false
 	count = 0
@@ -5046,19 +5037,19 @@ function get_poke_check(npc_name)
 	end
 end
 
-function get_poke_check_index(npc_name)
+function get_poke_check_index(npc_index)
 	npc_dialog = false
 	count = 0
 
 	while npc_dialog == false and count < 3
 	do
 		count = count + 1
-        npcstats = windower.ffxi.get_mob_by_index(npc_name)
-		if npcstats and distance_check_npc(npcstats) and npcstats.valid_target then -- math.sqrt(npcstats.distance)<6 
+        npcstats = windower.ffxi.get_mob_by_index(npc_index)
+		if npcstats and distance_check_npc(npcstats) and npcstats.valid_target then
 			atc('Poke #: ' ..count.. ' [NPC: ' .. npcstats.name.. ' ID: ' .. npcstats.id.. ']')
 			poke_npc(npcstats.id,npcstats.index)
-		else
-			atcwarn('POKE: NPC Target is too far!')
+		-- else
+			-- atcwarn('POKE: NPC Target is too far!')
 		end
 		
 		coroutine.sleep(2.1)
@@ -5066,6 +5057,7 @@ function get_poke_check_index(npc_name)
 			coroutine.sleep(2.0)
 		end
 	end
+	return npc_dialog
 end
 
 function get_poke_check_id(npc_id)
@@ -5219,8 +5211,26 @@ windower.register_event("status change", function(new,old)
 	end
 end)
 
+windower.register_event("gain buff", function(buff_id)
+	if buff_id == 254 then
+		if htmb_state then
+			htmb_entered = true
+			atc('[HTMB] IPC Trigger.')
+			send_to_IPC:schedule(1.0, 'htmb',player_leader)
+		elseif orb_state then
+			orb_entered = true
+			atc('[Macro Orb] IPC Trigger.')
+			send_to_IPC:schedule(1.0, 'macro',player_leader)
+		end
+    end
+end)
+
 windower.register_event("lose buff", function(buff_id)
 	if buff_id == 254 then
+		htmb_state = false
+		htmb_entered = false
+		orb_state = false
+		orb_entered = false
 		off:schedule(3)
     end
 end)
@@ -5233,7 +5243,7 @@ windower.register_event('incoming chunk', function(id, data)
 		elseif action_message["Category"] == 8 then
 			isCasting = true
 		end
-	elseif id == 0x0DF then -- Char update
+	elseif id == 0x0DF or id == 0x0DD or id == 0x0C8 then -- Char update
         local packet = packets.parse('incoming', data)
 		if packet then
 			local playerId = packet['ID']
@@ -5243,26 +5253,26 @@ windower.register_event('incoming chunk', function(id, data)
 				set_registry(packet['ID'], packet['Main job'])
 			end
 		end
-	elseif id == 0x0DD then -- Party member update
-        local packet = packets.parse('incoming', data)
-		if packet then
-			local playerId = packet['ID']
-			local job = packet['Main job']
+	-- elseif id == 0x0DD then -- Party member update
+        -- local packet = packets.parse('incoming', data)
+		-- if packet then
+			-- local playerId = packet['ID']
+			-- local job = packet['Main job']
 			
-			if playerId and playerId > 0 then
-				set_registry(packet['ID'], packet['Main job'])
-			end
-		end
-	elseif id == 0x0C8 then -- Alliance update
-        local packet = packets.parse('incoming', data)
-		if packet then
-			local playerId = packet['ID']
-			local job = packet['Main job']
+			-- if playerId and playerId > 0 then
+				-- set_registry(packet['ID'], packet['Main job'])
+			-- end
+		-- end
+	-- elseif id == 0x0C8 then -- Alliance update
+        -- local packet = packets.parse('incoming', data)
+		-- if packet then
+			-- local playerId = packet['ID']
+			-- local job = packet['Main job']
 			
-			if playerId and playerId > 0 then
-				set_registry(packet['ID'], packet['Main job'])
-			end
-		end
+			-- if playerId and playerId > 0 then
+				-- set_registry(packet['ID'], packet['Main job'])
+			-- end
+		-- end
 	end
 end)
 
@@ -5358,6 +5368,7 @@ end
 local salvage_area = S{73,74,75,76}
 
 windower.register_event('zone change', function(new_id, old_id)
+	zone_id = new_id
 	zone_info = windower.ffxi.get_info()
 	coroutine.sleep(10)
 	if salvage_area:contains(zone_info.zone) then

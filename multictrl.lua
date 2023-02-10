@@ -3937,24 +3937,6 @@ function get(cmd2)
 		elseif possible_npc and possible_npc.name == "Diaphanous Device #D" then
 			atc('GET: You are already at Sortie D!')
 		end
-	elseif cmd2 == 'moll' and EschaZones:contains(zone) then
-		atc('GET: Mollifier')
-		if not find_missing_ki(cmd2) then
-			if zone == 288 then
-				get_poke_check('Affi')
-			elseif zone == 289 then
-				get_poke_check('Dremi')
-			elseif zone == 291 then
-				get_poke_check('Shiftrix')
-			end
-			if npc_dialog == true then
-				windower.send_command('wait 4.7; setkey right down; wait 1.5; setkey right up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey up down; wait 0.05; setkey up up; wait 0.5; setkey enter down; wait 0.5; setkey enter up; wait 1.0; ' ..
-					'setkey right down; wait 1.2; setkey right up; wait 0.5; setkey enter down; wait 0.5; setkey enter up; wait 1.0; ' ..
-					'setkey up down; wait 0.05; setkey up up; wait 0.5; setkey enter down; wait 0.5; setkey enter up; wait 2.5; setkey escape down; wait 0.05; setkey escape up;')
-			end
-		else
-			atc('GET: Already have Mollifier!')
-		end
 	elseif cmd2 == 'deimos' and zone == 246 then
 		atc('GET: Deimos Orb, will not check if you have enough seals!')
 		get_poke_check('Shami')
@@ -4037,15 +4019,11 @@ function htmb(leader)
 end
 
 function enter(leader)
-	atc('[ENTER] Enter menu.')
-	local zone = windower.ffxi.get_info()['zone']
-	local cloister_zones = S{201,202,203,207,209,211}
-	local adoulin_beam_zones = S{265,268,269,272,273}
-	local wkr_zones = S{261,262,263,265,266,267}
-    local orb_zones = S{163,165,206,168,139,144,146}
+	if not (npc_map[zone_id]) then
+		atc('[ENTER] Not in an *Entry* zone, cancelling.')
+		return
+	end
 
-	local player = windower.ffxi.get_player()
-	
 	if haveBuff('Invisible') then
 		windower.send_command('cancel invisible')
 		coroutine.sleep(2.0)
@@ -4054,80 +4032,16 @@ function enter(leader)
 		coroutine.sleep(2.0)
 	end
 
-	--if not contains(deimos_zones, zone) then
-	if orb_zones:contains(zone) then
-		atc('[ENTER] Nothing to poke for orb fights, cancelling.')
+	local possible_npc = find_npc_to_poke()
+	if possible_npc and get_poke_check_index(possible_npc.index) then
+		keypress_cmd(npc_map[zone_id].name[possible_npc.name].entry_command)
 	else
-		possible_npc = find_npc_to_poke()
-		
-		if possible_npc then
-			get_poke_check_index(possible_npc.index)
-		else
-			atc("[ENTER] No NPC's nearby to poke, cancelling.")
-		end	
-	end
-	
-	if npc_dialog == true then
-		if zone == 255 then
-			windower.send_command('wait 0.85; setkey up down; wait 0.25; setkey up up; wait 0.7; setkey enter down; wait 0.25; setkey enter up;')
-		--Qufim enter to Shinryu
-		elseif zone == 126 then
-			windower.send_command('wait 3; setkey up down; wait 0.25; setkey up up; wait 1.1; setkey enter down; wait 0.35; setkey enter up;')
-		elseif zone == 33 then
-			windower.send_command('wait 4; setkey up down; wait 0.25; setkey up up; wait 1.1; setkey enter down; wait 0.35; setkey enter up;')
-		--Ouryu
-		-- elseif zone == 31 then 
-			-- windower.send_command('wait 17; setkey down down; wait 0.75; setkey down up; wait 0.6; setkey enter down; wait 0.25; setkey enter up; wait 0.75; setkey up down; wait 0.5; setkey up up; wait 0.6; setkey enter down; wait 0.25; setkey enter up')
-		--Walk of Echos
-		elseif zone == 137 then
-			windower.send_command('wait 2.0; setkey up down; wait 0.25; setkey up up; wait 0.7; setkey enter down; wait 0.25; setkey enter up;')
-		elseif zone == 182 then
-			if possible_npc and possible_npc.name == "Veridical Conflux" then
-				windower.send_command('wait 1.8; setkey enter down; wait 0.25; setkey enter up;')
-			else
-				windower.send_command('wait 3.5; setkey right down; wait 0.5; setkey right up; wait 0.6; setkey enter down; wait 0.25; setkey enter up;')
-			end
-		-- --6 Avatars
-		-- elseif cloister_zones:contains(zone) then
-			-- windower.send_command('wait 6; setkey down down; wait 0.75; setkey down up; wait 0.6; setkey enter down; wait 0.25; setkey enter up; wait 0.75; setkey up down; wait 0.5; setkey up up; wait 0.6; setkey enter down; wait 0.25; setkey enter up')
-		--Adoulin beam up
-		elseif adoulin_beam_zones:contains(zone) then
-			windower.send_command('wait 0.85; setkey down down; wait 0.25; setkey down up; wait 0.7; setkey enter down; wait 0.25; setkey enter up;')
-		--WKR
-		elseif wkr_zones:contains(zone) then
-			atc('WKR Zone')
-			windower.send_command('wait 1.3; setkey down down; wait 0.05; setkey down up; wait 0.7; setkey enter down; wait 0.25; setkey enter up; wait 2.1; setkey up down; wait 0.25; setkey up up; wait 0.7; setkey enter down; wait 0.25; setkey enter up;')
-		--MG
-		elseif zone == 256 or zone == 257 then
-			windower.send_command('wait 1.3; setkey enter down; wait 0.5; setkey enter up;')
-		--Jade
-		-- elseif zone == 67 then
-			-- if possible_npc then
-				-- windower.send_command('wait 12.3; setkey down down; wait 0.15; setkey down up; wait 0.7; setkey enter down; wait 0.25; setkey enter up; wait 1.1; setkey up down; wait 1.1; setkey up up; wait 0.7; setkey enter down; wait 0.5; setkey enter up;')
-			-- else
-				-- atc('Not close the entry NPC, cancelling')
-			-- end
-		--Sortie
-		elseif zone == 133 or zone == 275 then
-			if possible_npc.name == "Diaphanous Bitzer" then
-				atc('Bitzer return')
-				windower.send_command('wait 0.3; setkey up down; wait 0.18; setkey up up; wait 0.5; setkey enter down; wait 0.18; setkey enter up; wait 0.5; setkey up down; wait 0.18; setkey up up; wait 0.5; setkey enter down; wait 0.18; setkey enter up;')
-			else
-				windower.send_command('wait 0.3; setkey up down; wait 0.18; setkey up up; wait 0.5; setkey enter down; wait 0.18; setkey enter up;')
-			end
-		-- Trail markings
-		elseif zone == 111 or zone == 112 then
-			windower.send_command('wait 1.8; setkey up down; wait 0.25; setkey up up; wait 0.7; setkey enter down; wait 0.25; setkey enter up;')
-		-- Odyssey
-		elseif zone == 279 or zone == 298 then
-			windower.send_command('wait 0.1; setkey up down; wait 0.18; setkey up up; wait 0.5; setkey enter down; wait 0.18; setkey enter up;')
-		--General
-		else
-			windower.send_command('wait 0.85; setkey up down; wait 0.25; setkey up up; wait 0.7; setkey enter down; wait 0.25; setkey enter up;')
-		end
-	end
-	
+		atc("[ENTER] No NPC's nearby to poke, cancelling.")
+	end	
+
 end
+
+--windower.send_command('wait 1.3; setkey down down; wait 0.05; setkey down up; wait 0.7; setkey enter down; wait 0.25; setkey enter up; wait 2.1; setkey up down; wait 0.25; setkey up up; wait 0.7; setkey enter down; wait 0.25; setkey enter up;')
 
 function endown()
 	atc('[EnterDOWN]')
@@ -4863,24 +4777,32 @@ function find_npc_to_poke(npc_type)
 	elseif npc_type == "deimos" then
 		npc_list = deimos_orb_map[zone_id] and deimos_orb_map[zone_id].name
 	else
-		npc_list = npc_map[zone_id] and npc_map[zone_id].name
+		unformatted_npc_list = npc_map[zone_id] and npc_map[zone_id].name
+
+		npc_list = {}
+		if unformatted_npc_list then
+			local index = 1
+			for k,v in pairs(npc_map[zone_id].name) do
+			  npc_list[index] = k
+			  index=index+1
+			end
+		end
 	end
-    --local npc_list = npc_map[windower.ffxi.get_info()['zone']]
-    
+	    
     if not npc_list or #npc_list == 0 then
         return nil
     end
-	local player = windower.ffxi.get_mob_by_target('me')
+	local player_distance = windower.ffxi.get_mob_by_target('me')
 	
     npcs = T(T(windower.ffxi.get_mob_list()):filter(table.contains+{npc_list}):keyset()):map(windower.ffxi.get_mob_by_index):filter(table.get-{'valid_target'})
 	
 	closest_npc = npcs:reduce(function(current, npc_of_interest)
-		local npc_of_interest_dist = calc_lazy_distance(player, npc_of_interest)
-		local current_dist = calc_lazy_distance(player, current)
+		local npc_of_interest_dist = calc_lazy_distance(player_distance, npc_of_interest)
+		local current_dist = calc_lazy_distance(player_distance, current)
 		return npc_of_interest_dist < current_dist and npc_of_interest or current
 	end)
-    --if closest_npc and calc_lazy_distance(player, closest_npc) < 6^2 then
-	if closest_npc and calc_lazy_distance(player, closest_npc) < 45^2 then
+    --if closest_npc and calc_lazy_distance(player_distance, closest_npc) < 6^2 then
+	if closest_npc and calc_lazy_distance(player_distance, closest_npc) < 45^2 then
         return closest_npc
     end
 
@@ -5090,25 +5012,6 @@ function haveBuff(...)
 	return false
 end
 
-function find_missing_ki(escha_ki_to_find)
-	local keyitems = windower.ffxi.get_key_items()
-	local match_ki
-
-	if escha_ki_to_find == 'rads' then
-		match_ki = 3031
-	elseif escha_ki_to_find == 'trib' then
-		match_ki = 2894
-	elseif escha_ki_to_find == 'moll' then
-		match_ki = 3032
-	end
-	
-	for id,ki in pairs(keyitems) do
-		if ki == match_ki then 
-			atc('Found: ' ..ki)
-			return ki
-		end
-	end
-end
 ------------
 --IPC Stuff
 ------------

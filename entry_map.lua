@@ -39,6 +39,7 @@ npc_map = {
 	[50] = {name = {
 		['Ironbound Gate'] = {entry_command = {0.85, {'up', 0.15}, 0.5, {'enter', 0.15}}}, 
 		['Gate: The Pit'] = {entry_command = {0.85, {'up', 0.15}, 0.5, {'enter', 0.15}}}, 
+		['Gate: Chocobo Circuit'] = {entry_command = {0.85, {'up', 0.15}, 0.5, {'enter', 0.15}}},
 		}},	
 	[51] = {name = {
 		['Engraved Tablet'] = {entry_command = {0.85, {'up', 0.15}, 0.5, {'enter', 0.15}}},
@@ -47,6 +48,9 @@ npc_map = {
 		['Engraved Tablet'] = {entry_command = {0.85, {'up', 0.15}, 0.5, {'enter', 0.15}}},
 		}},
 	[70] = {name = {
+		['Ilsorie'] = {entry_command = {0.85, {'up', 0.15}, 0.5, {'enter', 0.15}}},
+		}},
+	[79] = {name = {
 		['Engraved Tablet'] = {entry_command = {0.85, {'up', 0.15}, 0.5, {'enter', 0.15}}},
 		}},
 	[71] = {name = {
@@ -106,6 +110,18 @@ npc_map = {
 		['Veridical Conflux #14'] = {entry_command = {3.5, {'right', 0.75}, 0.6, {'enter', 0.15}}},
 		['Veridical Conflux #15'] = {entry_command = {3.5, {'right', 0.75}, 0.6, {'enter', 0.15}}},
 		}},
+	[230] = {name = {
+		['Gate: Chocobo Circuit'] = {entry_command = {0.85, {'up', 0.15}, 0.5, {'enter', 0.15}}},
+		}},
+	[234] = {name = {
+		['Gate: Chocobo Circuit'] = {entry_command = {0.85, {'up', 0.15}, 0.5, {'enter', 0.15}}},
+		}},
+	[241] = {name = {
+		['Gate: Chocobo Circuit'] = {entry_command = {0.85, {'up', 0.15}, 0.5, {'enter', 0.15}}},
+		}},
+	[246] = {name = {
+		['Gate: Chocobo Circuit'] = {entry_command = {0.85, {'up', 0.15}, 0.5, {'enter', 0.15}}},
+		}},
 	[255] = {name = {
 		['Cavernous Maw'] = {entry_command = {0.85, {'up', 0.15}, 0.5, {'enter', 0.15}}},
 		}},
@@ -129,10 +145,10 @@ npc_map = {
 		['???'] = {entry_command = {0.85, {'down', 0.15}, 0.5, {'enter', 0.15}}},	--Beam Up
 		}},
 	[270] = {name = {'???'}},
-	[272]= {name = {
+	[272] = {name = {
 		['???'] = {entry_command = {0.85, {'down', 0.15}, 0.5, {'enter', 0.15}}},	--Beam Up
 		}},
-	[273]= {name = {
+	[273] = {name = {
 		['???'] = {entry_command = {0.85, {'down', 0.15}, 0.5, {'enter', 0.15}}},	--Beam Up
 		}},
 	[274] = {name = {
@@ -196,3 +212,12 @@ npc_map = {
 		['Otherworldly Vortex'] = {entry_command = {0.1, {'up', 0.15}, 0.5, {'enter', 0.15}}},
 		}},
 }
+
+basic_key_sequence = {
+	['ent'] = {command = {0.1, {'enter', 0.15}}},
+	['enup'] = {command = {0.1, {'up', 0.15}, 0.5, {'enter', 0.15}}},
+	['endown'] = {command = {0.1, {'down', 0.15}, 0.5, {'enter', 0.15}}},
+	['esc'] = {command = {0.1, {'escape', 0.15}}},
+}
+--WKR
+--'wait 1.3; setkey down down; wait 0.05; setkey down up; wait 0.7; setkey enter down; wait 0.25; setkey enter up; wait 2.1; setkey up down; wait 0.25; setkey up up; wait 0.7; setkey enter down; wait 0.25; setkey enter up;'

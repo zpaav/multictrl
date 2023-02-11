@@ -41,7 +41,6 @@ default = {
 	npc_dialog=false,
 	battletarget='Raskovniche',
     smartws=false,
-    solomode=false,
 }
 
 areas = {}
@@ -92,12 +91,12 @@ InternalCMDS = S{
 	--Job
 	'brd','bst','sch','smnburn','geoburn','burn','rng','proc','crit','wsproc','jc',
 	--Travel
-	'mnt','dis','warp','omen','enup','endown','ent','esc','go','enter','get','deimos','macro','htmb',
+	'mnt','dis','warp','omen','enter','get','deimos','macro','htmb',
 	--Misc
 	'reload','unload','fps','lotall','cleanup','drop','buyalltemps','book','stylelock',
 }
 
-DelayCMDS = S{'buyalltemps','get','enter','go','book','deimos','macro','htmb'}
+DelayCMDS = S{'buyalltemps','book','get','enter','deimos','macro','htmb','enup','endown','ent','esc'}
 
 local player = windower.ffxi.get_player()
 local info = windower.ffxi.get_info()
@@ -109,16 +108,18 @@ end
 isCasting = false
 isResting = false
 ipcflag = false
---player=windower.ffxi.get_player()
 new = 0
 old = 0
 log_flag = true
 cancel = false
+
 htmb_state = false
 htmb_entered = false
+orb_type = ''
 orb_state = false
 orb_entered = false
-htmb_table = {}
+
+
 player_leader = ''
 
 windower.register_event('addon command', function(input, ...)
@@ -141,68 +142,35 @@ windower.register_event('addon command', function(input, ...)
 
 	if cmd == nil then
 		windower.add_to_chat(123,"Abort: No command specified")
-    elseif cmd == 'solomode' then
-        if solomode then
-            settings.solomode = false
-            atc('Solo mode: OFF')
-        else
-            settings.solomode = true
-            atc('Solo mode: ON')
-        end
 	elseif cmd == 'job' then
 		find_job_charname(string.upper(cmd2),cmd3)
-	elseif cmd == 'rand' then
-		local leader = windower.ffxi.get_player()
-		rand(leader.name)
-		send_to_IPC(cmd,leader.name)
 	elseif cmd == 'buy' then						-- Leader
 		local leader = windower.ffxi.get_player()
 		buy:schedule(0, cmd2,leader.name)
 		send_to_IPC:schedule(1, cmd,cmd2,leader.name)
-    elseif cmd == 'cor' then						-- Mob ID
+    elseif cmd == 'cor' or cmd == 'blu' then	-- Index / Command / Command 2
 		local target = windower.ffxi.get_mob_by_target('t')
-		local mob_id = target and target.valid_target and target.is_npc and target.id
-		cor:schedule(0, cmd2, mob_id)
-		send_to_IPC:schedule(1, cmd,cmd2,mob_id)
-	elseif cmd == 'blu' then				    		-- Mob ID
+		local mob_index = target and target.valid_target and target.is_npc and target.index
+		_G[cmd]:schedule(0, cmd2, mob_index)
+		send_to_IPC:schedule(1, cmd,cmd2,mob_index)
+	elseif cmd == 'cc' or cmd == 'fin' or cmd == 'dispelga' or cmd == 'poke' then	-- Index / Command
 		local target = windower.ffxi.get_mob_by_target('t')
-		local mob_id = target and target.valid_target and target.is_npc and target.id
-		blu:schedule(0, cmd2,mob_id)
-		send_to_IPC:schedule(1, cmd,cmd2,mob_id)
-	elseif cmd == 'cc' then				    		-- Mob ID
-		local target = windower.ffxi.get_mob_by_target('t')
-		local mob_id = target and target.valid_target and target.is_npc and target.id
-		cc:schedule(0, mob_id)
-		send_to_IPC:schedule(1, cmd,mob_id)
-	elseif cmd == 'fin' then				    		-- Mob ID
-		local target = windower.ffxi.get_mob_by_target('t')
-		local mob_id = target and target.valid_target and target.is_npc and target.id
-		fin:schedule(0, mob_id)
-		send_to_IPC:schedule(1, cmd,mob_id)
-	elseif cmd == 'dispelga' then				    	-- Mob ID
-		local target = windower.ffxi.get_mob_by_target('t')
-		local mob_id = target and target.valid_target and target.is_npc and target.id
-		dispelga:schedule(0, mob_id)
-		send_to_IPC:schedule(1, cmd,mob_id)
-	elseif cmd == 'poke' then				    		-- Mob ID
-		local target = windower.ffxi.get_mob_by_target('t')
-		local mob_id = target and target.valid_target and target.is_npc and target.id
-		poke:schedule(0, mob_id)
-		send_to_IPC:schedule(1, cmd,mob_id)
+		local mob_index = target and target.valid_target and target.is_npc and target.index
+		if cmd == 'poke' and not mob_index then
+			atc('[POKE] Abort: No target or invalid target.')
+			return
+		end
+		_G[cmd]:schedule(0, mob_index)
+		send_to_IPC:schedule(1, cmd,mob_index)
+	elseif S{'enup','endown','ent','esc'}:contains(cmd) then
+		basic_keys:schedule(0, cmd)
+		send_to_IPC:schedule(0.25, 'basic_keys',cmd)
 	elseif cmd == 'htmb' then
-		--local leader = windower.ffxi.get_player()
-		player_leader = player.name
-		htmb:schedule(0, player_leader)
-		--send_to_IPC:schedule(1, cmd,leader.name)
+		htmb:schedule(0, player.name)
 	elseif cmd == 'deimos' then
-		--local leader = windower.ffxi.get_player()
-		player_leader = player.name
-		orb_entry:schedule(0, player_leader,cmd)
-		--send_to_IPC:schedule(1, 'orb_entry',leader.name,cmd)
+		orb_entry:schedule(0, player.name,cmd)
 	elseif cmd == 'macro' then
-		player_leader = player.name
-		orb_entry:schedule(0, player_leader,cmd)
-		--send_to_IPC:schedule(1, 'orb_entry',leader.name,cmd)
+		orb_entry:schedule(0, player.name,cmd)
 	elseif cmd == 'ein' then						-- Long delay
 		ein:schedule(0, cmd2)
 		if cmd2 == 'enter' then
@@ -248,6 +216,71 @@ windower.register_event('addon command', function(input, ...)
         shobu()
 	end
 
+end)
+
+------------
+--IPC Stuff
+------------
+
+function send_to_IPC(cmd,cmd2,cmd3,cmd4)
+	if cmd4 and cmd3 and cmd2 and cmd then
+		windower.send_ipc_message(cmd .. ' '..cmd2.. ' ' ..cmd3.. ' ' ..cmd4)
+	elseif cmd3 and cmd2 and cmd then
+		windower.send_ipc_message(cmd .. ' '..cmd2.. ' ' ..cmd3)
+	elseif cmd2 and cmd then
+		windower.send_ipc_message(cmd .. ' '..cmd2)
+	elseif cmd then
+		windower.send_ipc_message(cmd)
+	else
+		atcwarn('[IPC] - Error')
+	end
+end
+
+windower.register_event('ipc message', function(msg, ...) 
+	local args = msg:split(' ')
+	local cmd = args[1]
+	local cmd2 = args[2]
+	local cmd3 = args[3]
+	local cmd4 = args[4]
+	args:remove(1)
+	local delay = get_delay()
+	local term = msg:split(' ')
+	term:remove(1)
+	local send_cmd = table.concat(term, " ")
+	
+	if (InternalCMDS:contains(cmd)) then
+		if(DelayCMDS:contains(cmd)) then
+			 coroutine.sleep(delay)
+		end
+		_G[cmd](cmd2,cmd3)
+	elseif cmd == 'as' then
+		as(cmd2, cmd3, cmd4)
+	elseif cmd == 'send' then
+		coroutine.sleep(delay)
+		send(send_cmd)
+	elseif cmd == 'gt' then
+		coroutine.sleep(delay)
+		gt(send_cmd)
+	elseif cmd == 'smn' then
+		smn(cmd2, cmd3, cmd4)
+	elseif cmd == 'autosc' then
+		autosc(cmd2, cmd3)
+	elseif cmd == 'ein' then
+		coroutine.sleep(delay)
+		ein(cmd2)
+	elseif cmd == 'buy' then
+		coroutine.sleep(delay+delay)
+		buy(cmd2, cmd3)	
+	elseif cmd == 'blu' or cmd == 'cor' then
+		_G[cmd](cmd2, cmd3)	
+	elseif cmd == 'cc' or cmd == 'fin' or cmd == 'dispelga' or cmd == 'poke' then
+		if cmd == 'poke' then
+			coroutine.sleep(delay)
+		end
+		_G[cmd](cmd2)	
+	elseif cmd == 'basic_keys' then
+		basic_keys(cmd2)
+    end
 end)
 
 local mprefix = ('[%s] '):format(_addon.name)
@@ -560,9 +593,7 @@ display_box = function()
 		
     else
 		burn_status:clear()
-		--burn_status:append(string.format("%s1HR Burn: %sOFF", clr.w, clr.w))
     end
-	
 	
 	smn_help:show()
 	buy_help:show()
@@ -952,7 +983,7 @@ function stage(cmd2)
             if player_job.sub_job == 'NIN' then
                 windower.send_command('gs c set weapons DualSavage;')
             elseif player_job.sub_job == 'SCH' then
-				windower.send_command('hb as attack off; wait 1; hb as nolock on;')
+				windower.send_command('gs c set weapons Naegling;')
 			end
 		elseif player_job.main_job == 'GEO' and player_job.sub_job == 'SCH' then
    			windower.send_command('gs c set castingmode DT; gs c set idlemode DT; gfury; ibarrier; gs c autoentrust frailty; hb mincure 4; hb aoe on')
@@ -979,7 +1010,7 @@ function stage(cmd2)
 				' refresh3,protect5,shell5; hb mincure 4; hb buff '..find_job_charname('GEO','1',true)..
 				' refresh3; dvolte; gs c set weapons DualCroDay; gs c autows Seraph Blade; hb buff '..find_job_charname('SAM','1',true)..' refresh3;')
 			if player_job.sub_job == 'SCH' then
-				windower.send_command('hb as attack off; wait 1; hb as nolock on;')
+				windower.send_command('gs c set weapons Crocea;')
 			end
 		elseif player_job.main_job == 'GEO' and player_job.sub_job == 'SCH' then
 			windower.send_command('gs c set castingmode DT; gs c set idlemode DT; gmalaise; iacumen; gs c autoentrust fury; hb mincure 4; hb aoe on')
@@ -1006,7 +1037,7 @@ function stage(cmd2)
 				' refresh3,protect5,shell5; hb mincure 4; hb buff '..find_job_charname('GEO','1',true)..
 				' refresh3; dmain; dw3boss; gs c set weapons DualCroDay; gs c autows Seraph Blade; hb buff '..find_job_charname('SAM','1',true)..' refresh3;')
 			if player_job.sub_job == 'SCH' then
-				windower.send_command('hb as attack off; wait 1; hb as nolock on;')
+				windower.send_command('hb as attack off; wait 1; hb as nolock on; hb f off;')
 			end
 		elseif player_job.main_job == 'GEO' and player_job.sub_job == 'SCH' then
 			windower.send_command('gs c set castingmode DT; gs c set idlemode DT; gmalaise; iacumen; gs c autoentrust fury; hb mincure 4; hb aoe on')
@@ -1703,7 +1734,7 @@ function jc(cmd2)
 		elseif player_job.name == "" ..settings.char4.. "" then
 			windower.send_command("jc brd/dnc")
 		elseif player_job.name == "" ..settings.char5.. "" then
-			windower.send_command("jc rdm/nin")
+			windower.send_command("jc rdm/sch")
 		elseif player_job.name == "" ..settings.char6.. "" then
 			windower.send_command("jc geo/sch")
 		end
@@ -1714,7 +1745,7 @@ function jc(cmd2)
 		elseif player_job.name == "" ..settings.char2.. "" then
 			windower.send_command("jc cor/nin" )
 		elseif player_job.name == "" ..settings.char3.. "" then
-			windower.send_command("jc rdm/nin" )
+			windower.send_command("jc rdm/sch" )
 		elseif player_job.name == "" ..settings.char4.. "" then
 			windower.send_command("jc brd/dnc")
 		elseif player_job.name == "" ..settings.char5.. "" then
@@ -1820,59 +1851,105 @@ function wsall()
     end
 end
 
-function cc(cmd2)
-	local player_job = windower.ffxi.get_player()
+function cc(mob_index)
+	atc('[CC] - Sleep/Lullaby')
 	local SleepJobs = S{'BRD','BLM','RDM','GEO'}
 	local SleepSubs = S{'BLM','RDM'}
-    local world = res.zones[windower.ffxi.get_info().zone].name
+    local world = res.zones[zone_id].name
+	local mob = mob_index and windower.ffxi.get_mob_by_index(mob_index)
+	
+	if not (SleepJobs:contains(player.main_job) or SleepSubs:contains(player.sub_job)) or areas.Cities:contains(world) then
+		atcwarn("[CC]: Abort. Non sleepable jobs or in cities area.")
+		return
+	end
 
-	if (SleepJobs:contains(player_job.main_job) or SleepSubs:contains(player_job.sub_job)) and not(areas.Cities:contains(world)) then
-		
-		if player_job.main_job == "BRD" then
-			atcwarn("[CC]: Horde Lullaby.")
-			if cmd2 and not (player_job.target_locked) then
-				windower.send_command('input /ma \'Horde Lullaby II\' ' .. cmd2)
+	if player.main_job == "BRD" then
+		atcwarn("[CC]: Horde Lullaby.")
+		if mob and not (player.target_locked) then
+			windower.send_command('input /ma \'Horde Lullaby II\' ' .. mob.id)
+		else
+			windower.send_command('input /ma \'Horde Lullaby II\' <t>')
+		end
+	elseif player.main_job == "BLM" then
+		atcwarn("[CC]: Sleepga II.")
+		if mob and not (player.target_locked) then
+			windower.send_command('input /ma \'Sleepga II\' ' .. mob.id)
+		else
+			windower.send_command('input /ma \'Sleepga II\' <t>')
+		end
+	elseif player.main_job == "RDM" or player.main_job == "GEO" then
+		if player.sub_job == "BLM" then
+			atcwarn("[CC]: Sleepga.")
+			if mob and not (player.target_locked) then
+				windower.send_command('input /ma \'Sleepga\' ' .. mob.id)
 			else
-				windower.send_command('input /ma \'Horde Lullaby II\' <t>')
+				windower.send_command('input /ma \'Sleepga\' <t>')
 			end
-		elseif player_job.main_job == "BLM" then
-			atcwarn("[CC]: Sleepga II.")
-			if cmd2 and not (player_job.target_locked) then
-				windower.send_command('input /ma \'Sleepga II\' ' .. cmd2)
+		else
+			atcwarn("[CC]: Sleep II.")
+			if mob and not (player.target_locked) then
+				windower.send_command('input /ma \'Sleep II\' ' .. mob.id)
 			else
-				windower.send_command('input /ma \'Sleepga II\' <t>')
-			end
-		elseif player_job.main_job == "RDM" or player_job.main_job == "GEO" then
-			if player_job.sub_job == "BLM" then
-				atcwarn("[CC]: Sleepga.")
-				if cmd2 and not (player_job.target_locked) then
-					windower.send_command('input /ma \'Sleepga\' ' .. cmd2)
-				else
-					windower.send_command('input /ma \'Sleepga\' <t>')
-				end
-            else
-            	atcwarn("[CC]: Sleep II.")
-				if cmd2 and not (player_job.target_locked) then
-					windower.send_command('input /ma \'Sleep II\' ' .. cmd2)
-				else
-					windower.send_command('input /ma \'Sleep II\' <t>')
-				end
+				windower.send_command('input /ma \'Sleep II\' <t>')
 			end
 		end
-	else
-        if areas.Cities:contains(world) then
-            atcwarn("[CC]: In town area, cancelling.")
-        else
-            atcwarn("[CC]: Non sleepable jobs, skipping")
-        end
 	end
 end
 
-function poke(cmd2)
+function dispelga(mob_index)
+	atc('[DISPELGA]')
+    local world = res.zones[zone_id].name
+    local DispelJobs = S{'WHM','BLM','RDM','BRD','SMN','SCH','GEO'}
+	local mob = mob_index and windower.ffxi.get_mob_by_index(mob_index)
+    
+    if not (DispelJobs:contains(player.main_job) or DispelJobs:contains(player.sub_job)) or areas.Cities:contains(world) then
+		atcwarn("[DISPELGA]: Non dispelable jobs or in cities area.")
+		return
+	end
+	
+	if mob and not (player.target_locked) then
+		windower.send_command("input /ma 'Dispelga " .. mob.id)
+	else
+		windower.send_command("input /ma 'Dispelga' <t>")
+	end
+end
+
+function fin(mob_index)
+	atc('[FIN]: Dispel/Finale.')
+    local world = res.zones[zone_id].name
+    local DispelJobs = S{'RDM','BRD'}
+	local mob = mob_index and windower.ffxi.get_mob_by_index(mob_index)
+    
+    if not (DispelJobs:contains(player.main_job) or DispelJobs:contains(player.sub_job)) or areas.Cities:contains(world) then
+		atcwarn("[FIN]: Non dispelable jobs, skipping")
+		return
+	end
+        
+	if player.main_job == "BRD" then
+		atcwarn("[FIN]: Finale")
+		if mob and not (player.target_locked) then
+			windower.send_command("input /ma 'Magic Finale' " .. mob.id)
+		else
+			windower.send_command("input /ma 'Magic Finale' <t>")
+		end
+	elseif player.main_job == "RDM" or player.sub_job == "RDM" then
+		atcwarn("[FIN]: Dispel")
+		if mob and not (player.target_locked) then
+			windower.send_command("input /ma 'Dispel " .. mob.id)
+		else
+			windower.send_command("input /ma 'Dispel' <t>")
+		end
+	end
+
+end
+
+function poke(mob_index)
     atcwarn("[POKE] - Attempt to poke NPC")
-    if cmd2 then
-        get_poke_check_id(cmd2)
-    end
+    if not mob_index then
+		return
+		atcwarn("[POKE] - Abort, no valid target.")
+	end
+    get_poke_check_index(mob_index)	
 end
 
 function mnt()
@@ -2147,58 +2224,7 @@ function reraise()
     end
 end
 
-function dispelga(cmd2)
-	atc('[DISPELGA]')
-	local player_job = windower.ffxi.get_player()
-    local world = res.zones[windower.ffxi.get_info().zone].name
-    local DispelJobs = S{'WHM','BLM','RDM','BRD','SMN','SCH','GEO'}
-    
-    if (DispelJobs:contains(player_job.main_job) or DispelJobs:contains(player_job.sub_job)) and not(areas.Cities:contains(world)) then
-		if cmd2 and not (player_job.target_locked) then
-			windower.send_command("input /ma 'Dispelga " .. cmd2)
-		else
-			windower.send_command("input /ma 'Dispelga' <t>")
-		end
-    else
-        if areas.Cities:contains(world) then
-            atcwarn("[DISPELGA]: In town area, cancelling.")
-        else
-            atcwarn("[DISPELGA]: Non dispelable jobs, skipping")
-        end
-    end
-end
 
-function fin(cmd2)
-	atc('[FIN]: Dispel/Finale.')
-	local player_job = windower.ffxi.get_player()
-    local world = res.zones[windower.ffxi.get_info().zone].name
-    local DispelJobs = S{'RDM','BRD'}
-    
-    if (DispelJobs:contains(player_job.main_job) or DispelJobs:contains(player_job.sub_job)) and not(areas.Cities:contains(world)) then
-        
-        if player_job.main_job == "BRD" then
-            atcwarn("[FIN]: Finale")
-            if cmd2 and not (player_job.target_locked) then
-                windower.send_command("input /ma 'Magic Finale' " .. cmd2)
-            else
-                windower.send_command("input /ma 'Magic Finale' <t>")
-            end
-        elseif player_job.main_job == "RDM" or player_job.sub_job == "RDM" then
-            atcwarn("[FIN]: Dispel")
-            if cmd2 and not (player_job.target_locked) then
-                windower.send_command("input /ma 'Dispel " .. cmd2)
-            else
-                windower.send_command("input /ma 'Dispel' <t>")
-            end
-        end
-    else
-        if areas.Cities:contains(world) then
-            atcwarn("[FIN]: In town area, cancelling.")
-        else
-            atcwarn("[FIN]: Non dispelable jobs, skipping")
-        end
-    end
-end
 
 function brd(cmd2)
 	local player_job = windower.ffxi.get_player()
@@ -2260,39 +2286,40 @@ function bst(cmd2)
 	end
 end
 
-function cor(cmd2, cmd3)
+function cor(cmd, mob_index)
 	local player_job = windower.ffxi.get_player()
-    local mob = cmd3 and windower.ffxi.get_mob_by_id(cmd3)
-    local world = res.zones[windower.ffxi.get_info().zone].name
+    local mob = mob_index and windower.ffxi.get_mob_by_index(mob_index)
+    local world = res.zones[zone_id].name
     
-	if player_job.main_job == "COR" then
-		if cmd2 == 'melee' then
-			atc('[COR] Melee rolls + higher radius')
-			windower.send_command('gs c set luzafring on; roll melee;')			
-		elseif cmd2 == 'back' then
-			atc('[COR] Backline rolls + lower radius')
-			windower.send_command('gs c set luzafring off; roll roll1 warlock; roll roll2 gallant;')
-		elseif cmd2 == 'aoe' then
-			atc('[COR] Set Luzaf ON')
-			windower.send_command('gs c set luzafring on')
-		elseif cmd2 == 'statue' and not(areas.Cities:contains(world)) then
-			atc('[COR] Killing statues')
-			windower.send_command('gs c killstatue')
-        elseif cmd2 == 'leaden' and not(areas.Cities:contains(world)) then
-            atc('[COR] Leaden Salute')
-            if cmd3 and player_job.vitals.tp > 1000 and (math.sqrt(mob.distance) < 21) then
-                local self_vector = windower.ffxi.get_mob_by_id(player_job.id)
-                local angle = (math.atan2((mob.y - self_vector.y), (mob.x - self_vector.x))*180/math.pi)*-1
-                windower.ffxi.turn((angle):radian())
-                windower.send_command:schedule(0.75,'input /ja \'Leaden Salute\' ' .. cmd3)
-            else
-                atc('[COR] Target too far or not enough TP!')
-            end
+	if player.main_job ~= "COR" then
+		atc('[COR] Incorrect job, skipping.')
+		return
+	end
+	
+	if cmd == 'melee' then
+		atc('[COR] Melee rolls + higher radius')
+		windower.send_command('gs c set luzafring on; roll melee;')			
+	elseif cmd == 'back' then
+		atc('[COR] Backline rolls + lower radius')
+		windower.send_command('gs c set luzafring off; roll roll1 warlock; roll roll2 gallant;')
+	elseif cmd == 'aoe' then
+		atc('[COR] Set Luzaf ON')
+		windower.send_command('gs c set luzafring on')
+	elseif cmd == 'statue' and not(areas.Cities:contains(world)) then
+		atc('[COR] Killing statues')
+		windower.send_command('gs c killstatue')
+	elseif cmd == 'leaden' and not(areas.Cities:contains(world)) then
+		atc('[COR] Leaden Salute')
+		if mob and player_job.vitals.tp > 1000 and (math.sqrt(mob.distance) < 21) then
+			local self_vector = windower.ffxi.get_mob_by_id(player_job.id)
+			local angle = (math.atan2((mob.y - self_vector.y), (mob.x - self_vector.x))*180/math.pi)*-1
+			windower.ffxi.turn((angle):radian())
+			windower.send_command:schedule(0.75,'input /ja \'Leaden Salute\' ' .. mob.id)
 		else
-			atc('[COR] Invalid command')
+			atc('[COR] Target too far or not enough TP!')
 		end
 	else
-		atc('[COR] Incorrect job, skipping.')
+		atc('[COR] Invalid command')
 	end
 end
 
@@ -2840,52 +2867,46 @@ function as(namearg,cmd,cmd2)
 end
 
 function d2()
-
-	player = windower.ffxi.get_player()
 	get_spells = windower.ffxi.get_spells()
 	spell = S{player.main_job_id,player.sub_job_id}[4] and (get_spells[261] 
 		and {japanese='デジョン',english='"Warp"'} or get_spells[262] 
 		and {japanese='デジョンII',english='"Warp II"'})
 	
-	if spell then
-	-- Have right job/sub job and spells
-
-		for k, v in pairs(windower.ffxi.get_party()) do
-		
-			if type(v) == 'table' then
-				if v.name ~= player.name then
-	
-					ptymember = windower.ffxi.get_mob_by_name(v.name)
-					-- check if party member in same zone.
-
-					if v.mob ~= nil and math.sqrt(ptymember.distance) < 19 and windower.ffxi.get_mob_by_name(v.name).in_party then
-						-- Checking recast
-						check_mp_rest(262)
-						coroutine.sleep(1.5)
-						atc('[D2] Warping ' .. v.name)
-						windower.send_command('input /ma "Warp II" ' .. v.name)
-						coroutine.sleep(2.0)
-
-						--Check if still casting
-						while isCasting do
-							coroutine.sleep(0.5)
-						end
-					end
-
-				end
-				
-			end
-		end
-
-		-- Warp self
-		check_mp_rest(261)
-		coroutine.sleep(2.2)
-		atc('[D2] Warping')
-		windower.send_command('input /ma "Warp" ' .. player.name)
-	else
-		atc('[D2] Not BLM main or sub or no warp spells!')
+	if not spell then
+		atc('[D2] Not BLM main or sub or no warp spells.')
+		return
 	end
 	
+	-- Have right job/sub job and spells
+	for k, v in pairs(windower.ffxi.get_party()) do
+		if type(v) == 'table' then
+			if v.name ~= player.name then
+				ptymember = windower.ffxi.get_mob_by_name(v.name)
+				-- check if party member in same zone.
+				if v.mob ~= nil and math.sqrt(ptymember.distance) < 19 and windower.ffxi.get_mob_by_name(v.name).in_party then
+					-- Checking recast
+					check_mp_rest(262)
+					coroutine.sleep(1.5)
+					atc('[D2] Warping ' .. v.name)
+					windower.send_command('input /ma "Warp II" ' .. v.name)
+					coroutine.sleep(2.0)
+
+					--Check if still casting
+					while isCasting do
+						coroutine.sleep(0.5)
+					end
+				end
+
+			end
+		end
+	end
+
+	-- Warp self
+	check_mp_rest(261)
+	coroutine.sleep(2.2)
+	atc('[D2] Warping')
+	windower.send_command('input /ma "Warp" ' .. player.name)
+
 end
 
 function check_mp_rest(spell)
@@ -2952,20 +2973,6 @@ function burn(cmd2,cmd3)
 		settings.assist = tank_char_name
 	elseif cmd2:lower() == 'off' then
 		settings.active = false
-	-- elseif cmd2 == 'dia' then
-		-- if cmd3 ~= nil then
-			-- if cmd3 == 'on' then
-				-- settings.dia = true
-				-- atc('[BurnSet] DIA ON')
-			-- elseif cmd3 == 'off' then
-				-- settings.dia = false
-				-- atc('[BurnSet] DIA OFF')
-			-- else
-				-- atc('Invalid DIA choice')
-			-- end
-		-- else
-			-- atc('Missing argument for DIA')
-		-- end
 	elseif cmd2:lower() == 'indi' then
 		if cmd3 ~= nil then
 			if cmd3:lower() == 'torpor' then
@@ -3080,84 +3087,82 @@ function burn(cmd2,cmd3)
 	display_box()
 end
 
-function blu(cmd2,cmd3)
-	local player_job = windower.ffxi.get_player()
-	local world = res.zones[windower.ffxi.get_info().zone].name
+function blu(cmd,mob_index)
+	local world = res.zones[zone_id].name
+	local mob = mob_index and windower.ffxi.get_mob_by_index(mob_index)
 
-	if player_job.main_job == 'BLU' and not(areas.Cities:contains(world)) then
-		if cmd2 then
-			if cmd2 and cmd2:lower() == 'tenebral' then
-				atc('[BLU] Tenebral Crush')
-				if not (player_job.target_locked) then
-					windower.send_command("input /ma 'Tenebral Crush' " .. cmd3)
-				else
-					windower.send_command('input /ma "Tenebral Crush" <t>')
-				end
-			elseif cmd2 and cmd2:lower() == 'anvil' then
-				atc('[BLU] Anvil Lightning')
-				if not (player_job.target_locked) then
-					windower.send_command("input /ma 'Anvil Lightning' " .. cmd3)
-				else
-					windower.send_command('input /ma "Anvil Lightning" <t>')
-				end
-			elseif cmd2 and cmd2:lower() == 'spectral' then
-				atc('[BLU] Spectral Floe')
-				if not (player_job.target_locked) then
-					windower.send_command("input /ma 'Spectral Floe' " .. cmd3)
-				else
-					windower.send_command('input /ma "Spectral Floe" <t>')
-				end
-			elseif cmd2 and cmd2:lower() == 'entomb' then
-				atc('[BLU] Entomb')
-				if not (player_job.target_locked) then
-					windower.send_command("input /ma 'Entomb' " .. cmd3)
-				else
-					windower.send_command('input /ma "Entomb" <t>')
-				end
-			elseif cmd2 and cmd2:lower() == 'searing' then
-				atc('[BLU] Searing Tempest')
-				if not (player_job.target_locked) then
-					windower.send_command("input /ma 'Searing Tempest' " .. cmd3)
-				else
-					windower.send_command('input /ma "Searing Tempest" <t>')
-				end
-			elseif cmd2 and cmd2:lower() == 'spate' then
-				atc('[BLU] Scouring Spate')
-				if not (player_job.target_locked) then
-					windower.send_command("input /ma 'Scouring Spate' " .. cmd3)
-				else
-					windower.send_command('input /ma "Scouring Spate" <t>')
-				end
-			elseif cmd2 and cmd2:lower() == 'silent' then
-				atc('[BLU] Silent Storm')
-				if not (player_job.target_locked) then
-					windower.send_command("input /ma 'Silent Storm' " .. cmd3)
-				else
-					windower.send_command('input /ma "Silent Storm" <t>')
-				end
-			elseif cmd2 and cmd2:lower() == 'blinding' then
-				atc('[BLU] Blinding Fulgor')
-				if not (player_job.target_locked) then
-					windower.send_command("input /ma 'Blinding Fulgor' " .. cmd3)
-				else
-					windower.send_command('input /ma "Blinding Fulgor" <t>')
-				end
-			elseif cmd2 and cmd2:lower() == 'subduction' then
-				atc('[BLU] Subduction')
-				if not (player_job.target_locked) then
-					windower.send_command("input /ma 'Subduction' " .. cmd3)
-				else
-					windower.send_command('input /ma "Subduction" <t>')
-				end
-			else 
-				atc('[BLU] Invalid Command')
+	if player.main_job ~= 'BLU' or areas.Cities:contains(world) then
+		atc('[BLU] Abort - Not BLU job or in cities area.')
+		return
+	end
+	if cmd then
+		if cmd and cmd:lower() == 'tenebral' then
+			atc('[BLU] Tenebral Crush')
+			if not (player.target_locked) then
+				windower.send_command("input /ma 'Tenebral Crush' " .. mob.id)
+			else
+				windower.send_command('input /ma "Tenebral Crush" <t>')
 			end
-			windower.send_command('wait 1.9; mc cc ' .. cmd3)
+		elseif cmd and cmd:lower() == 'anvil' then
+			atc('[BLU] Anvil Lightning')
+			if not (player.target_locked) then
+				windower.send_command("input /ma 'Anvil Lightning' " .. mob.id)
+			else
+				windower.send_command('input /ma "Anvil Lightning" <t>')
+			end
+		elseif cmd and cmd:lower() == 'spectral' then
+			atc('[BLU] Spectral Floe')
+			if not (player.target_locked) then
+				windower.send_command("input /ma 'Spectral Floe' " .. mob.id)
+			else
+				windower.send_command('input /ma "Spectral Floe" <t>')
+			end
+		elseif cmd and cmd:lower() == 'entomb' then
+			atc('[BLU] Entomb')
+			if not (player.target_locked) then
+				windower.send_command("input /ma 'Entomb' " .. mob.id)
+			else
+				windower.send_command('input /ma "Entomb" <t>')
+			end
+		elseif cmd and cmd:lower() == 'searing' then
+			atc('[BLU] Searing Tempest')
+			if not (player.target_locked) then
+				windower.send_command("input /ma 'Searing Tempest' " .. mob.id)
+			else
+				windower.send_command('input /ma "Searing Tempest" <t>')
+			end
+		elseif cmd and cmd:lower() == 'spate' then
+			atc('[BLU] Scouring Spate')
+			if not (player.target_locked) then
+				windower.send_command("input /ma 'Scouring Spate' " .. mob.id)
+			else
+				windower.send_command('input /ma "Scouring Spate" <t>')
+			end
+		elseif cmd and cmd:lower() == 'silent' then
+			atc('[BLU] Silent Storm')
+			if not (player.target_locked) then
+				windower.send_command("input /ma 'Silent Storm' " .. mob.id)
+			else
+				windower.send_command('input /ma "Silent Storm" <t>')
+			end
+		elseif cmd and cmd:lower() == 'blinding' then
+			atc('[BLU] Blinding Fulgor')
+			if not (player.target_locked) then
+				windower.send_command("input /ma 'Blinding Fulgor' " .. mob.id)
+			else
+				windower.send_command('input /ma "Blinding Fulgor" <t>')
+			end
+		elseif cmd and cmd:lower() == 'subduction' then
+			atc('[BLU] Subduction')
+			if not (player.target_locked) then
+				windower.send_command("input /ma 'Subduction' " .. mob.id)
+			else
+				windower.send_command('input /ma "Subduction" <t>')
+			end
+		else 
+			atc('[BLU] Invalid Command')
 		end
-	elseif areas.Cities:contains(world) then
-		atc('[BLU] Abort: In city zone.')
-	else
-		atc('[BLU] Skipping - Not BLU.')
+		windower.send_command('wait 1.9; mc cc ' .. mob.index)
 	end
 end
 
@@ -3958,24 +3963,12 @@ function get(cmd2)
 	end
 end
 
-function go()
-	atc('[GO] TargetNPC + ENTER.')
-	get_npc_dialogue('npc',2)
-end
 
-function ent()
-	atc('[ENT] Sending ENTER Key.')
-	windower.send_command('wait 1.5; setkey enter down; wait 0.5; setkey enter up;')
-end
 
 
 function orb_entry(leader, orb_type)
 	if orb_type and ((orb_type == 'macro' and not (macro_orb_map[zone_id])) or (orb_type == 'deimos' and not (deimos_orb_map[zone_id]))) then
-		if orb_type == 'macro' then
-			atc('[ORB_ENTRY] Not in Macrocosmic Orb zone, cancelling.')
-		elseif orb_type == 'deimos' then
-			atc('[ORB_ENTRY] Not in Deimos Orb zone, cancelling.')
-		end
+		atc('[ORB_ENTRY] Not in '..(orb_type:gsub("^%l", string.upper))..' Orb zone, cancelling.')
 		return
 	end
 	
@@ -4041,21 +4034,10 @@ function enter(leader)
 
 end
 
---windower.send_command('wait 1.3; setkey down down; wait 0.05; setkey down up; wait 0.7; setkey enter down; wait 0.25; setkey enter up; wait 2.1; setkey up down; wait 0.25; setkey up up; wait 0.7; setkey enter down; wait 0.25; setkey enter up;')
 
-function endown()
-	atc('[EnterDOWN]')
-	windower.send_command('setkey down down; wait 0.05; setkey down up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
-end
-
-function enup()
-	atc('[EnterUP]')
-	windower.send_command('setkey up down; wait 0.05; setkey up up; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
-end
-
-function esc()
-	atc('[ESC]')
-	windower.send_command('setkey escape down; wait 0.5; setkey escape up;')
+function basic_keys(cmd)
+	atc('[KeyPress] Sending -'..cmd:upper()..'- key sequence.')
+	keypress_cmd(basic_key_sequence[cmd].command)
 end
 
 function cleanup()
@@ -4271,22 +4253,6 @@ function buffall(cmd2)
 			end
 		end
 	end
-end
-
-function rand(leader)
-	atc('[Rand] Randomize party position')
-	player = windower.ffxi.get_player()
-	if player.name:lower() ~= leader:lower() then
-		windower.send_command('hb f off; gaze ap off')
-		pivot = math.random(-5.27,8.39)
-		windower.ffxi.turn(pivot)
-		coroutine.sleep(0.5)
-		--windower.ffxi.run(true)
-		runtime = math.random(0.59,0.91)
-		windower.send_command('setkey numpad8 down; wait ' ..runtime.. '; setkey numpad8 up; setkey numpad4 down; wait ' ..runtime.. '; setkey numpad4 up; setkey numpad8 down; wait ' ..runtime.. '; setkey numpad8 up;')
-	end
-	--coroutine.sleep(runtime)
-	--windower.ffxi.run(false)
 end
 
 function wstype(cmd2)
@@ -4808,28 +4774,6 @@ function find_npc_to_poke(npc_type)
 
 end
 
--- function check_party()
-
-	-- player=windower.ffxi.get_player()
-	-- for k, v in pairs(windower.ffxi.get_party()) do
-		-- if type(v) == 'table' then
-			-- if v.name ~= player.name then
-				-- ptymember = windower.ffxi.get_mob_by_name(v.name)
-				-- -- check if party member in same zone.
-				-- if v.mob == nil then
-					-- -- Not in zone.
-					-- atc('Check: ' .. v.name .. ' is not in zone, not following.')
-				-- else
-					-- if ptymember.valid_target then
-
-					-- else
-						-- atc('Check: ' .. v.name .. ' is not in range, not following.')
-					-- end
-				-- end
-			-- end
-		-- end
-	-- end
--- end
 
 function check_leader_in_same_party(leader)
 	player = windower.ffxi.get_player()
@@ -4843,7 +4787,7 @@ function check_leader_in_same_party(leader)
 	end
 end
 
-local function get_delay()
+function get_delay()
     local self = windower.ffxi.get_player().name
     local members = {}
     for k, v in pairs(windower.ffxi.get_party()) do
@@ -4858,42 +4802,6 @@ local function get_delay()
 			return (k - 1) * settings.send_all_delay
         end
     end
-end
-
-function get_npc_dialogue(target_id,cycles)
-	npc_dialog = false
-	count = 0
-	if target_id == 'npc' then
-		while npc_dialog == false and count < cycles
-		do
-			count = count + 1
-			if count == 0 then
-				atc('NPC Target #: ' ..count.. ' [NPC]')
-				windower.send_command('input /targetnpc; wait 0.5; input /lockon; wait 0.7; setkey enter down; wait 0.5; setkey enter up;')
-			else
-				atc('NPC Target #: ' ..count.. ' [NPC]')
-				windower.send_command('setkey escape down; wait 0.5; setkey escape up; wait 1.0; input /targetnpc; wait 0.5; input /lockon; wait 1.0; setkey enter down; wait 0.5; setkey enter up;')
-			end
-			coroutine.sleep(5.2)
-		end
-	else
-		while npc_dialog == false and count < cycles
-		do
-			count = count + 1
-			if count == 0 then
-				atc('Poke #: ' ..count.. ' [ID: ' .. target_id.. ']')
-				windower.send_command('wait 1.5; settarget ' .. target_id .. '; wait 1; input /lockon; wait 1; setkey enter down; wait 0.5; setkey enter up;')
-			else
-				atc('Poke #: ' ..count.. ' [ID: ' .. target_id.. ']')
-				windower.send_command('setkey escape down; wait 0.5; setkey escape up; wait 1.0; settarget ' .. target_id .. '; wait 1; input /lockon; wait 1; setkey enter down; wait 0.5; setkey enter up;')
-			end
-			coroutine.sleep(6.5)
-		end
-	end
-	coroutine.sleep(1.5)
-	if npc_dialog == false then
-		windower.send_command('wait 0.7; setkey escape down; wait 0.5; setkey escape up;')
-	end
 end
 
 local function distance_check_npc(npc)
@@ -4965,8 +4873,6 @@ function get_poke_check_index(npc_index)
 		if npcstats and distance_check_npc(npcstats) and npcstats.valid_target then
 			atc('Poke #: ' ..count.. ' [NPC: ' .. npcstats.name.. ' ID: ' .. npcstats.id.. ']')
 			poke_npc(npcstats.id,npcstats.index)
-		-- else
-			-- atcwarn('POKE: NPC Target is too far!')
 		end
 		
 		coroutine.sleep(2.1)
@@ -5012,81 +4918,6 @@ function haveBuff(...)
 	return false
 end
 
-------------
---IPC Stuff
-------------
-
-function send_to_IPC(cmd,cmd2,cmd3,cmd4)
-    --if settings.solomode == false then
-        if cmd4 and cmd3 and cmd2 and cmd then
-            windower.send_ipc_message(cmd .. ' '..cmd2.. ' ' ..cmd3.. ' ' ..cmd4)
-        elseif cmd3 and cmd2 and cmd then
-            windower.send_ipc_message(cmd .. ' '..cmd2.. ' ' ..cmd3)
-        elseif cmd2 and cmd then
-            windower.send_ipc_message(cmd .. ' '..cmd2)
-        elseif cmd then
-            windower.send_ipc_message(cmd)
-        else
-            atcwarn('[IPC] - Error')
-        end
-    --end
-end
-
-windower.register_event('ipc message', function(msg, ...) 
-	local args = msg:split(' ')
-	local cmd = args[1]
-	local cmd2 = args[2]
-	local cmd3 = args[3]
-	local cmd4 = args[4]
-	args:remove(1)
-	local delay = get_delay()
-	local term = msg:split(' ')
-	term:remove(1)
-	local send_cmd = table.concat(term, " ")
-	
-	if (InternalCMDS:contains(cmd)) then
-		if(DelayCMDS:contains(cmd)) then
-			 coroutine.sleep(delay)
-		end
-		_G[cmd](cmd2,cmd3)
-	elseif cmd == 'rand' then
-		coroutine.sleep(delay)
-		rand(cmd2)
-	elseif cmd == 'as' then
-		as(cmd2, cmd3, cmd4)
-	elseif cmd == 'send' then
-		coroutine.sleep(delay)
-		send(send_cmd)
-	elseif cmd == 'gt' then
-		coroutine.sleep(delay)
-		gt(send_cmd)
-	elseif cmd == 'smn' then
-		smn(cmd2, cmd3, cmd4)
-	elseif cmd == 'autosc' then
-		autosc(cmd2, cmd3)
-	elseif cmd == 'ein' then
-		coroutine.sleep(delay)
-		ein(cmd2)
-	elseif cmd == 'buy' then
-		coroutine.sleep(delay+delay)
-		buy(cmd2, cmd3)	
-	elseif cmd == 'blu' then
-		blu(cmd2, cmd3)	
-	elseif cmd == 'cc' then
-		cc(cmd2)	
-    elseif cmd == 'fin' then
-        fin(cmd2)
-	elseif cmd == 'dispelga' then
-        dispelga(cmd2)
-    elseif cmd == 'poke' then
-        coroutine.sleep(delay)
-        poke(cmd2)
-    elseif cmd == 'cor' then
-        cor(cmd2,cmd3)
-	end
-end)
-
-
 windower.register_event('load', function()
 	settings = config.load(default)
 	init_box_pos()
@@ -5109,16 +4940,21 @@ windower.register_event("status change", function(new,old)
 	end
 end)
 
+windower.register_event("job change", function(main_job_id, main_job_level, sub_job_id, sub_job_level)
+	player = windower.ffxi.get_player()
+end)
+
 windower.register_event("gain buff", function(buff_id)
 	if buff_id == 254 then
 		if htmb_state then
 			htmb_entered = true
 			atc('[HTMB] IPC Trigger.')
 			send_to_IPC:schedule(1.0, 'htmb',player_leader)
-		elseif orb_state then
+		elseif orb_state and orb_type then
 			orb_entered = true
-			atc('[Macro Orb] IPC Trigger.')
-			send_to_IPC:schedule(1.0, 'macro',player_leader)
+			orb_label = (orb_type:gsub("^%l", string.upper))
+			atc('['..orb_label..' Orb] IPC Trigger.')
+			send_to_IPC:schedule(1.0, orb_label,player_leader)
 		end
     end
 end)
@@ -5129,6 +4965,7 @@ windower.register_event("lose buff", function(buff_id)
 		htmb_entered = false
 		orb_state = false
 		orb_entered = false
+		orb_type = ''
 		off:schedule(3)
     end
 end)
@@ -5151,26 +4988,6 @@ windower.register_event('incoming chunk', function(id, data)
 				set_registry(packet['ID'], packet['Main job'])
 			end
 		end
-	-- elseif id == 0x0DD then -- Party member update
-        -- local packet = packets.parse('incoming', data)
-		-- if packet then
-			-- local playerId = packet['ID']
-			-- local job = packet['Main job']
-			
-			-- if playerId and playerId > 0 then
-				-- set_registry(packet['ID'], packet['Main job'])
-			-- end
-		-- end
-	-- elseif id == 0x0C8 then -- Alliance update
-        -- local packet = packets.parse('incoming', data)
-		-- if packet then
-			-- local playerId = packet['ID']
-			-- local job = packet['Main job']
-			
-			-- if playerId and playerId > 0 then
-				-- set_registry(packet['ID'], packet['Main job'])
-			-- end
-		-- end
 	end
 end)
 
@@ -5261,7 +5078,6 @@ function find_job_charname(job, job_count, in_party, with_self)
 	end
 	return 'NoJobFound'
 end
-
 
 local salvage_area = S{73,74,75,76}
 

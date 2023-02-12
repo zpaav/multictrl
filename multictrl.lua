@@ -1,6 +1,6 @@
 _addon.name = 'MC'
 _addon.author = 'Kate'
-_addon.version = '3.0.1'
+_addon.version = '3.3.1'
 _addon.commands = {'mc'}
 
 require('functions')
@@ -11,10 +11,8 @@ config = require('config')
 packets = require('packets')
 res = require('resources')
 texts = require('texts')
---npc_map = require('npc_map')
---htmb_map = require('htmb_map')
---macro_orb_map = require('macro_orb_map')
 entry_map = require('entry_map')
+job_data = require('job_data')
 extdata = require('extdata')
 
 -- job registry is a key->value table/db of player name->jobs we have encountered
@@ -118,8 +116,6 @@ htmb_entered = false
 orb_type = ''
 orb_state = false
 orb_entered = false
-
-
 player_leader = ''
 
 windower.register_event('addon command', function(input, ...)
@@ -182,10 +178,8 @@ windower.register_event('addon command', function(input, ...)
 		buffall(cmd2)
 	elseif cmd == 'd2' then							-- No IPC
 		d2()
-	elseif cmd == 'fon' then						-- No IPC
-		fon(cmd2)
-	elseif cmd == 'foff' then						-- No IPC
-		foff(cmd2)
+	elseif cmd == 'fon' or cmd == 'foff' then		-- No IPC
+		follow_command(cmd)
 	elseif cmd == 'as' then							-- Leader
 		local leader = windower.ffxi.get_player()
 		as:schedule(0, leader.name,cmd2,cmd3)
@@ -1460,331 +1454,27 @@ function stage(cmd2)
 	display_box()
 end
 
-function jc(cmd2)
-	local player_job = windower.ffxi.get_player()
+function jc(cmd)
+	if not job_change_data[cmd] then
+		atcwarn('[JC] Not a Job Change setup.')
+		return
+	end
 
-    if cmd2 == 'ambu' then
-		atc('[JC] Ambu')
-		if player_job.name == "" ..settings.char1.. "" then
-			windower.send_command("jc thf/cor" )
-		elseif player_job.name == "" ..settings.char2.. "" then
-			windower.send_command("jc smn/rdm" )
-		elseif player_job.name == "" ..settings.char3.. "" then
-			windower.send_command("jc smn/rdm" )
-		elseif player_job.name == "" ..settings.char4.. "" then
-			windower.send_command("jc geo/whm")
-		elseif player_job.name == "" ..settings.char5.. "" then
-			windower.send_command("jc run/drk")
-		elseif player_job.name == "" ..settings.char6.. "" then
-			windower.send_command("jc smn/rdm")
+	if job_change_data[cmd] then
+		atc('[JC] '..job_change_data[cmd].name)
+		if player.name == "" ..settings.char1.. "" then
+			windower.send_command('jc '..job_change_data[cmd].char1)
+		elseif player.name == "" ..settings.char2.. "" then
+			windower.send_command('jc '..job_change_data[cmd].char2)
+		elseif player.name == "" ..settings.char3.. "" then
+			windower.send_command('jc '..job_change_data[cmd].char3)
+		elseif player.name == "" ..settings.char4.. "" then
+			windower.send_command('jc '..job_change_data[cmd].char4)
+		elseif player.name == "" ..settings.char5.. "" then
+			windower.send_command('jc '..job_change_data[cmd].char5)
+		elseif player.name == "" ..settings.char6.. "" then
+			windower.send_command('jc '..job_change_data[cmd].char6)
 		end
-	elseif cmd2 == 'ody' then
-		atc('[JC] Odyssey C farm.')
-		if player_job.name == "" ..settings.char1.. "" then
-			windower.send_command("jc run/pld" )
-		elseif player_job.name == "" ..settings.char2.. "" then
-			windower.send_command("jc sam/war" )
-		elseif player_job.name == "" ..settings.char3.. "" then
-			windower.send_command("jc cor/nin" )
-		elseif player_job.name == "" ..settings.char4.. "" then
-			windower.send_command("jc brd/rdm")
-		elseif player_job.name == "" ..settings.char5.. "" then
-			windower.send_command("jc whm/sch")
-		elseif player_job.name == "" ..settings.char6.. "" then
-			windower.send_command("jc sam/war")
-		end
-	-- PLD, WHM/SCH, BRD/NIN, THF/WAR, WAR/DRG, GEO/RDM
-	elseif cmd2 == 'alex' then
-		atc('[JC] Alexander')
-		if player_job.name == "" ..settings.char1.. "" then
-			windower.send_command("jc pld/run" )
-		elseif player_job.name == "" ..settings.char2.. "" then
-			windower.send_command("jc thf/war" )
-		elseif player_job.name == "" ..settings.char3.. "" then
-			windower.send_command("jc war/drg" )
-		elseif player_job.name == "" ..settings.char4.. "" then
-			windower.send_command("jc brd/nin")
-		elseif player_job.name == "" ..settings.char5.. "" then
-			windower.send_command("jc geo/rdm")
-		elseif player_job.name == "" ..settings.char6.. "" then
-			windower.send_command("jc whm/sch")
-		end
-	elseif cmd2 == 'mboze1' then
-		atc('[JC] Mboze farm #1')
-		if player_job.name == "" ..settings.char1.. "" then
-			windower.send_command("jc blu/rdm" )
-		elseif player_job.name == "" ..settings.char2.. "" then
-			windower.send_command("jc mnk/rdm" )
-		elseif player_job.name == "" ..settings.char3.. "" then
-			windower.send_command("jc war/rdm" )
-		elseif player_job.name == "" ..settings.char4.. "" then
-			windower.send_command("jc brd/rdm")
-		elseif player_job.name == "" ..settings.char5.. "" then
-			windower.send_command("jc run/whm")
-		elseif player_job.name == "" ..settings.char6.. "" then
-			windower.send_command("jc whm/rdm")
-		end
-	elseif cmd2 == 'mboze2' then
-		atc('[JC] Mboze farm #2')
-		if player_job.name == "" ..settings.char1.. "" then
-			windower.send_command("jc pld/rdm" )
-		elseif player_job.name == "" ..settings.char2.. "" then
-			windower.send_command("jc sam/rdm" )
-		elseif player_job.name == "" ..settings.char3.. "" then
-			windower.send_command("jc rdm/rdm" )
-		elseif player_job.name == "" ..settings.char4.. "" then
-			windower.send_command("jc cor/rdm")
-		elseif player_job.name == "" ..settings.char5.. "" then
-			windower.send_command("jc bst/rdm")
-		elseif player_job.name == "" ..settings.char6.. "" then
-			windower.send_command("jc pup/rdm")
-		end
-	elseif cmd2 == 'mboze3' then
-		atc('[JC] Mboze farm #3')
-		if player_job.name == "" ..settings.char1.. "" then
-			windower.send_command("jc thf/rdm" )
-		elseif player_job.name == "" ..settings.char2.. "" then
-			windower.send_command("jc nin/rdm" )
-		elseif player_job.name == "" ..settings.char3.. "" then
-			windower.send_command("jc drk/rdm" )
-		elseif player_job.name == "" ..settings.char4.. "" then
-			windower.send_command("jc sch/rdm")
-		elseif player_job.name == "" ..settings.char5.. "" then
-			windower.send_command("jc geo/rdm")
-		elseif player_job.name == "" ..settings.char6.. "" then
-			windower.send_command("jc smn/rdm")
-		end
-	elseif cmd2 == 'ongo1' then
-		--RUN+COR+BLM+RDM+BLU+*NIN*
-		atc('[JC] Ongo farm #1')
-		if player_job.name == "" ..settings.char1.. "" then
-			windower.send_command("jc run/rdm" )
-		elseif player_job.name == "" ..settings.char2.. "" then
-			windower.send_command("jc blm/rdm" )
-		elseif player_job.name == "" ..settings.char3.. "" then
-			windower.send_command("jc blu/rdm" )
-		elseif player_job.name == "" ..settings.char4.. "" then
-			windower.send_command("jc war/rdm")
-		elseif player_job.name == "" ..settings.char5.. "" then
-			windower.send_command("jc rdm/whm")
-		elseif player_job.name == "" ..settings.char6.. "" then
-			windower.send_command("jc nin/rdm")
-		end
-	elseif cmd2 == 'ongo2' then
-		--PLD+RNG+SMN+WHM+BRD+*DRK*
-		atc('[JC] Ongo farm #2')
-		if player_job.name == "" ..settings.char1.. "" then
-			windower.send_command("jc pld/rdm" )
-		elseif player_job.name == "" ..settings.char2.. "" then
-			windower.send_command("jc cor/rdm" )
-		elseif player_job.name == "" ..settings.char3.. "" then
-			windower.send_command("jc drk/rdm" )
-		elseif player_job.name == "" ..settings.char4.. "" then
-			windower.send_command("jc brd/rdm")
-		elseif player_job.name == "" ..settings.char5.. "" then
-			windower.send_command("jc whm/rdm")
-		elseif player_job.name == "" ..settings.char6.. "" then
-			windower.send_command("jc smn/rdm")
-		end
-	elseif cmd2 == 'ongo3' then
-		--PUP+SCH+GEO+BST+*MNK*+*THF*
-		atc('[JC] Ongo farm #3')
-		if player_job.name == "" ..settings.char1.. "" then
-			windower.send_command("jc thf/rdm" )
-		elseif player_job.name == "" ..settings.char2.. "" then
-			windower.send_command("jc pup/rdm" )
-		elseif player_job.name == "" ..settings.char3.. "" then
-			windower.send_command("jc sch/rdm" )
-		elseif player_job.name == "" ..settings.char4.. "" then
-			windower.send_command("jc geo/rdm")
-		elseif player_job.name == "" ..settings.char5.. "" then
-			windower.send_command("jc bst/rdm")
-		elseif player_job.name == "" ..settings.char6.. "" then
-			windower.send_command("jc mnk/rdm")
-		end
-	elseif cmd2 == 'kalunga1' then
-		--DRK PLD SCH BRD BST MNK
-		atc('[JC] Kalunga farm #1')
-		if player_job.name == "" ..settings.char1.. "" then
-			windower.send_command("jc pld/rdm" )
-		elseif player_job.name == "" ..settings.char2.. "" then
-			windower.send_command("jc bst/rdm" )
-		elseif player_job.name == "" ..settings.char3.. "" then
-			windower.send_command("jc drk/rdm" )
-		elseif player_job.name == "" ..settings.char4.. "" then
-			windower.send_command("jc sch/rdm")
-		elseif player_job.name == "" ..settings.char5.. "" then
-			windower.send_command("jc brd/rdm")
-		elseif player_job.name == "" ..settings.char6.. "" then
-			windower.send_command("jc mnk/rdm")
-		end
-	elseif cmd2 == 'sortie' then
-		atc('[JC] Sortie farm.')
-		if player_job.name == "" ..settings.char1.. "" then
-			windower.send_command("jc run/drk" )
-		elseif player_job.name == "" ..settings.char2.. "" then
-			windower.send_command("jc cor/nin" )
-		elseif player_job.name == "" ..settings.char3.. "" then
-			windower.send_command("jc blu/drg" )
-		elseif player_job.name == "" ..settings.char4.. "" then
-			windower.send_command("jc brd/dnc")
-		elseif player_job.name == "" ..settings.char5.. "" then
-			windower.send_command("jc war/drg")
-		elseif player_job.name == "" ..settings.char6.. "" then
-			windower.send_command("jc whm/sch")
-		end
-	elseif cmd2 == 'sortie2' then
-		atc('[JC] Sortie basement farm.')
-		if player_job.name == "" ..settings.char1.. "" then
-			windower.send_command("jc run/pld" )
-		elseif player_job.name == "" ..settings.char2.. "" then
-			windower.send_command("jc blm/rdm" )
-		elseif player_job.name == "" ..settings.char3.. "" then
-			windower.send_command("jc sch/rdm" )
-		elseif player_job.name == "" ..settings.char4.. "" then
-			windower.send_command("jc sch/whm")
-		elseif player_job.name == "" ..settings.char5.. "" then
-			windower.send_command("jc geo/rdm")
-		elseif player_job.name == "" ..settings.char6.. "" then
-			windower.send_command("jc cor/whm")
-		end
-    elseif cmd2 == 'arepre' then
-		atc('[JC] Arebati team B')
-		if player_job.name == "" ..settings.char1.. "" then
-			windower.send_command("jc run/rdm" )
-		elseif player_job.name == "" ..settings.char2.. "" then
-			windower.send_command("jc sam/rdm" )
-		elseif player_job.name == "" ..settings.char3.. "" then
-			windower.send_command("jc geo/rdm" )
-		elseif player_job.name == "" ..settings.char4.. "" then
-			windower.send_command("jc smn/rdm")
-		elseif player_job.name == "" ..settings.char5.. "" then
-			windower.send_command("jc whm/thf")
-		elseif player_job.name == "" ..settings.char6.. "" then
-			windower.send_command("jc mnk/rdm")
-		end
-    elseif cmd2 == 'arewar' then
-		atc('[JC] Arebati WAR setup')
-		if player_job.name == "" ..settings.char1.. "" then
-			windower.send_command("jc pld/rdm" )
-		elseif player_job.name == "" ..settings.char2.. "" then
-			windower.send_command("jc bst/rdm" )
-		elseif player_job.name == "" ..settings.char3.. "" then
-			windower.send_command("jc war/rdm" )
-		elseif player_job.name == "" ..settings.char4.. "" then
-			windower.send_command("jc brd/rdm")
-		elseif player_job.name == "" ..settings.char5.. "" then
-			windower.send_command("jc rdm/thf")
-		elseif player_job.name == "" ..settings.char6.. "" then
-			windower.send_command("jc cor/rdm")
-		end
-    elseif cmd2 == 'bumbapre' then
-		atc('[JC] Bumba PRE [I]')
-		if player_job.name == "" ..settings.char1.. "" then
-			windower.send_command("jc run/rdm" )
-		elseif player_job.name == "" ..settings.char2.. "" then
-			windower.send_command("jc bst/rdm" )
-		elseif player_job.name == "" ..settings.char3.. "" then
-			windower.send_command("jc sch/rdm" )
-		elseif player_job.name == "" ..settings.char4.. "" then
-			windower.send_command("jc blm/rdm")
-		elseif player_job.name == "" ..settings.char5.. "" then
-			windower.send_command("jc rdm/thf")
-		elseif player_job.name == "" ..settings.char6.. "" then
-			windower.send_command("jc smn/rdm")
-		end
-    elseif cmd2 == 'bumba' then
-		atc('[JC] Bumba')
-		if player_job.name == "" ..settings.char1.. "" then
-			windower.send_command("jc war/rdm" )
-		elseif player_job.name == "" ..settings.char2.. "" then
-			windower.send_command("jc cor/rdm" )
-		elseif player_job.name == "" ..settings.char3.. "" then
-			windower.send_command("jc drg/rdm" )
-		elseif player_job.name == "" ..settings.char4.. "" then
-			windower.send_command("jc brd/rdm")
-		elseif player_job.name == "" ..settings.char5.. "" then
-			windower.send_command("jc whm/thf")
-		elseif player_job.name == "" ..settings.char6.. "" then
-			windower.send_command("jc geo/rdm")
-		end
-    elseif cmd2 == 'cait' then
-		atc('[JC] Cait')
-		if player_job.name == "" ..settings.char1.. "" then
-			windower.send_command("jc sub sam; wait 1; jc run" )
-		elseif player_job.name == "" ..settings.char2.. "" then
-			windower.send_command("jc thf/war" )
-		elseif player_job.name == "" ..settings.char3.. "" then
-			windower.send_command("jc cor/nin" )
-		elseif player_job.name == "" ..settings.char4.. "" then
-			windower.send_command("jc brd/dnc")
-		elseif player_job.name == "" ..settings.char5.. "" then
-			windower.send_command("jc whm/sch")
-		elseif player_job.name == "" ..settings.char6.. "" then
-			windower.send_command("jc smn/whm")
-		end
-    elseif cmd2 == 'dyna' then
-		atc('[JC] Dynamis W3')
-		if player_job.name == "" ..settings.char1.. "" then
-			windower.send_command("jc pld/blu; wait 1; lua l azuresets; wait 3; azuresets set tank" )
-		elseif player_job.name == "" ..settings.char2.. "" then
-			windower.send_command("jc sam/drg" )
-		elseif player_job.name == "" ..settings.char3.. "" then
-			windower.send_command("jc cor/nin" )
-		elseif player_job.name == "" ..settings.char4.. "" then
-			windower.send_command("jc brd/dnc")
-		elseif player_job.name == "" ..settings.char5.. "" then
-			windower.send_command("jc rdm/sch")
-		elseif player_job.name == "" ..settings.char6.. "" then
-			windower.send_command("jc geo/sch")
-		end
-	elseif cmd2 == 'dyna2' then
-		atc('[JC] Dynamis W3 - Alternative')
-		if player_job.name == "" ..settings.char1.. "" then
-			windower.send_command("jc pld/blu; wait 1; lua l azuresets; wait 3; azuresets set tank" )
-		elseif player_job.name == "" ..settings.char2.. "" then
-			windower.send_command("jc cor/nin" )
-		elseif player_job.name == "" ..settings.char3.. "" then
-			windower.send_command("jc rdm/sch" )
-		elseif player_job.name == "" ..settings.char4.. "" then
-			windower.send_command("jc brd/dnc")
-		elseif player_job.name == "" ..settings.char5.. "" then
-			windower.send_command("jc geo/sch")
-		elseif player_job.name == "" ..settings.char6.. "" then
-			windower.send_command("jc sam/drg")
-		end
-    elseif cmd2 == 'shinryu' then
-		atc('[JC] Shinryu')
-		if player_job.name == "" ..settings.char1.. "" then
-			windower.send_command("jc thf/war;" )
-		elseif player_job.name == "" ..settings.char2.. "" then
-			windower.send_command("jc mnk/war" )
-		elseif player_job.name == "" ..settings.char3.. "" then
-			windower.send_command("jc sch/whm" )
-		elseif player_job.name == "" ..settings.char4.. "" then
-			windower.send_command("jc brd/dnc")
-		elseif player_job.name == "" ..settings.char5.. "" then
-			windower.send_command("jc whm/sch")
-		elseif player_job.name == "" ..settings.char6.. "" then
-			windower.send_command("jc geo/rdm")
-		end
-    elseif cmd2 == 'ouryu' then
-		atc('[JC] Ouryu')
-		if player_job.name == "" ..settings.char1.. "" then
-			windower.send_command("jc run/drk;" )
-		elseif player_job.name == "" ..settings.char2.. "" then
-			windower.send_command("jc sam/war" )
-		elseif player_job.name == "" ..settings.char3.. "" then
-			windower.send_command("jc cor/dnc" )
-		elseif player_job.name == "" ..settings.char4.. "" then
-			windower.send_command("jc brd/whm")
-		elseif player_job.name == "" ..settings.char5.. "" then
-			windower.send_command("jc whm/sch")
-		elseif player_job.name == "" ..settings.char6.. "" then
-			windower.send_command("jc geo/rdm")
-		end
-	else
-		atc('[JC] Nothing specified.')
 	end
 end
 
@@ -1948,8 +1638,9 @@ function poke(mob_index)
     if not mob_index then
 		return
 		atcwarn("[POKE] - Abort, no valid target.")
+	else
+		get_poke_check_index(mob_index)	
 	end
-    get_poke_check_index(mob_index)	
 end
 
 function mnt()
@@ -1962,11 +1653,9 @@ end
 
 function on()
 	atc('ON: Turning on addons.')
-	local zone = windower.ffxi.get_info()['zone']
-	local world = res.zones[windower.ffxi.get_info().zone].name
+	local world = res.zones[zone_id].name
 	local di_zones = S{288,289,291}
 		
-	local player_job = windower.ffxi.get_player()
 	local MeleeJobs = S{'WAR','SAM','DRG','DRK','NIN','MNK','COR','BLU','PUP','DNC','RUN','THF','RNG','PLD','BST','GEO','BRD'}
 	local MageJobs = S{'WHM','BLM','SCH','RDM','SMN','GEO','BRD'}
 
@@ -1989,8 +1678,8 @@ function on()
 	
 		windower.send_command('hb on')
 		
-		if MageJobs:contains(player_job.main_job) then
-			if player_job.main_job == "SCH" then
+		if MageJobs:contains(player.main_job) then
+			if player.main_job == "SCH" then
 				if autoarts == 'Light' then
 					windower.send_command('gs c set autobuffmode Healing')
 				elseif autoarts == 'Dark' then
@@ -2003,33 +1692,33 @@ function on()
 			end
 		end
 
-		if player_job.main_job == "RUN" then
+		if player.main_job == "RUN" then
 			windower.send_command('gs c set autorunemode on; gs c set autobuffmode auto')
-		elseif player_job.main_job == "PLD" then
+		elseif player.main_job == "PLD" then
 			windower.send_command('gs c set autobuffmode auto')
-		elseif player_job.main_job == "BRD" then
+		elseif player.main_job == "BRD" then
 			windower.send_command('singer on')
-		elseif player_job.main_job == "COR" then
+		elseif player.main_job == "COR" then
 			windower.send_command('roller on')
-		elseif player_job.main_job == "SCH" then
+		elseif player.main_job == "SCH" then
 			windower.send_command('gs c set autosubmode on')
-		elseif player_job.main_job == "RDM" then
+		elseif player.main_job == "RDM" then
 			windower.send_command('gs c set autoarts on;')
 			windower.send_command('input /ja composure <me>')
-		elseif player_job.main_job == "WHM" then
+		elseif player.main_job == "WHM" then
 			windower.send_command('gs c set autoarts on;')
-		elseif player_job.main_job == "BLU" then
+		elseif player.main_job == "BLU" then
 			windower.send_command('gs c set autobuffmode auto;')
-		elseif player_job.main_job == "DNC" then
+		elseif player.main_job == "DNC" then
 			windower.send_command('gs c set autosambamode haste')
 			windower.send_command('gs c set autobuffmode auto')
-		elseif player_job.main_job == "PUP" then
+		elseif player.main_job == "PUP" then
 			windower.send_command('gs c set autopuppetmode on; gs c set autobuffmode auto')
 		end
 		
 		-- SCH sub toggles
-		if player_job.sub_job == "SCH" then
-			if player_job.main_job ~= "RDM" then
+		if player.sub_job == "SCH" then
+			if player.main_job ~= "RDM" then
 				if settings.autosub == 'sleep' then
 					windower.send_command('gs c set autosubmode sleep')
 				elseif settings.autosub == 'on' then
@@ -2040,24 +1729,24 @@ function on()
 			end
 		end
 		
-		if player_job.sub_job == "RUN" then
+		if player.sub_job == "RUN" then
 			windower.send_command('gs c set autorunemode on')
-        elseif player_job.sub_job == "DNC" then
+        elseif player.sub_job == "DNC" then
             windower.send_command('gs c set autosambamode haste; gs c set autobuffmode auto')
-        elseif player_job.sub_job == "COR" then
+        elseif player.sub_job == "COR" then
             windower.send_command('roller on')
 		end
 		
 		-- WS/Buff mode
-		if MeleeJobs:contains(player_job.main_job) then
+		if MeleeJobs:contains(player.main_job) then
 			if settings.autows then
 				windower.send_command('gs c set autowsmode on; gs c set autobuffmode auto;')
-				if player_job.main_job == "DRG" or player_job.sub_job == "DRG" then
+				if player.main_job == "DRG" or player.sub_job == "DRG" then
 					windower.send_command('gs c set autojumpmode on;')
 				end
 			end
 			if settings.rangedmode then
-				if player_job.main_job == "COR" or player_job.main_job == "RNG" then
+				if player.main_job == "COR" or player.main_job == "RNG" then
 					windower.send_command('gs c set rnghelper on;')
 				end
 			end
@@ -2073,26 +1762,25 @@ end
 
 function off()
 	atc('OFF: Turning off addons.')
-	local player_job = windower.ffxi.get_player()
-	if player_job.main_job == "RUN" then
+	if player.main_job == "RUN" then
 		windower.send_command('gs c set autorunemode off')
 		windower.send_command('gs c set autotankmode off')
 		windower.send_command('gs c set autotankfull off')
-	elseif player_job.main_job == "PLD" then
+	elseif player.main_job == "PLD" then
 		windower.send_command('gs c set autorunemode off')
 		windower.send_command('gs c set autotankmode off')
 		windower.send_command('gs c set autotankfull off')
-	elseif player_job.main_job == "DRG" or player_job.sub_job == "DRG" then
+	elseif player.main_job == "DRG" or player.sub_job == "DRG" then
 		windower.send_command('gs c set autojumpmode off')
-	elseif player_job.main_job == "RNG" or player_job.main_job == "COR" then
+	elseif player.main_job == "RNG" or player.main_job == "COR" then
 		windower.send_command('gs c set rnghelper off')
-	elseif player_job.main_job == "SMN" then
+	elseif player.main_job == "SMN" then
 		windower.send_command('gs c set autowardmode off; gs c set autobpmode off; gs c set autoavatar off;')
-	elseif player_job.main_job == "PUP" then
+	elseif player.main_job == "PUP" then
 		windower.send_command('gs c set autopuppetmode off')
-	elseif player_job.main_job == "BST" then
+	elseif player.main_job == "BST" then
 		windower.send_command('gs c set autocallpet off')
-	elseif player_job.main_job == "SCH" or player_job.sub_job == "SCH" then
+	elseif player.main_job == "SCH" or player.sub_job == "SCH" then
 		windower.send_command('gs c set autosubmode off')
 	end
 
@@ -2109,57 +1797,31 @@ function off()
 end
 
 -- Does NOT use IPC
-function fon()
-	atc('FON: Follow ON.')
-	player=windower.ffxi.get_player()
-	
-	windower.send_command('hb follow off')
-	windower.send_command('hb f dist 1.5')
+function follow_command(cmd)
+	if cmd == 'fon' then
+		atc('[FOLLOW]: Follow ON.')
+	elseif cmd == 'foff' then
+		atc('[FOLLOW]: Follow OFF.')
+	end
+	windower.send_command('hb follow off; hb f dist 1.5')
 
 	for k, v in pairs(windower.ffxi.get_party()) do
-		if type(v) == 'table' then
-			if v.name ~= player.name then
-				ptymember = windower.ffxi.get_mob_by_name(v.name)
-				-- check if party member in same zone.
-				if v.mob == nil then
-					-- Not in zone.
-					atc('FON: ' .. v.name .. ' is not in zone, not following.')
-				else
-					if ptymember and ptymember.valid_target then
-						windower.send_command('send ' .. v.name .. ' hb f dist 1.5')
+		if type(v) == 'table' and (v.name ~= player.name) then
+			ptymember = windower.ffxi.get_mob_by_name(v.name)
+			if not v.mob then
+				atcwarn('[FOLLOW]: ' .. v.name .. ' is not in zone.')			
+			else
+				if ptymember and ptymember.valid_target then
+					if cmd == 'fon' then
+						atc('[FOLLOW]: Setting ' ..v.name.. ' to start following.')
+						windower.send_command('send ' .. v.name .. ' hb f dist 1.5;')
 						windower.send_command('send ' .. v.name .. ' hb follow ' .. player.name)
 					else
-						atc('FON: ' .. v.name .. ' is not in range, not following.')
-					end
-				end
-			end
-		end
-	end
-end
-
--- Does NOT use IPC
-function foff()
-	atc('FOFF: Follow OFF')
-	player=windower.ffxi.get_player()
-	
-	windower.send_command('hb follow off')
-	windower.send_command('hb f dist 2')
-
-	for k, v in pairs(windower.ffxi.get_party()) do
-		if type(v) == 'table' then
-			if v.name ~= player.name then
-				ptymember = windower.ffxi.get_mob_by_name(v.name)
-				-- check if party member in same zone.
-				if v.mob == nil then
-					-- Not in zone.
-					atc('FOFF: ' .. v.name .. ' is not in zone.')
-				else
-					if ptymember.valid_target then
-						atcwarn('FOFF: Setting ' ..v.name.. ' to stop following.')
+						atc('[FOLLOW]: Setting ' ..v.name.. ' to stop following.')
 						windower.send_command('send ' .. v.name .. ' hb f off')
-					else
-						atc('FOFF: ' .. v.name .. ' is not in range.')
 					end
+				else
+					atcwarn('[FOLLOW]: ' .. v.name .. ' is not in range.')
 				end
 			end
 		end
@@ -3412,30 +3074,36 @@ function autosc(cmd2, leader_char)
 			elseif cmd2 and cmd2:lower() == 'upheaval' then
 				if player.main_job == 'COR' then
 					atc('[AUTOSC] COR Leaden and Earth Shot')
+					local ongo = windower.ffxi.get_mob_by_name('Ongo')
 					local abil_recasts = windower.ffxi.get_ability_recasts()
 					local latency = 0.7
 					if abil_recasts[195] < latency then
-						windower.send_command:schedule(1.7, 'input /ja "Earth Shot" <t>')
+						windower.send_command:schedule(1.7, 'input /ja "Earth Shot" '..ongo.id)
 					end
-					windower.send_command:schedule(3.4, 'input /ws "Leaden Salute" <t>')
-					windower.send_command:schedule(7.2, 'autora start')
-					windower.send_command:schedule(16.3, 'input /ws "Wildfire" <t>')
-					windower.send_command:schedule(20.1, 'autora start')
+					windower.send_command:schedule(3.4, 'input /ws "Leaden Salute" '..ongo.id)
+					windower.send_command:schedule(7.2, 'autora start_id '..ongo.id)
+					windower.send_command:schedule(16.3, 'input /ws "Wildfire" '..ongo.id)
+					windower.send_command:schedule(20.1, 'autora start_id '..ongo.id)
 				elseif player.main_job == 'RUN' then
 					local abil_recasts = windower.ffxi.get_ability_recasts()
 					local latency = 0.7
 					windower.send_command('hb off; gs c set autotankmode off; gs c set autobuffmode off; gs c set autorunemode off; gs c set autowsmode off')
 					atc('[AUTOSC] Rayke/Gambit')
-					if abil_recasts[116] < latency then
-						windower.send_command:schedule(2.8, 'input /ja "Gambit" <t>')
-					elseif abil_recasts[119] < latency then
-						windower.send_command:schedule(2.8, 'input /ja "Rayke" <t>')
-					end
+					-- if abil_recasts[116] < latency then
+						-- windower.send_command:schedule(2.8, 'input /ja "Gambit" <t>')
+					-- elseif abil_recasts[119] < latency then
+						-- windower.send_command:schedule(2.8, 'input /ja "Rayke" <t>')
+					-- end
 					windower.send_command:schedule(12.0, 'input /ws "Steel Cyclone" <t>')
-					windower.send_command:schedule(13.5, 'gs c set autotankmode on; gs c set autorunemode on')
+					windower.send_command:schedule(13.5, 'gs c set autotankmode on; gs c set autorunemode on; gs c autobuffmode auto;')
 				elseif player.main_job == 'BLM' then
-					atc('[AUTOSC] BLM PreNuke')
+					atc('[AUTOSC] BLM Nuke')
+					windower.send_command('gs c set elementalmode '..element..'; gs c set autobuffmode off')
 					windower.send_command:schedule(4.1, 'gs c elemental aja Ongo')
+					windower.send_command:schedule(13.0, 'gs c elemental nuke Ongo')
+					windower.send_command:schedule(17.3, 'gs c elemental nuke Ongo')
+					windower.send_command:schedule(22.6, 'gs c elemental nuke Ongo')
+					windower.send_command:schedule(24.0, 'gs c set autobuffmode auto')
 				end
 			--Sortie 4 Step: Aeolian Edge x4.
 			elseif cmd2 and cmd2:lower() == 'aeolian' then
@@ -4123,7 +3791,7 @@ function drop(cmd2)
                          3205,3206,3207,3208,3209,3210,3211,3212,3213,3214,3215,3216,3217,3218,3219,3220,3221,3222,3223,
                          3224,3225,3226,3227,3228,3229}
 	local crystals = S{4096,4097,4098,4099,4100,4101,4102,4103}
-	local escha_trash = S{9084,9085,9210,9212,9214,9215,9216}
+	local escha_trash = S{9084,9085,9210,9212,9214,9215,9216,6486,6488}
 
 	if cmd2 == 'rem' then
 		atc('[Drop] Rem Chapters 6-10')

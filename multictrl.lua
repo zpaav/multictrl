@@ -75,7 +75,9 @@ areas.Cities = S{
     "Western Adoulin",
 	"Celennia Memorial Library",
 	"Mog Garden",
-	"Leafallia"
+	"Leafallia",
+	"Silver Knife",
+	"Chocobo Circuit"
 }
 
 areas.Abyssea = S{15,45,132,215,216,217,218,253,254}
@@ -91,10 +93,12 @@ InternalCMDS = S{
 	--Travel
 	'mnt','dis','warp','omen','enter','get','deimos','macro','htmb',
 	--Misc
-	'reload','unload','fps','lotall','cleanup','drop','buyalltemps','book','stylelock',
+	'reload','unload','fps','lotall','cleanup','drop','book','stylelock',
 }
 
-DelayCMDS = S{'buyalltemps','book','get','enter','deimos','macro','htmb','enup','endown','ent','esc'}
+DelayCMDS = S{'book','get','enter','deimos','macro','htmb','enup','endown','ent','esc'}
+
+--sendall commands: lotall, reload, unload, fps?, omen, warp, mnt, dis,
 
 local player = windower.ffxi.get_player()
 local info = windower.ffxi.get_info()
@@ -622,15 +626,21 @@ function stage(cmd2)
 	if cmd2 == 'ambu' then
 		atc('[Stage]: Ambu')
 		windower.send_command('gaze ap on')
-		if player_job.main_job == 'THF' then
-			windower.send_command('lua r react; lua r roller; roll roll1 beast; hb f '..tank_char_name..'; hb as '..tank_char_name..'; hb as lock on; hb f dist 2')
-		elseif player_job.main_job == 'RUN' then
-			windower.send_command('mc smn; mc burn on; wait 3; mc burn avatar ramuh; mc burn indi refresh; wait 2; mc burn init')
-		elseif player_job.main_job == 'GEO' then
-			windower.send_command('rebuff; wait 10; hb buff '..tank_char_name..' haste')
+		if player_job.main_job == 'BLU' and player.sub_job == 'RDM' then
+			windower.send_command('azuresets set mboze; gs c set weapons macc; gs c set autobluspam on; hb buff me aquaveil')
+		elseif player_job.main_job == 'WAR' then
+			windower.send_command('gs c set weapons Loxotic; hb f off')
+		elseif player_job.main_job == 'BRD' then
+			windower.send_command('sing pl meleehaste2; sing ballad 1 '..tank_char_name..'; gs c set weapons DualSavage; sing ballad 2 '..find_job_charname('BLU')..'; hb as attack on; hb as '..find_job_charname('WAR')..'; hb f '..find_job_charname('WAR')..'; sing ballad 1 '..find_job_charname('RDM'))
+		elseif player_job.main_job == 'COR' then
+			windower.send_command('gs c set weapons DualSavage; roll melee; hb as attack on; hb as '..find_job_charname('WAR')..'; hb f '..find_job_charname('WAR'))
+		elseif player_job.main_job == 'RDM' then
+			windower.send_command('hb moblist add \"Bozzetto Pishogue\"; hb moblist on; hb aoe on; hb mincure 4; mc buffall haste2; hb buff '..tank_char_name..' refresh3; hb buff '..find_job_charname('BLU')..' refresh3; dfull; hb ind on; ; gs c set weapons maxentius; gs c autows black halo;')
+		elseif player_job.main_job == 'PLD' then
+			windower.send_command('lua l react')
 		end
 		settings.autows = true
-        windower.send_command('input /autotarget on')
+        windower.send_command('input /autotarget off; gs c othertargetws Bozzetto Pishogue; gs c set AutoOtherTargetWS on;')
 	elseif cmd2 == 'ambu2' then
 		if player_job.main_job == 'RDM' then
 			windower.send_command('hb f off; hb as off; hb off')
@@ -1099,6 +1109,22 @@ function stage(cmd2)
 			windower.send_command('irefresh; gfury; gs c autoentrust frailty; hb debuff dia2;')
 		end
 		settings.autows = true
+	elseif cmd2 == 'gige' then
+		if player_job.main_job == 'RDM' then
+			windower.send_command('hb f dist 8; hb f '..find_job_charname('WAR')..'; hb as nolock; hb as '..find_job_charname('WAR')..'; hb mldb gravity2,bind,paralyze2,slow2; hb moblist on; hb moblist add \"Gigelorum\'s Matamata\"; hb debuff slow2,paralyze2,addle2,gravity2,dia3,inundation; hb buff ' ..tank_char_name.. ' refresh3; hb buff ' ..find_job_charname('MNK').. ' refresh3; hb buff ' ..find_job_charname('WAR').. ' refresh3; mc buffall haste2; hb mincure 4')
+		elseif player_job.main_job == 'PLD' then
+			windower.send_command('hb buff me shell4; hb as off; hb f off;')
+		elseif player_job.main_job == 'BRD' then
+			windower.send_command('wait 2.5; sing pl gige; sing n on; sing p on; sing sirvente ' ..tank_char_name..'; sing ballad 1 '..tank_char_name..'; sing ballad 2 '..find_job_charname('RDM')..'; gs c set weapons Carnwenhan')
+		elseif player_job.main_job == 'MNK' then
+			windower.send_command('gs c set weaponskillmode Emnity')
+		elseif player_job.main_job == 'WAR' then
+			windower.send_command('gs c set weapons Loxotic; gs c set weaponskillmode Emnity; hb f dist 12; hb f '..tank_char_name)
+		elseif player_job.main_job == 'COR' then
+			windower.send_command('roll melee;')
+			windower.send_command('gs c set weapons Naegling;')
+		end
+		settings.autows = true
 	elseif cmd2 == 'kalunga' then
 		if player_job.main_job == 'WHM' then
 			windower.send_command('hb buff <me> barfira; gs c set castingmode DT; gs c set idlemode DT; hb debuff dia2; hb disable erase; hb buff ' ..settings.char1.. ' haste; hb buff ' ..settings.char1.. ' shell5; hb buff ' .. settings.char2 .. ' haste; hb buff ' .. settings.char3 .. ' haste;')
@@ -1483,10 +1509,10 @@ function wsall()
 	local player_job = windower.ffxi.get_player()
 	local MeleeJobs = S{'WAR','SAM','DRG','DRK','NIN','MNK','COR','BLU','PUP','DNC','RUN','BRD','THF','RNG','PLD','GEO','BST','RDM'}
     
-    local SmartJobs = S{'WAR','COR','BRD'}
+    local SmartJobs = S{'WAR','COR','BRD','BLU'}
     if settings.smartws then
         if SmartJobs:contains(player_job.main_job) then
-            windower.send_command('gs c smartws Mboze')
+            windower.send_command('gs c smartws Bozzetto Pishogue')
         end
     else
         if MeleeJobs:contains(player_job.main_job) then
@@ -3695,7 +3721,11 @@ function enter(leader)
 
 	local possible_npc = find_npc_to_poke()
 	if possible_npc and get_poke_check_index(possible_npc.index) then
-		keypress_cmd(npc_map[zone_id].name[possible_npc.name].entry_command)
+		if not(npc_map[zone_id].name[possible_npc.name].index) then
+			keypress_cmd(npc_map[zone_id].name[possible_npc.name].entry_command)
+		else
+			keypress_cmd(npc_map[zone_id].name[possible_npc.name].index[possible_npc.index].entry_command)
+		end
 	else
 		atc("[ENTER] No NPC's nearby to poke, cancelling.")
 	end	
@@ -4444,13 +4474,12 @@ end
 
 
 function check_leader_in_same_party(leader)
-	player = windower.ffxi.get_player()
 	for k, v in pairs(windower.ffxi.get_party()) do
-		if type(v) == 'table' then
-			if v.name == leader then
+		if type(v) == 'table' and v.name == leader then
+			--if v.name == leader then
 				atc('[CheckLeader] ' ..v.name .. ' is in party and is leader.')
 				return true
-			end
+			--end
 		end
 	end
 end
@@ -4479,7 +4508,7 @@ local function distance_check_npc(npc)
 		atc('[Dist Check] -Found-: ' ..npc.name.. ' [Distance]: ' .. math.sqrt(npc.distance))
         return true
     else
-        atc('[Dist Check] -TOO FAR AWAY-: ' ..npc.name.. ' [Distance]: ' .. math.sqrt(npc.distance))
+        atcwarn('[Dist Check] -TOO FAR AWAY-: ' ..npc.name.. ' [Distance]: ' .. math.sqrt(npc.distance))
         return false
     end
 end
@@ -4609,6 +4638,7 @@ windower.register_event("status change", function(new,old)
 end)
 
 windower.register_event("job change", function(main_job_id, main_job_level, sub_job_id, sub_job_level)
+	coroutine.sleep(3)
 	player = windower.ffxi.get_player()
 end)
 
@@ -4751,15 +4781,15 @@ local salvage_area = S{73,74,75,76}
 
 windower.register_event('zone change', function(new_id, old_id)
 	zone_id = new_id
-	zone_info = windower.ffxi.get_info()
-	coroutine.sleep(10)
-	if salvage_area:contains(zone_info.zone) then
-		windower.add_to_chat(262,'[MC] Entering Salvage zones.')
-        windower.send_command('lua load salvagecells')
-	end 
+	--zone_info = windower.ffxi.get_info()
+	-- coroutine.sleep(10)
+	-- if salvage_area:contains(zone_info.zone) then
+		-- windower.add_to_chat(262,'[MC] Entering Salvage zones.')
+        -- windower.send_command('lua load salvagecells')
+	-- end 
 	
-	if salvage_area:contains(old_id) and not salvage_area:contains(new_id) then
-		windower.add_to_chat(262,'[MC] Exiting Salvage zones.')
-        windower.send_command('lua unload salvagecells')
-	end
+	-- if salvage_area:contains(old_id) and not salvage_area:contains(new_id) then
+		-- windower.add_to_chat(262,'[MC] Exiting Salvage zones.')
+        -- windower.send_command('lua unload salvagecells')
+	-- end
 end)

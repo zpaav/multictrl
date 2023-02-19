@@ -1,5 +1,5 @@
 job_change_data = {
-	['ambu'] = {name='Ambuscade', char1 = 'thf/cor', char2 = 'smn/rdm', char3 = 'smn/rdm', char4 = 'geo/whm', char5 = 'run/drk', char6 = 'smn/rdm',},
+	['ambu'] = {name='Ambuscade', char1 = 'blu/rdm', char2 = 'pld/run', char3 = 'rdm/sch', char4 = 'brd/dnc', char5 = 'war/sam', char6 = 'cor/nin',},
 	['ody'] = {name='Odyssey Farm', char1 = 'run/pld', char2 = 'sam/war', char3 = 'cor/nin', char4 = 'brd/rdm', char5 = 'whm/sch', char6 = 'sam/war',},
 	['alex'] = {name='Alexander', char1 = 'pld/run', char2 = 'thf/war', char3 = 'war/drg', char4 = 'brd/nin', char5 = 'geo/rdm', char6 = 'whm/sch',},
 	['sortie'] = {name='Sortie Melee', char1 = 'run/drk', char2 = 'cor/nin', char3 = 'blu/drg', char4 = 'brd/dnc', char5 = 'war/drg', char6 = 'whm/sch',},

@@ -133,23 +133,50 @@ npc_map = {
 		['Krepol'] = {entry_command = {0.85, {'enter', 0.15}}},
 		['Glowing Hearth'] = {entry_command = {0.85, {'enter', 0.15}}},
 		}},
-	[261] = {name = {'???'}},
-	[263] = {name = {'???'}},
-	[265] = {name = {
-		['???'] = {entry_command = {0.85, {'down', 0.15}, 0.5, {'enter', 0.15}}},	--Beam Up
+	[261] = {name = { -- [Ceizak]
+		['???'] = {index = {
+			[497] = {entry_command = {1.5, {'down', 0.05}, 0.7, {'enter', 0.15}, 2.1, {'up', 0.15}, 0.7, {'enter', 0.15}}}, -- WKR Ceizak
+			[593] = {entry_command = {0.85, {'down', 0.15}, 0.5, {'enter', 0.15}}}, --Beam Up - To Sih Gates
+		}}}},
+	[262] = {name = { -- [Foret]
+		['???'] = {index = {
+			[531] = {entry_command = {1.5, {'down', 0.05}, 0.7, {'enter', 0.15}, 2.1, {'up', 0.15}, 0.7, {'enter', 0.15}}}, -- WKR Foret
+			[625] = {entry_command = {0.85, {'down', 0.15}, 0.5, {'enter', 0.15}}}, --Beam Up - To Dho Gates
+		}}}},
+	[263] = {name = { -- [Yorcia]
+		['???'] = {index = {
+			[562] = {entry_command = {1.5, {'down', 0.05}, 0.7, {'enter', 0.15}, 2.1, {'up', 0.15}, 0.7, {'enter', 0.15}}},	--WKR Yorcia
+			[649] = {entry_command = {0.85, {'down', 0.15}, 0.5, {'enter', 0.15}}},  --Beam Up - To Cirdas
+		}}}},
+	[265] = {name = { -- [Morimor]
+		['???'] = {index = { 
+			[734] = {entry_command = {1.5, {'down', 0.05}, 0.7, {'enter', 0.15}, 2.1, {'up', 0.15}, 0.7, {'enter', 0.15}}}, --WKR Morimor
+			[844] = {entry_command = {0.85, {'down', 0.15}, 0.5, {'enter', 0.15}}},  --Beam Up - To Moh Gates
+		}}}},
+	[266] = {name = { -- [Marjami]
+		['???'] = {index = { 
+			[416] = {entry_command = {1.5, {'down', 0.05}, 0.7, {'enter', 0.15}, 2.1, {'up', 0.15}, 0.7, {'enter', 0.15}}}, --WKR Marjami
+			[507] = {entry_command = {0.85, {'down', 0.15}, 0.5, {'enter', 0.15}}},  --Beam Up - To Woh Gates
 		}},
-	[268] = {name = {
-		['???'] = {entry_command = {0.85, {'down', 0.15}, 0.5, {'enter', 0.15}}},	--Beam Up
+		['Scalable Area'] = {entry_command = {0.85, {'enter', 0.15}}},
 		}},
-	[269] = {name = {
-		['???'] = {entry_command = {0.85, {'down', 0.15}, 0.5, {'enter', 0.15}}},	--Beam Up
+	[267] = {name = { -- [Kamihr]
+		['???'] = {entry_command = {1.5, {'down', 0.05}, 0.7, {'enter', 0.15}, 2.1, {'up', 0.15}, 0.7, {'enter', 0.15}}}, --WKR Kamihr
 		}},
-	[270] = {name = {'???'}},
-	[272] = {name = {
-		['???'] = {entry_command = {0.85, {'down', 0.15}, 0.5, {'enter', 0.15}}},	--Beam Up
+	[268] = {name = { -- [Sih Gates]
+		['???'] = {entry_command = {0.85, {'down', 0.15}, 0.5, {'enter', 0.15}}},	--Beam Up/Down - To Ceizak /  Ra'Kaznar Inner Court
 		}},
-	[273] = {name = {
-		['???'] = {entry_command = {0.85, {'down', 0.15}, 0.5, {'enter', 0.15}}},	--Beam Up
+	[269] = {name = { -- [Moh Gates]
+		['???'] = {entry_command = {0.85, {'down', 0.15}, 0.5, {'enter', 0.15}}},	--Beam Up/Down - To Morimor / Ra'Kaznar Inner Court
+		}},
+	[270] = {name = { -- [Cirdas Caverns]
+		['???'] = {entry_command = {0.85, {'down', 0.15}, 0.5, {'enter', 0.15}}},	--Beam Up/Down - To Yorcia /  Ra'Kaznar Inner Court
+		}},
+	[272] = {name = { -- [Dho Gates]
+		['???'] = {entry_command = {0.85, {'down', 0.15}, 0.5, {'enter', 0.15}}},	--Beam Up/Down - To Foret /  Ra'Kaznar Inner Court
+		}},
+	[273] = {name = { -- [Woh Gates]
+		['???'] = {entry_command = {0.85, {'down', 0.15}, 0.5, {'enter', 0.15}}},	--Beam Up/Down - To Marjami /  Ra'Kaznar Inner Court
 		}},
 	[274] = {name = {
 		['Entwined Roots'] = {entry_command = {0.85, {'up', 0.15}, 0.5, {'enter', 0.15}}},
@@ -214,10 +241,10 @@ npc_map = {
 }
 
 basic_key_sequence = {
-	['ent'] = {command = {0.1, {'enter', 0.15}}},
-	['enup'] = {command = {0.1, {'up', 0.15}, 0.5, {'enter', 0.15}}},
-	['endown'] = {command = {0.1, {'down', 0.15}, 0.5, {'enter', 0.15}}},
-	['esc'] = {command = {0.1, {'escape', 0.15}}},
+	['ent'] = {command = {0.7, {'enter', 0.15}}},
+	['enup'] = {command = {0.7, {'up', 0.15}, 0.5, {'enter', 0.15}}},
+	['endown'] = {command = {0.7, {'down', 0.15}, 0.5, {'enter', 0.15}}},
+	['esc'] = {command = {0.7, {'escape', 0.15}}},
 }
---WKR
---'wait 1.3; setkey down down; wait 0.05; setkey down up; wait 0.7; setkey enter down; wait 0.25; setkey enter up; wait 2.1; setkey up down; wait 0.25; setkey up up; wait 0.7; setkey enter down; wait 0.25; setkey enter up;'
+
+return entry_map

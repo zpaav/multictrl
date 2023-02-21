@@ -85,7 +85,7 @@ areas.Abyssea = S{15,45,132,215,216,217,218,253,254}
 InternalCMDS = S{
 
 	--Battle
-	'on','off','stage','fight','fightmage','fightsmall','ws','food','autosub',
+	'on','off','stage','stagenew','fight','fightmage','fightsmall','ws','food','autosub',
 	'wsall','zerg','wstype','buffup','rebuff','dd','attackon','reraise','smartws',
 	
 	--Job
@@ -606,6 +606,38 @@ end
 
 -- Sub functions
 
+function stagenew(cmd2)
+
+	if not stage_data[cmd2] then
+		atcwarn('Error: Not a stage setup.')
+		return
+	end
+	
+	if player.main_job == 'BRD' then
+		windower.send_command('lua r singer; wait 1; sing clear all; mc brd reset')
+	end
+	
+	--Unload certain addons
+	windower.send_command('lua u maa; lua u react')
+	
+	for _,job_cmds in pairs(stage_data[cmd2]) do
+		if type(job_cmds)=='table' and job_cmds[player.main_job] then
+			for _,action_line in pairs(job_cmds[player.main_job]) do
+				windower.send_command(action_line)
+			end
+		end
+		if job_cmds['ALL'] then
+			if job_cmds['ALL'].commands then
+				windower.send_command(job_cmds['ALL'].commands)
+			end
+			if job_cmds['ALL'].mc_settings then
+				job_cmds['ALL'].mc_settings()
+			end
+		end
+	end
+	display_box()
+end
+
 function stage(cmd2)
 	local player_job = windower.ffxi.get_player()
 	local MeleeJobs = S{'WAR','SAM','DRG','DRK','NIN','MNK','COR','BLU','PUP','DNC','RUN','BRD','THF','RNG'}
@@ -614,7 +646,7 @@ function stage(cmd2)
 
 	-- Mamool Mage - PLD BRD COR WHM RDM WAR
 	if player_job.main_job == 'BRD' then
-		windower.send_command('sing clear all; mc brd reset')
+		windower.send_command('lua r singer; wait 1; sing clear all; mc brd reset')
 	end
 	
 	--Unload certain addons
@@ -1111,15 +1143,15 @@ function stage(cmd2)
 		settings.autows = true
 	elseif cmd2 == 'gige' then
 		if player_job.main_job == 'RDM' then
-			windower.send_command('hb f dist 8; hb f '..find_job_charname('WAR')..'; hb as nolock; hb as '..find_job_charname('WAR')..'; hb mldb gravity2,bind,paralyze2,slow2; hb moblist on; hb moblist add \"Gigelorum\'s Matamata\"; hb debuff slow2,paralyze2,addle2,gravity2,dia3,inundation; hb buff ' ..tank_char_name.. ' refresh3; hb buff ' ..find_job_charname('MNK').. ' refresh3; hb buff ' ..find_job_charname('WAR').. ' refresh3; mc buffall haste2; hb mincure 4')
+			windower.send_command('hb f dist 6; hb f '..find_job_charname('WAR')..'; hb as nolock; hb as '..find_job_charname('WAR')..'; hb mldb gravity2,bind,paralyze2,slow2; hb moblist on; hb moblist add \"Gigelorum\'s Matamata\"; hb debuff slow2,paralyze2,addle2,gravity2,dia3,inundation; hb buff ' ..tank_char_name.. ' refresh3; hb buff ' ..find_job_charname('MNK').. ' refresh3; hb buff ' ..find_job_charname('WAR').. ' refresh3; mc buffall haste2; hb mincure 4')
 		elseif player_job.main_job == 'PLD' then
 			windower.send_command('hb buff me shell4; hb as off; hb f off;')
 		elseif player_job.main_job == 'BRD' then
 			windower.send_command('wait 2.5; sing pl gige; sing n on; sing p on; sing sirvente ' ..tank_char_name..'; sing ballad 1 '..tank_char_name..'; sing ballad 2 '..find_job_charname('RDM')..'; gs c set weapons Carnwenhan')
 		elseif player_job.main_job == 'MNK' then
-			windower.send_command('gs c set weaponskillmode Emnity')
+			windower.send_command('gs c set weaponskillmode Enmity')
 		elseif player_job.main_job == 'WAR' then
-			windower.send_command('gs c set weapons Loxotic; gs c set weaponskillmode Emnity; hb f dist 12; hb f '..tank_char_name)
+			windower.send_command('lua l dressup; gs c set weapons Loxotic; gs c set weaponskillmode Enmity; hb f dist 12; hb f '..tank_char_name)
 		elseif player_job.main_job == 'COR' then
 			windower.send_command('roll melee;')
 			windower.send_command('gs c set weapons Naegling;')
@@ -4476,10 +4508,8 @@ end
 function check_leader_in_same_party(leader)
 	for k, v in pairs(windower.ffxi.get_party()) do
 		if type(v) == 'table' and v.name == leader then
-			--if v.name == leader then
-				atc('[CheckLeader] ' ..v.name .. ' is in party and is leader.')
-				return true
-			--end
+			atc('[CheckLeader] ' ..v.name .. ' is in party and is leader.')
+			return true
 		end
 	end
 end
@@ -4668,6 +4698,18 @@ windower.register_event("lose buff", function(buff_id)
     end
 end)
 
+function poke_npc(npc,target_index)
+	if npc and target_index then
+		local packet = packets.new('outgoing', 0x01A, {
+			["Target"]=npc,
+			["Target Index"]=target_index,
+			["Category"]=0,
+			["Param"]=0,
+			["_unknown1"]=0})
+		packets.inject(packet)
+	end
+end
+
 windower.register_event('incoming chunk', function(id, data)
     if id == 0x028 then	-- Casting
         local action_message = packets.parse('incoming', data)
@@ -4689,18 +4731,6 @@ windower.register_event('incoming chunk', function(id, data)
 	end
 end)
 
-
-function poke_npc(npc,target_index)
-	if npc and target_index then
-		local packet = packets.new('outgoing', 0x01A, {
-			["Target"]=npc,
-			["Target Index"]=target_index,
-			["Category"]=0,
-			["Param"]=0,
-			["_unknown1"]=0})
-		packets.inject(packet)
-	end
-end
 
 -- Credit to partyhints
 function set_registry(id, job_id)

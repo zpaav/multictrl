@@ -5,6 +5,7 @@ job_change_data = {
 	['sortie'] = {name='Sortie Melee', char1 = 'run/drk', char2 = 'cor/nin', char3 = 'blu/drg', char4 = 'brd/dnc', char5 = 'war/drg', char6 = 'whm/sch',},
 	['sortie2'] = {name='Sortie Mage', char1 = 'run/pld', char2 = 'blm/rdm', char3 = 'sch/rdm', char4 = 'sch/whm', char5 = 'geo/rdm', char6 = 'cor/whm',},
 	['shinryu'] = {name='Shinryu', char1 = 'thf/war', char2 = 'mnk/war', char3 = 'sch/whm', char4 = 'brd/dnc', char5 = 'whm/sch', char6 = 'geo/rdm',},
+	['shinryu2'] = {name='Shinryu Alternative', char1 = 'whm/sch', char2 = 'thf/war', char3 = 'geo/rdm', char4 = 'sch/whm', char5 = 'brd/dnc', char6 = 'mnk/war',},
 	['ouryu'] = {name='Ouryu', char1 = 'run/drk', char2 = 'sam/war', char3 = 'cor/dnc', char4 = 'brd/whm', char5 = 'whm/sch', char6 = 'geo/rdm',},
 	['cait'] = {name='Cait Sith', char1 = 'run/drk', char2 = 'thf/war', char3 = 'cor/nin', char4 = 'brd/dnc', char5 = 'whm/sch', char6 = 'smn/whm',},
 	['dyna'] = {name='Dnyamis W3', char1 = 'pld/blu', char2 = 'sam/drg', char3 = 'cor/nin', char4 = 'brd/dnc', char5 = 'rdm/sch', char6 = 'geo/sch',},
@@ -27,6 +28,37 @@ job_change_data = {
 	['kalunga1'] = {name='Kalunga Farm #1', char1 = 'pld/rdm', char2 = 'bst/rdm', char3 = 'drk/rdm', char4 = 'sch/rdm', char5 = 'brd/rdm', char6 = 'mnk/rdm',},
 	['kalunga2'] = {name='Kalunga Farm #2', char1 = 'run/rdm', char2 = 'sam/rdm', char3 = 'blu/rdm', char4 = 'geo/rdm', char5 = 'rdm/thf', char6 = 'thf/rdm',},
 	['kalunga3'] = {name='Kalunga Farm #3', char1 = 'war/rdm', char2 = 'pup/rdm', char3 = 'cor/rdm', char4 = 'blm/rdm', char5 = 'whm/rdm', char6 = 'nini/rdm',},
+}
+
+stage_data = {
+	['ambu'] = { jobs = {
+		['RDM'] = {	'hb moblist add \"Bozzetto Pishogue\"; hb moblist on; hb aoe on; hb mincure 4; mc buffall haste2; hb buffjob tank refresh3; hb buffjob BLU refresh3; dfull; hb ind on;'},
+		['BLU'] = {	'azuresets set mboze; gs c set weapons macc; gs c set autobluspam on; hb buff me aquaveil'},
+		['BRD'] = { 'wait 2.5; sing pl meleehaste2; sing ballad 1 tank; gs c set weapons DualSavage; sing ballad 2 BLU; hb as attack on; hb as j WAR; hb f j WAR; sing ballad 1 RDM'},
+		['PLD'] = {	'lua r react',},
+		['WAR'] = {	'gs c set weapons Loxotic; hb f off'},
+		['COR'] = {	'gs c set weapons DualSavage; roll melee; hb as attack on; hb as j WAR; hb f j WAR'},
+		['ALL'] = {	commands = 'input /autotarget off; gs c othertargetws Bozzetto Pishogue; gs c set AutoOtherTargetWS on;', mc_settings = function() settings.autows = true; end},
+	}},
+	['gige'] = { jobs = {
+		['RDM'] = {	'hb f dist 6; hb f j WAR; hb as nolock; hb as j WAR; hb mldb gravity2,bind,paralyze2,slow2; hb moblist on; hb moblist add \"Gigelorum\'s Matamata\";',
+					'hb debuff slow2,paralyze2,addle2,gravity2,dia3,inundation; hb buffjob tank refresh3; hb buffjob MNK refresh3; hb buffjob WAR refresh3; hb mincure 4; mc buffall haste2;'},
+		['RUN'] = {	'hb buff me shell5; hb as off; hb f off;'},
+		['BRD'] = { 'wait 2.5; sing pl gige; sing n on; sing p on; sing sirvente tank; sing ballad 1 tank; sing ballad 2 RDM; gs c set weapons Carnwenhan'},
+		['MNK'] = {	'gs c set weaponskillmode Enmity',},
+		['WAR'] = {	'lua l dressup; gs c set weapons Loxotic; gs c set weaponskillmode Enmity; hb f dist 12; hb f j TANK'},
+		['COR'] = {	'gs c set weapons Naegling; roll melee;'},
+		['ALL'] = {	commands = '', mc_settings = function() settings.autows = true; end},
+	}},
+	['aris'] = { jobs = {
+		['WHM'] = {	'hb buff me auspice,aquaveil,barfira,baramnesra; gs c set castingmode SIRD; mc buffall haste; hb debuff dia2; hb as j WAR; hb as nolock; hb disable erase',},
+		['GEO'] = {	'gs c autogeo fury; gs c autoindi barrier; gs c autoentrust STR'},
+		['BRD'] = { 'wait 2.5; sing pl aris; sing n on; sing p on; sing ballad 2 whm; gs c set weapons Carnwenhan; sing debuff carnage elegy; sing aoe off; sing d on;'},
+		['SAM'] = {	'gs c set weaponskillmode Enmity; gs c set defensedownmode on;',},
+		['WAR'] = {	'lua l dressup; gs c set weapons Naegling; gs c set autotomahawkmode on;'},
+		['COR'] = {	'gs c set weapons Naegling; roll melee;'},
+		['ALL'] = {	commands = 'autoitem off', mc_settings = function() settings.autows = true; end},
+	}},
 }
 
 return job_data

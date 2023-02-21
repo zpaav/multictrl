@@ -614,7 +614,7 @@ function stagenew(cmd2)
 	end
 	
 	if player.main_job == 'BRD' then
-		windower.send_command('lua r singer; wait 1; sing clear all; mc brd reset')
+		windower.send_command('lua l singer; wait 0.5; sing clear all; mc brd reset')
 	end
 	
 	--Unload certain addons

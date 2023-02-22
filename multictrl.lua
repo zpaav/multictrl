@@ -631,7 +631,7 @@ function stagenew(cmd2)
 				windower.send_command(job_cmds['ALL'].commands)
 			end
 			if job_cmds['ALL'].mc_settings then
-				job_cmds['ALL'].mc_settings()
+				local updated_settings = settings:update(job_cmds['ALL'].mc_settings)
 			end
 		end
 	end
@@ -645,9 +645,9 @@ function stage(cmd2)
 	settings = settings.load('data/settings.xml')
 
 	-- Mamool Mage - PLD BRD COR WHM RDM WAR
-	if player_job.main_job == 'BRD' then
-		windower.send_command('lua r singer; wait 1; sing clear all; mc brd reset')
-	end
+	-- if player_job.main_job == 'BRD' then
+		-- windower.send_command('lua r singer; wait 1; sing clear all; mc brd reset')
+	-- end
 	
 	--Unload certain addons
 	windower.send_command('lua u maa; lua u react')
@@ -2133,26 +2133,26 @@ function ws(cmd2)
 end
 
 function autosub(cmd2)
-	local player_job = windower.ffxi.get_player()
+	
 	if cmd2 == 'off' then
-		if player_job.sub_job == "SCH" then
-			if player_job.main_job ~= "RDM" then
+		if player.sub_job == "SCH" or player.main_job == "SCH" then
+			if player.main_job ~= "RDM" then
 				windower.send_command('gs c set autosubmode off')
 			end
 		end
 		atc('[SLEEP]: AutoSubMode OFF')
 		settings.autosub = 'off'
 	elseif cmd2 == 'sleep' then
-		if player_job.sub_job == "SCH" then
-			if player_job.main_job ~= "RDM" then
+		if player.sub_job == "SCH" or player.main_job == "SCH" then
+			if player.main_job ~= "RDM" then
 				windower.send_command('gs c set autosubmode sleep')
 			end
 		end
 		atc('[SLEEP]: AutoSubMode SLEEP')
 		settings.autosub = 'sleep'
     elseif cmd2 == 'on' then
-		if player_job.sub_job == "SCH" then
-			if player_job.main_job ~= "RDM" then
+		if player.sub_job == "SCH" or player.main_job == "SCH" then
+			if player.main_job ~= "RDM" then
 				windower.send_command('gs c set autosubmode on')
 			end
 		end
@@ -3096,36 +3096,52 @@ function autosc(cmd2, leader_char)
 						windower.send_command:schedule(4.2, 'gs c set autotankmode on; gs c set autorunemode on')
 					end
 				end
+			--Marmorkrebs [Thunder Burst 3 Step SC]
 			elseif cmd2 and cmd2:lower() == 'frostbite' then
+				local mob_name = 'Marmorkrebs'
 				if player.main_job == 'SCH' then				
 					atc('[AUTOSC] ENDING SCH - Water [Fragmentation]')
-					windower.send_command('input /ja "Immanence" <me>')
-					windower.send_command:schedule(3.4, 'gs c elemental tier1 Marmorkrebs')
+					windower.send_command('gs c set elementalmode lightning; gs c set autobuffmode off; gs c set autosubmode off; input /ja "Immanence" <me>')
+					windower.send_command:schedule(3.3, 'input /ma "Water" '..windower.ffxi.get_mob_by_name(mob_name).id)
+					windower.send_command:schedule(8.5, 'gs c elemental nuke '..mob_name)
+					windower.send_command:schedule(14.5, 'gs c elemental nuke '..mob_name)
+					windower.send_command:schedule(15.8, 'gs c set autobuffmode nuking; gs c set autosubmode off;')
+				elseif player.main_job == 'BLM' then
+					atc('[AUTOSC] BLM Nuke')
+					windower.send_command('gs c set elementalmode lightning; gs c set autobuffmode off')
+					windower.send_command:schedule(2.9, 'gs c elemental aja '..mob_name)
+					windower.send_command:schedule(7.3, 'gs c elemental nuke '..mob_name)
+					windower.send_command:schedule(12.7, 'gs c elemental nuke '..mob_name)
+					windower.send_command:schedule(13.5, 'gs c set autobuffmode auto')
+				elseif player.main_job == 'GEO' then
+					atc('[AUTOSC] GEO Nuke')
+					windower.send_command('gs c set elementalmode lightning')
+					windower.send_command:schedule(5.4, 'gs c elemental nuke '..mob_name)
+					windower.send_command:schedule(9.8, 'gs c elemental nuke '..mob_name)
+					windower.send_command:schedule(13.7, 'gs c elemental nuke '..mob_name)
 				elseif player.main_job == 'COR' then
 					atc('[AUTOSC] COR Last Stand')
 					local abil_recasts = windower.ffxi.get_ability_recasts()
 					local latency = 0.7
 					if abil_recasts[195] < latency then
-						windower.send_command:schedule(3.7, 'input /ja "Thunder Shot" <t>')
+						windower.send_command:schedule(3.6, 'input /ja "Thunder Shot" <t>')
 					end
-					windower.send_command:schedule(10.1, 'input /ws "Last Stand" <t>')
-					windower.send_command:schedule(13.5, 'autora start')
-				elseif player.main_job == 'BLM' then
-					atc('[AUTOSC] BLM PreNuke')
-					windower.send_command:schedule(3.9, 'gs c elemental aja Marmorkrebs')
+					windower.send_command:schedule(11.0, 'input /ws "Last Stand" <t>')
+					windower.send_command:schedule(14.6, 'autora start')
 				elseif player.main_job == 'RUN' then
 					local abil_recasts = windower.ffxi.get_ability_recasts()
 					local latency = 0.7
 					atc('[AUTOSC] Rayke/Gambit')
-					--windower.send_command:schedule(3.2, 'gs c set autowsmode off')
 					if abil_recasts[116] < latency then
-						windower.send_command('gs c set autotankmode off; gs c set autobuffmode off; gs c set autorunemode off')
+						windower.send_command('gs c set autobuffmode off; gs c set autotankmode off; gs c set autorunemode off')
 						windower.send_command:schedule(3.1, 'input /ja "Gambit" <t>')
-						windower.send_command:schedule(4.2, 'gs c set autotankmode on; gs c set autorunemode on')
+						windower.send_command:schedule(4.2, 'gs c set autobuffmode auto; gs c set autotankmode on; gs c set autorunemode on')
 					elseif abil_recasts[119] < latency then
-						windower.send_command('gs c set autotankmode off; gs c set autobuffmode off; gs c set autorunemode off')
+						windower.send_command('gs c set autobuffmode off; gs c set autotankmode off; gs c set autorunemode off')
 						windower.send_command:schedule(3.1, 'input /ja "Rayke" <t>')
-						windower.send_command:schedule(4.2, 'gs c set autotankmode on; gs c set autorunemode on')
+						windower.send_command:schedule(4.2, 'gs c set autobuffmode auto; gs c set autotankmode on; gs c set autorunemode on')
+					elseif abil_recasts[25] < latency then
+						windower.send_command:schedule(10.9, 'input /ja "Lunge" <t>')
 					end
 				end
 			--Upheaval > Gambit/Rayke/Earth Shot > Leaden Saluate > Steel Cyclone > Wild fire.

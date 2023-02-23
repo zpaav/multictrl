@@ -29,6 +29,7 @@ job_change_data = {
 	['kalunga2'] = {name='Kalunga Farm #2', char1 = 'run/rdm', char2 = 'sam/rdm', char3 = 'blu/rdm', char4 = 'geo/rdm', char5 = 'rdm/thf', char6 = 'thf/rdm',},
 	['kalunga3'] = {name='Kalunga Farm #3', char1 = 'war/rdm', char2 = 'pup/rdm', char3 = 'cor/rdm', char4 = 'blm/rdm', char5 = 'whm/rdm', char6 = 'nin/rdm',},
 	['marm'] = {name='Marmorkrebs Clear', char1 = 'run/rdm', char2 = 'blm/rdm', char3 = 'sch/rdm', char4 = 'geo/rdm', char5 = 'rdm/whm', char6 = 'cor/rdm',},
+	['procne'] = {name='Procne Clear', char1 = 'war/rdm', char2 = 'pld/rdm', char3 = 'drg/rdm', char4 = 'brd/rdm', char5 = 'rdm/whm', char6 = 'cor/rdm',},
 }
 
 stage_data = {
@@ -61,12 +62,12 @@ stage_data = {
 		['ALL'] = {	commands = 'autoitem off', mc_settings = {autows=true}},
 	}},
 	['procne'] = { jobs = {
-		['RDM'] = {	'hb f dist 6; hb f j WAR; hb as nolock; hb as j WAR; hb mldb gravity2,bind,paralyze2,slow2; hb moblist on; hb moblist add \"Procne\'s Tulfaire\";',
-					'hb debuff slow2,paralyze2,addle2,gravity2,dia3,inundation; hb buffjob tank refresh3; hb buffjob SAM refresh3; hb buffjob WAR refresh3; hb mincure 4; mc buffall haste2;'},
-		['PLD'] = {	'hb buff me shell5; hb as off; hb f off;'},
-		['BRD'] = { 'wait 2.5; sing pl aris; sing n on; sing p on; sing ballad 1 tank; sing ballad 2 RDM; gs c set weapons Carnwenhan'},
-		['SAM'] = {	'gs c set weapons ShiningOne',},
-		['WAR'] = {	'lua l dressup; gs c set weapons ShiningOne;'},
+		['RDM'] = {	'hb f dist 6; hb f j WAR; hb as nolock; hb as j WAR; hb mldb gravity2,bind,paralyze2,slow2; hb moblist on; hb moblist add \"Procne\'s Tulfaire\"; hb buffjob tank shell5;',
+					'hb debuff slow2,paralyze2,addle2,gravity2,dia3,inundation; hb buffjob tank refresh3; hb buffjob WAR refresh3; hb mincure 4; mc buffall haste2;'},
+		['PLD'] = {	'hb as off; hb f off;'},
+		['BRD'] = { 'wait 2.5; sing pl procne; sing n on; sing p on; sing ballad 1 tank; sing wind 1 tank; sing sirvente tank; sing ballad 2 RDM; gs c set weapons Carnwenhan'},
+		['DRG'] = {	'gs c set weapons Trishula;',},
+		['WAR'] = {	'lua l dressup; gs c set weapons ShiningOne; gs c set weaponskillmode Enmity;'},
 		['COR'] = {	'gs c set weapons Fomalhaut; roll melee;'},
 		['ALL'] = {	commands = '', mc_settings = {autows=true}},
 	}},
@@ -101,7 +102,7 @@ stage_data = {
 		['ALL'] = {	commands = 'hb f dist 2.7; autoitem on;', mc_settings = {autows=false,autosc=true,autosub='off'}},
 	}},
 	['wave1'] = { jobs = {
-		['RDM'] = {	'mc buffall haste2; wait 1.0; mc buffall shell5; wait 1.0; hb buff me enthunder; hb buffjob tank refresh3,protect5,shell5;',
+		['RDM'] = {	'mc buffall haste2; wait 1.0; mc buffall shell5; wait 1.0; hb buff me enthunder; hb buffjob tank refresh3,protect5,shell5; hb aoe on;',
 					'hb mincure 4; hb buffjob GEO refresh3; dmain; hb buffjob SAM refresh3;'},
 		['PLD'] = {	'hb buff me shell5; hb as off; hb f off;'},
 		['BRD'] = { 'wait 1; gs c set treasuremode tag; hb minwaltz 3; gs c weapons DualCarn; sing pl melee; sing n off; sing p on; sing d on; hb debuff wind threnody II; sing debuff carnage elegy;',
@@ -112,8 +113,20 @@ stage_data = {
 		['GEO'] = {	'gs c set castingmode DT; gs c set idlemode DT; gmalaise; iacumen; hb mincure 4; hb aoe on',
 					'wait 0.7; hb buffjob SAM windstorm; hb buffjob RDM aurorastorm; hb buffjob BRD aurorastorm; hb buffjob tank aurorastorm;'},
 		['COR'] = {	'gs c autows leaden salute; gs c set weapons DualLeadenRanged; roll roll1 tact; roll roll2 wizard;'},
-		['SCH'] = {	'gs c set castingmode DT; gs c set idlemode DT; hb mincure 4',
-					'wait 0.7; hb buff me auspice,regen5; hb buffjob SAM windstorm2; hb buffjob RDM aurorastorm2; hb buffjob RDM aurorastorm2; hb buffjob BRD aurorastorm2; hb buffjob tank aurorastorm2;'},
+		['ALL'] = {	commands = 'input /autotarget off', mc_settings = {autows=true,autosub='off'}},
+	}},
+	['wave2'] = { jobs = {
+		['RDM'] = {	'mc buffall haste2; wait 1.0; mc buffall shell5; wait 1.0; hb buff me enthunder; hb buffjob tank refresh3,protect5,shell5; hb mincure 4; hb aoe on;',
+					'hb buffjob GEO refresh3; dfull; gs c autows savage blade; hb buffjob SAM refresh3; gs c set weapons Naegling;'},
+		['PLD'] = {	'hb buff me shell5; hb as off; hb f off;'},
+		['BRD'] = { 'wait 1; gs c set treasuremode tag; hb minwaltz 3; gs c weapons DualCarn; sing pl w2; sing n off; sing p on; sing d on; hb debuff wind threnody II; sing debuff carnage elegy; gs c set autozergmode on;',
+					'wait 1.5; sing ballad 1 GEO; sing ballad 1 RDM;',
+					'wait 1.5; sing sirvente tank; sing ballad 1 tank',
+					'wait 1.5; sing ballad 1 WHM; sing ballad 2 SCH'},
+		['SAM'] = {	'gs c set hybridmode DT; gs c set weapons Masamune; gs c set DefenseDownMode tag; gs c set weaponskillmode Enmity;'},
+		['GEO'] = {	'gs c set castingmode DT; gs c set idlemode DT; gfury; ibarrier; gs c autoentrust frailty; hb mincure 4; hb aoe on',
+					'wait 0.7; hb buffjob SAM windstorm; hb buffjob RDM aurorastorm; hb buffjob BRD aurorastorm; hb buffjob tank aurorastorm;'},
+		['COR'] = {	'gs c set weapons DualSavage; gs c autows savage blade; roll melee;'},
 		['ALL'] = {	commands = 'input /autotarget off', mc_settings = {autows=true,autosub='off'}},
 	}},
 	['shinryu'] = { jobs = {
@@ -131,3 +144,4 @@ stage_data = {
 }
 
 return job_data
+       

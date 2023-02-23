@@ -656,27 +656,8 @@ function stage(cmd2)
 	local whm_char_name = find_job_charname('WHM','1',true)
 	
 	if cmd2 == 'ambu' then
-		atc('[Stage]: Ambu')
-		windower.send_command('gaze ap on')
-		if player_job.main_job == 'BLU' and player.sub_job == 'RDM' then
-			windower.send_command('azuresets set mboze; gs c set weapons macc; gs c set autobluspam on; hb buff me aquaveil')
-		elseif player_job.main_job == 'WAR' then
-			windower.send_command('gs c set weapons Loxotic; hb f off')
-		elseif player_job.main_job == 'BRD' then
-			windower.send_command('sing pl meleehaste2; sing ballad 1 '..tank_char_name..'; gs c set weapons DualSavage; sing ballad 2 '..find_job_charname('BLU')..'; hb as attack on; hb as '..find_job_charname('WAR')..'; hb f '..find_job_charname('WAR')..'; sing ballad 1 '..find_job_charname('RDM'))
-		elseif player_job.main_job == 'COR' then
-			windower.send_command('gs c set weapons DualSavage; roll melee; hb as attack on; hb as '..find_job_charname('WAR')..'; hb f '..find_job_charname('WAR'))
-		elseif player_job.main_job == 'RDM' then
-			windower.send_command('hb moblist add \"Bozzetto Pishogue\"; hb moblist on; hb aoe on; hb mincure 4; mc buffall haste2; hb buff '..tank_char_name..' refresh3; hb buff '..find_job_charname('BLU')..' refresh3; dfull; hb ind on; ; gs c set weapons maxentius; gs c autows black halo;')
-		elseif player_job.main_job == 'PLD' then
-			windower.send_command('lua l react')
-		end
-		settings.autows = true
-        windower.send_command('input /autotarget off; gs c othertargetws Bozzetto Pishogue; gs c set AutoOtherTargetWS on;')
-	elseif cmd2 == 'ambu2' then
-		if player_job.main_job == 'RDM' then
-			windower.send_command('hb f off; hb as off; hb off')
-		end
+		
+	
 	elseif cmd2 == 'cp' or cmd2 == 'ml' then
 		if player_job.main_job == 'WHM' then
 			windower.send_command('hb debuff slow; hb debuff paralyze; hb buff <me> boost-str; hb buff <me> auspice; hb buff <me> regen4; gs c set castingmode DT; gs c set idlemode DT;')
@@ -2610,24 +2591,21 @@ function d2()
 	
 	-- Have right job/sub job and spells
 	for k, v in pairs(windower.ffxi.get_party()) do
-		if type(v) == 'table' then
-			if v.name ~= player.name then
-				ptymember = windower.ffxi.get_mob_by_name(v.name)
-				-- check if party member in same zone.
-				if v.mob ~= nil and math.sqrt(ptymember.distance) < 19 and windower.ffxi.get_mob_by_name(v.name).in_party then
-					-- Checking recast
-					check_mp_rest(262)
-					coroutine.sleep(1.5)
-					atc('[D2] Warping ' .. v.name)
-					windower.send_command('input /ma "Warp II" ' .. v.name)
-					coroutine.sleep(2.0)
+		if type(v) == 'table' and v.name ~= player.name then
+			ptymember = windower.ffxi.get_mob_by_name(v.name)
+			-- check if party member in same zone.
+			if v.mob ~= nil and math.sqrt(ptymember.distance) < 19 and windower.ffxi.get_mob_by_name(v.name).in_party then
+				-- Checking recast
+				check_mp_rest(262)
+				coroutine.sleep(1.5)
+				atc('[D2] Warping ' .. v.name)
+				windower.send_command('input /ma "Warp II" ' .. v.name)
+				coroutine.sleep(2.0)
 
-					--Check if still casting
-					while isCasting do
-						coroutine.sleep(0.5)
-					end
+				--Check if still casting
+				while isCasting do
+					coroutine.sleep(0.8)
 				end
-
 			end
 		end
 	end
@@ -3206,13 +3184,21 @@ function autosc(cmd2, leader_char)
 					atc('[AUTOSC] SCH - (SC SCH) Nuke')
 					windower.send_command('gs c set elementalmode '..element..'; gs c set autobuffmode off; gs c set autosubmode off;')
 					windower.send_command:schedule(9.8, 'gs c elemental nuke '..mob_target.id)
-					windower.send_command:schedule(10.8, 'gs c set autobuffmode nuking; gs c set autosubmode on;')
+					if find_job_charname('RDM') then
+						windower.send_command:schedule(10.8, 'gs c set autobuffmode nuking; gs c set autosubmode off;')
+					else
+						windower.send_command:schedule(10.8, 'gs c set autobuffmode nuking; gs c set autosubmode on;')
+					end
 				elseif player.main_job == 'SCH' and leader_char ~= player.name then
 					atc('[AUTOSC] SCH - (Standby SCH) Nuke')
 					windower.send_command('gs c set elementalmode '..element..'; gs c set autobuffmode off; gs c set autosubmode off;')
 					windower.send_command:schedule(8.9, 'gs c elemental nuke '..mob_target.id)
 					windower.send_command:schedule(14.8, 'gs c elemental nuke '..mob_target.id)
-					windower.send_command:schedule(15.8, 'gs c set autobuffmode nuking; gs c set autosubmode on;')
+					if find_job_charname('RDM') then
+						windower.send_command:schedule(15.8, 'gs c set autobuffmode nuking; gs c set autosubmode off;')
+					else
+						windower.send_command:schedule(15.8, 'gs c set autobuffmode nuking; gs c set autosubmode on;')
+					end
 				elseif player.main_job == 'RUN' then
 					local abil_recasts = windower.ffxi.get_ability_recasts()
 					local latency = 0.7
@@ -4813,7 +4799,7 @@ function find_job_charname(job, job_count, in_party, with_self)
 			end
 		end
 	end
-	return 'NoJobFound'
+	return nil
 end
 
 local salvage_area = S{73,74,75,76}

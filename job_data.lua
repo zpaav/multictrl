@@ -27,7 +27,8 @@ job_change_data = {
 	['kalunga'] = {name='Kalunga Main', char1 = 'run/rdm', char2 = 'cor/rdm', char3 = 'drk/rdm', char4 = 'brd/rdm', char5 = 'whm/thf', char6 = 'geo/rdm',},
 	['kalunga1'] = {name='Kalunga Farm #1', char1 = 'pld/rdm', char2 = 'bst/rdm', char3 = 'drk/rdm', char4 = 'sch/rdm', char5 = 'brd/rdm', char6 = 'mnk/rdm',},
 	['kalunga2'] = {name='Kalunga Farm #2', char1 = 'run/rdm', char2 = 'sam/rdm', char3 = 'blu/rdm', char4 = 'geo/rdm', char5 = 'rdm/thf', char6 = 'thf/rdm',},
-	['kalunga3'] = {name='Kalunga Farm #3', char1 = 'war/rdm', char2 = 'pup/rdm', char3 = 'cor/rdm', char4 = 'blm/rdm', char5 = 'whm/rdm', char6 = 'nini/rdm',},
+	['kalunga3'] = {name='Kalunga Farm #3', char1 = 'war/rdm', char2 = 'pup/rdm', char3 = 'cor/rdm', char4 = 'blm/rdm', char5 = 'whm/rdm', char6 = 'nin/rdm',},
+	['marm'] = {name='Marmorkrebs Clear', char1 = 'run/rdm', char2 = 'blm/rdm', char3 = 'sch/rdm', char4 = 'geo/rdm', char5 = 'rdm/whm', char6 = 'cor/rdm',},
 }
 
 stage_data = {
@@ -85,8 +86,18 @@ stage_data = {
 		['GEO'] = {	'gs c set MagicBurstMode lock; gs c set elementalmode lightning; iacumen; gmalaise; gs c autoentrust INT'},
 		['COR'] = { 'gs c set weapons fomalhaut; roll roll1 evokers; roll roll2 wizards;'},
 		['RDM'] = {	'hb buffjob BLM refresh3,haste2; hb buffjob SCH refresh3,haste2; hb buffjob GEO refresh3,haste2; hb buffjob tank refresh3,haste2,shell5,protect5; hb buffjob COR flurry2;',
-					'hb debuff slow2,paralyze2,addle2,gravity2,bio3,inundation; hb as nolock; hb as j tank; hb mldb gravity2,bind,paralyze2,slow2; hb moblist on; hb moblist add \"Marmorkrebs\'s Craklaw\";'},
-		['RUN'] = {	'gs c set hybridmode Ongo; gs c set RuneElement Sulpor; gs c set autotankmode on; hb buff me barwater; hb f off'},
+					'hb debuff slow2,paralyze2,gravity2,bio3,inundation; hb as nolock on; hb as j tank; hb mldb gravity2,bind,paralyze2,slow2; hb moblist on; hb moblist add \"Marmorkrebs\'s Cracklaw\";'},
+		['RUN'] = {	'gs c set hybridmode MEVA; gs c set RuneElement Sulpor; gs c set autotankmode on; hb buff me barwater; hb f off'},
+		['ALL'] = {	commands = 'hb f dist 2.7; autoitem on;', mc_settings = {autows=false,autosc=true,autosub='off'}},
+	}},
+	['rask'] = { jobs = {
+		['BLM'] = {	'gs c set MagicBurstMode lock; gs c set elementalmode wind;'},
+		['SCH'] = {	'gs c set MagicBurstMode lock; gs c set elementalmode wind; schnuke; gs c set autosubmode off;'},
+		['GEO'] = {	'gs c set MagicBurstMode lock; gs c set elementalmode wind; iacumen; gmalaise; gs c autoentrust INT'},
+		['COR'] = { 'gs c set weapons fomalhaut; roll roll1 evokers; roll roll2 wizards;'},
+		['RDM'] = {	'hb buffjob BLM refresh3,haste2; hb buffjob SCH refresh3,haste2; hb buffjob GEO refresh3,haste2; hb buffjob tank refresh3,haste2,shell5,protect5; hb buffjob COR flurry2;',
+					'hb debuff slow2,paralyze2,gravity2,bio3,inundation; hb as nolock on; hb as j tank; hb mldb gravity2,bind,paralyze2,slow2; hb moblist on; hb moblist add \"Raskovniche\'s Snapweed\";'},
+		['RUN'] = {	'gs c set hybridmode MEVA; gs c set RuneElement Flabra; gs c set autotankmode on; hb buff me barstone; hb f off'},
 		['ALL'] = {	commands = 'hb f dist 2.7; autoitem on;', mc_settings = {autows=false,autosc=true,autosub='off'}},
 	}},
 	['wave1'] = { jobs = {

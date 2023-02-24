@@ -3088,7 +3088,7 @@ function autosc(cmd2, leader_char)
 					local abil_recasts = windower.ffxi.get_ability_recasts()
 					local latency = 0.7
 					if abil_recasts[195] < latency then
-						windower.send_command:schedule(3.6, 'gs c set elementalmode '..element_nuke..'; gs c elemental quickdraw '..mob_target.id)
+						windower.send_command:schedule(3.6, 'gs c set elementalmode '..element_nuke..'; gs c elemental quickdraw '..windower.ffxi.get_mob_by_name(mob_name).id)
 					end
 					windower.send_command:schedule(11.0, 'input /ws "Last Stand" <t>')
 					windower.send_command:schedule(14.6, 'autora start')

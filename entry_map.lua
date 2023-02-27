@@ -250,6 +250,312 @@ npc_map = {
 		}},
 }
 
+
+get_map = {
+	[15] = {name ={
+		['Conflux Surveyor'] = {cmd = {
+			['aby'] = {description='Abyssea Visitation - Remaining time', entry_command = {1.0, {'down', 0.05}, 0.5, {'down', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'down', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'up', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'up', 0.05}, 0.5, {'enter', 0.15}}},
+			['aby1'] = {description='Abyssea Visitation - 1 Stone', entry_command = {1.0, {'down', 0.05}, 0.5, {'down', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'down', 0.05}, 0.5, {'down', 0.15}, 0.5, {'enter', 0.15}, 1.5, {'up', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'up', 0.05}, 0.5, {'enter', 0.15}}},
+			['aby2'] = {description='Abyssea Visitation - 2 Stone', entry_command = {1.0, {'down', 0.05}, 0.5, {'down', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'down', 0.05}, 0.5, {'down', 0.05}, 0.5, {'down', 0.15}, 0.5, {'enter', 0.15}, 1.5, {'up', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'up', 0.05}, 0.5, {'enter', 0.15}}},
+		}}
+	}},
+	[45] = {name ={
+		['Conflux Surveyor'] = {cmd = {
+			['aby'] = {description='Abyssea Visitation - Remaining time', entry_command = {1.0, {'down', 0.05}, 0.5, {'down', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'down', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'up', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'up', 0.05}, 0.5, {'enter', 0.15}}},
+			['aby1'] = {description='Abyssea Visitation - 1 Stone', entry_command = {1.0, {'down', 0.05}, 0.5, {'down', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'down', 0.05}, 0.5, {'down', 0.15}, 0.5, {'enter', 0.15}, 1.5, {'up', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'up', 0.05}, 0.5, {'enter', 0.15}}},
+			['aby2'] = {description='Abyssea Visitation - 2 Stone', entry_command = {1.0, {'down', 0.05}, 0.5, {'down', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'down', 0.05}, 0.5, {'down', 0.05}, 0.5, {'down', 0.15}, 0.5, {'enter', 0.15}, 1.5, {'up', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'up', 0.05}, 0.5, {'enter', 0.15}}},
+		}}
+	}},
+	[50] = {name ={
+		['Rytaal'] = {cmd = {
+			['tag'] = {description='Assault Tag', entry_command = {2.0, {'enter', 0.15}, 0.75, {'enter', 0.15}, 0.75, {'up', 0.15}, 0.75, {'enter', 0.15}}},
+		}},
+		['Sorrowful Sage'] = {cmd = {
+			['nyzul'] = {description='Nyzul Tag', entry_command = {1.0, {'enter', 0.15}}},
+		}},
+		['Wondrix'] = {cmd = {
+			['gobbiebox'] = {description='Gobbie Mystery Box', entry_command = {3.0, {'enter', 0.15}, 1.5, {'right', 1.0}, 1.0, {'enter', 0.15}, 9.0, {'escape', 0.15}}},
+		}},
+	}},
+	[132] = {name ={
+		['Conflux Surveyor'] = {cmd = {
+			['aby'] = {description='Abyssea Visitation - Remaining time', entry_command = {1.0, {'down', 0.05}, 0.5, {'down', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'down', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'up', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'up', 0.05}, 0.5, {'enter', 0.15}}},
+			['aby1'] = {description='Abyssea Visitation - 1 Stone', entry_command = {1.0, {'down', 0.05}, 0.5, {'down', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'down', 0.05}, 0.5, {'down', 0.15}, 0.5, {'enter', 0.15}, 1.5, {'up', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'up', 0.05}, 0.5, {'enter', 0.15}}},
+			['aby2'] = {description='Abyssea Visitation - 2 Stone', entry_command = {1.0, {'down', 0.05}, 0.5, {'down', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'down', 0.05}, 0.5, {'down', 0.05}, 0.5, {'down', 0.15}, 0.5, {'enter', 0.15}, 1.5, {'up', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'up', 0.05}, 0.5, {'enter', 0.15}}},
+		}}
+	}},
+	[133] = {name ={
+		--	Main> A B C D
+		--	A > Main B C D
+		--	B > Main A C D
+		--	C > Main A B D
+		--	D > Main A B C
+		['Diaphanous Device'] = {cmd = {
+			['sortiea'] = {description='Go-> Sortie #A - From MAIN', entry_command = {1.2, {'enter', 0.15}}},
+			['sortieb'] = {description='Go-> Sortie #B - From MAIN', entry_command = {1.2, {'down', 0.04}, 1.0, {'enter', 0.15}}},
+			['sortiec'] = {description='Go-> Sortie #C - From MAIN', entry_command = {1.2, {'down', 0.04}, 1.0, {'down', 0.04}, 1.0, {'enter', 0.15}}},
+			['sortied'] = {description='Go-> Sortie #D - From MAIN', entry_command = {1.2, {'down', 0.04}, 1.0, {'down', 0.04}, 1.0, {'down', 0.04}, 1.0, {'enter', 0.15}}},
+		}},
+		['Diaphanous Device #A'] = {cmd = {
+			['sortiemain'] = {description='Go-> Sortie Main - From #A', entry_command = {1.2, {'enter', 0.15}}},
+			['sortieb'] = {description='Go-> Sortie #B - From #A', entry_command = {1.2, {'down', 0.04}, 1.0, {'enter', 0.15}}},
+			['sortiec'] = {description='Go-> Sortie #C - From #A', entry_command = {1.2, {'down', 0.04}, 1.0, {'down', 0.04}, 1.0, {'enter', 0.15}}},
+			['sortied'] = {description='Go-> Sortie #D - From #A', entry_command = {1.2, {'down', 0.04}, 1.0, {'down', 0.04}, 1.0, {'down', 0.04}, 1.0, {'enter', 0.15}}},
+		}},
+		['Diaphanous Device #B'] = {cmd = {
+			['sortiemain'] = {description='Go-> Sortie Main - From #B', entry_command = {1.2, {'enter', 0.15}}},
+			['sortiea'] = {description='Go-> Sortie #A - From #B', entry_command = {1.2, {'down', 0.04}, 1.0, {'enter', 0.15}}},
+			['sortiec'] = {description='Go-> Sortie #C - From #B', entry_command = {1.2, {'down', 0.04}, 1.0, {'down', 0.04}, 1.0, {'enter', 0.15}}},
+			['sortied'] = {description='Go-> Sortie #D - From #B', entry_command = {1.2, {'down', 0.04}, 1.0, {'down', 0.04}, 1.0, {'down', 0.04}, 1.0, {'enter', 0.15}}},
+		}},
+		['Diaphanous Device #C'] = {cmd = {
+			['sortiemain'] = {description='Go-> Sortie Main - From #C', entry_command = {1.2, {'enter', 0.15}}},
+			['sortiea'] = {description='Go-> Sortie #A - From #C', entry_command = {1.2, {'down', 0.04}, 1.0, {'enter', 0.15}}},
+			['sortieb'] = {description='Go-> Sortie #B - From #C', entry_command = {1.2, {'down', 0.04}, 1.0, {'down', 0.04}, 1.0, {'enter', 0.15}}},
+			['sortied'] = {description='Go-> Sortie #D - From #C', entry_command = {1.2, {'down', 0.04}, 1.0, {'down', 0.04}, 1.0, {'down', 0.04}, 1.0, {'enter', 0.15}}},
+		}},
+		['Diaphanous Device #D'] = {cmd = {
+			['sortiemain'] = {description='Go-> Sortie Main - From #D', entry_command = {1.2, {'enter', 0.15}}},
+			['sortiea'] = {description='Go-> Sortie #A - From #D', entry_command = {1.2, {'down', 0.04}, 1.0, {'enter', 0.15}}},
+			['sortieb'] = {description='Go-> Sortie #B - From #D', entry_command = {1.2, {'down', 0.04}, 1.0, {'down', 0.04}, 1.0, {'enter', 0.15}}},
+			['sortiec'] = {description='Go-> Sortie #C - From #D', entry_command = {1.2, {'down', 0.04}, 1.0, {'down', 0.04}, 1.0, {'down', 0.04}, 1.0, {'enter', 0.15}}},
+		}},
+	}},
+	[189] = {name ={
+		--	Main> A B C D
+		--	A > Main B C D
+		--	B > Main A C D
+		--	C > Main A B D
+		--	D > Main A B C
+		['Diaphanous Device'] = {cmd = {
+			['sortiea'] = {description='Go-> Sortie #A - From MAIN', entry_command = {1.2, {'enter', 0.15}}},
+			['sortieb'] = {description='Go-> Sortie #B - From MAIN', entry_command = {1.2, {'down', 0.04}, 1.0, {'enter', 0.15}}},
+			['sortiec'] = {description='Go-> Sortie #C - From MAIN', entry_command = {1.2, {'down', 0.04}, 1.0, {'down', 0.04}, 1.0, {'enter', 0.15}}},
+			['sortied'] = {description='Go-> Sortie #D - From MAIN', entry_command = {1.2, {'down', 0.04}, 1.0, {'down', 0.04}, 1.0, {'down', 0.04}, 1.0, {'enter', 0.15}}},
+		}},
+		['Diaphanous Device #A'] = {cmd = {
+			['sortiemain'] = {description='Go-> Sortie Main - From #A', entry_command = {1.2, {'enter', 0.15}}},
+			['sortieb'] = {description='Go-> Sortie #B - From #A', entry_command = {1.2, {'down', 0.04}, 1.0, {'enter', 0.15}}},
+			['sortiec'] = {description='Go-> Sortie #C - From #A', entry_command = {1.2, {'down', 0.04}, 1.0, {'down', 0.04}, 1.0, {'enter', 0.15}}},
+			['sortied'] = {description='Go-> Sortie #D - From #A', entry_command = {1.2, {'down', 0.04}, 1.0, {'down', 0.04}, 1.0, {'down', 0.04}, 1.0, {'enter', 0.15}}},
+		}},
+		['Diaphanous Device #B'] = {cmd = {
+			['sortiemain'] = {description='Go-> Sortie Main - From #B', entry_command = {1.2, {'enter', 0.15}}},
+			['sortiea'] = {description='Go-> Sortie #A - From #B', entry_command = {1.2, {'down', 0.04}, 1.0, {'enter', 0.15}}},
+			['sortiec'] = {description='Go-> Sortie #C - From #B', entry_command = {1.2, {'down', 0.04}, 1.0, {'down', 0.04}, 1.0, {'enter', 0.15}}},
+			['sortied'] = {description='Go-> Sortie #D - From #B', entry_command = {1.2, {'down', 0.04}, 1.0, {'down', 0.04}, 1.0, {'down', 0.04}, 1.0, {'enter', 0.15}}},
+		}},
+		['Diaphanous Device #C'] = {cmd = {
+			['sortiemain'] = {description='Go-> Sortie Main - From #C', entry_command = {1.2, {'enter', 0.15}}},
+			['sortiea'] = {description='Go-> Sortie #A - From #C', entry_command = {1.2, {'down', 0.04}, 1.0, {'enter', 0.15}}},
+			['sortieb'] = {description='Go-> Sortie #B - From #C', entry_command = {1.2, {'down', 0.04}, 1.0, {'down', 0.04}, 1.0, {'enter', 0.15}}},
+			['sortied'] = {description='Go-> Sortie #D - From #C', entry_command = {1.2, {'down', 0.04}, 1.0, {'down', 0.04}, 1.0, {'down', 0.04}, 1.0, {'enter', 0.15}}},
+		}},
+		['Diaphanous Device #D'] = {cmd = {
+			['sortiemain'] = {description='Go-> Sortie Main - From #D', entry_command = {1.2, {'enter', 0.15}}},
+			['sortiea'] = {description='Go-> Sortie #A - From #D', entry_command = {1.2, {'down', 0.04}, 1.0, {'enter', 0.15}}},
+			['sortieb'] = {description='Go-> Sortie #B - From #D', entry_command = {1.2, {'down', 0.04}, 1.0, {'down', 0.04}, 1.0, {'enter', 0.15}}},
+			['sortiec'] = {description='Go-> Sortie #C - From #D', entry_command = {1.2, {'down', 0.04}, 1.0, {'down', 0.04}, 1.0, {'down', 0.04}, 1.0, {'enter', 0.15}}},
+		}},
+	}},
+	[215] = {name ={
+		['Conflux Surveyor'] = {cmd = {
+			['aby'] = {description='Abyssea Visitation - Remaining time', entry_command = {1.0, {'down', 0.05}, 0.5, {'down', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'down', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'up', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'up', 0.05}, 0.5, {'enter', 0.15}}},
+			['aby1'] = {description='Abyssea Visitation - 1 Stone', entry_command = {1.0, {'down', 0.05}, 0.5, {'down', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'down', 0.05}, 0.5, {'down', 0.15}, 0.5, {'enter', 0.15}, 1.5, {'up', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'up', 0.05}, 0.5, {'enter', 0.15}}},
+			['aby2'] = {description='Abyssea Visitation - 2 Stone', entry_command = {1.0, {'down', 0.05}, 0.5, {'down', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'down', 0.05}, 0.5, {'down', 0.05}, 0.5, {'down', 0.15}, 0.5, {'enter', 0.15}, 1.5, {'up', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'up', 0.05}, 0.5, {'enter', 0.15}}},
+		}}
+	}},
+	[216] = {name ={
+		['Conflux Surveyor'] = {cmd = {
+			['aby'] = {description='Abyssea Visitation - Remaining time', entry_command = {1.0, {'down', 0.05}, 0.5, {'down', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'down', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'up', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'up', 0.05}, 0.5, {'enter', 0.15}}},
+			['aby1'] = {description='Abyssea Visitation - 1 Stone', entry_command = {1.0, {'down', 0.05}, 0.5, {'down', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'down', 0.05}, 0.5, {'down', 0.15}, 0.5, {'enter', 0.15}, 1.5, {'up', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'up', 0.05}, 0.5, {'enter', 0.15}}},
+			['aby2'] = {description='Abyssea Visitation - 2 Stone', entry_command = {1.0, {'down', 0.05}, 0.5, {'down', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'down', 0.05}, 0.5, {'down', 0.05}, 0.5, {'down', 0.15}, 0.5, {'enter', 0.15}, 1.5, {'up', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'up', 0.05}, 0.5, {'enter', 0.15}}},
+		}}
+	}},
+	[217] = {name ={
+		['Conflux Surveyor'] = {cmd = {
+			['aby'] = {description='Abyssea Visitation - Remaining time', entry_command = {1.0, {'down', 0.05}, 0.5, {'down', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'down', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'up', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'up', 0.05}, 0.5, {'enter', 0.15}}},
+			['aby1'] = {description='Abyssea Visitation - 1 Stone', entry_command = {1.0, {'down', 0.05}, 0.5, {'down', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'down', 0.05}, 0.5, {'down', 0.15}, 0.5, {'enter', 0.15}, 1.5, {'up', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'up', 0.05}, 0.5, {'enter', 0.15}}},
+			['aby2'] = {description='Abyssea Visitation - 2 Stone', entry_command = {1.0, {'down', 0.05}, 0.5, {'down', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'down', 0.05}, 0.5, {'down', 0.05}, 0.5, {'down', 0.15}, 0.5, {'enter', 0.15}, 1.5, {'up', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'up', 0.05}, 0.5, {'enter', 0.15}}},
+		}}
+	}},
+	[218] = {name ={
+		['Conflux Surveyor'] = {cmd = {
+			['aby'] = {description='Abyssea Visitation - Remaining time', entry_command = {1.0, {'down', 0.05}, 0.5, {'down', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'down', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'up', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'up', 0.05}, 0.5, {'enter', 0.15}}},
+			['aby1'] = {description='Abyssea Visitation - 1 Stone', entry_command = {1.0, {'down', 0.05}, 0.5, {'down', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'down', 0.05}, 0.5, {'down', 0.15}, 0.5, {'enter', 0.15}, 1.5, {'up', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'up', 0.05}, 0.5, {'enter', 0.15}}},
+			['aby2'] = {description='Abyssea Visitation - 2 Stone', entry_command = {1.0, {'down', 0.05}, 0.5, {'down', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'down', 0.05}, 0.5, {'down', 0.05}, 0.5, {'down', 0.15}, 0.5, {'enter', 0.15}, 1.5, {'up', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'up', 0.05}, 0.5, {'enter', 0.15}}},
+		}}
+	}},
+	[230] = {name ={
+		['Mystrix'] = {cmd = {
+			['gobbiebox'] = {description='Gobbie Mystery Box', entry_command = {3.0, {'enter', 0.15}, 1.5, {'right', 1.0}, 1.0, {'enter', 0.15}, 9.0, {'escape', 0.15}}},
+		}}
+	}}, 
+	[231] = {name ={
+		['Trisvain'] = {cmd = {
+			['htmb'] = {description='HTMB NPC', entry_command = {3.0, {'escape', 0.15}}},
+		}}
+	}},
+	[232] = {name ={
+		['Habitox'] = {cmd = {
+			['gobbiebox'] = {description='Gobbie Mystery Box', entry_command = {3.0, {'enter', 0.15}, 1.5, {'right', 1.0}, 1.0, {'enter', 0.15}, 9.0, {'escape', 0.15}}},
+		}}
+	}}, 
+	[234] = {name ={
+		['Bountibox'] = {cmd = {
+			['gobbiebox'] = {description='Gobbie Mystery Box', entry_command = {3.0, {'enter', 0.15}, 1.5, {'right', 1.0}, 1.0, {'enter', 0.15}, 9.0, {'escape', 0.15}}},
+		}}
+	}}, 
+	[235] = {name ={
+		['Specilox'] = {cmd = {
+			['gobbiebox'] = {description='Gobbie Mystery Box', entry_command = {3.0, {'enter', 0.15}, 1.5, {'right', 1.0}, 1.0, {'enter', 0.15}, 9.0, {'escape', 0.15}}},
+		}}
+	}}, 
+	[239] = {name ={
+		['Arbitrix'] = {cmd = {
+			['gobbiebox'] = {description='Gobbie Mystery Box', entry_command = {3.0, {'enter', 0.15}, 1.5, {'right', 1.0}, 1.0, {'enter', 0.15}, 9.0, {'escape', 0.15}}},
+		}}
+	}}, 
+	[241] = {name ={
+		['Funtrox'] = {cmd = {
+			['gobbiebox'] = {description='Gobbie Mystery Box', entry_command = {3.0, {'enter', 0.15}, 1.5, {'right', 1.0}, 1.0, {'enter', 0.15}, 9.0, {'escape', 0.15}}},
+		}}
+	}},
+	[244] = {name ={
+		['Priztrix'] = {cmd = {
+			['gobbiebox'] = {description='Gobbie Mystery Box', entry_command = {3.0, {'enter', 0.15}, 1.5, {'right', 1.0}, 1.0, {'enter', 0.15}, 9.0, {'escape', 0.15}}},
+		}}
+	}}, 
+	[245] = {name ={
+		['Sweepstox'] = {cmd = {
+			['gobbiebox'] = {description='Gobbie Mystery Box', entry_command = {3.0, {'enter', 0.15}, 1.5, {'right', 1.0}, 1.0, {'enter', 0.15}, 9.0, {'escape', 0.15}}},
+		}}
+	}}, 
+	[241] = {name ={
+		['Harara, W.W.'] = {cmd = {
+			['signet'] = {description='Signet', entry_command = {0.7, {'enter', 0.15}}},
+		}}
+	}}, 
+	[246] = {name ={
+		['Joachim'] = {cmd = {
+			['abystone'] = {description='Abyssea Traveler Stone KI', entry_command = {1.2, {'enter', 0.15}}},
+		}},
+		['Shami'] = {cmd = {
+			['deimosorb'] = {description='Deimos Orb', entry_command = {1.6, {'right', 0.05}, 0.5, {'enter', 0.15}, 0.5, {'down', 0.05}, 0.5, {'down', 0.05}, 0.5, {'enter', 0.15}, 0.5, {'enter', 0.15}, 0.5, {'up', 0.05}, 0.5, {'enter', 0.15}}},
+			['macroorb'] = {description='Macro Orb', entry_command = {1.6, {'right', 0.05}, 0.5, {'down', 0.05}, 0.5, {'down', 0.05}, 0.5, {'enter', 0.15}, 0.5, {'down', 0.05}, 0.5, {'down', 0.05}, 0.5, {'enter', 0.15}, 0.5, {'enter', 0.15}, 0.5, {'up', 0.05}, 0.5, {'enter', 0.15}}},
+			['moonorb'] = {description='Moon Orb', entry_command = {1.6, {'down', 0.05}, 0.5, {'enter', 0.15}, 0.5, {'right', 0.15}, 0.5, {'right', 0.15}, 0.5, {'enter', 0.15}, 0.5, {'enter', 0.15}, 0.5, {'up', 0.05}, 0.5, {'enter', 0.15}}},
+		}},
+	}},  
+	[247] = {name ={
+		['???'] = {cmd = {
+			['mog'] = {description='Moglophone', entry_command = {3, {'enter', 0.15}, 2, {'escape', 0.15}}},
+			['mog2'] = {description='Moglophone II', entry_command = {3, {'down', 0.05}, 0.5, {'down', 0.05}, 0.5, {'down', 0.05}, 0.5, {'down', 0.05}, 0.5, {'enter', 0.15}, 2.0, {'enter', 0.15}}},
+		}}
+	}},
+	[253] = {name ={
+		['Conflux Surveyor'] = {cmd = {
+			['aby'] = {description='Abyssea Visitation - Remaining time', entry_command = {1.0, {'down', 0.05}, 0.5, {'down', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'down', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'up', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'up', 0.05}, 0.5, {'enter', 0.15}}},
+			['aby1'] = {description='Abyssea Visitation - 1 Stone', entry_command = {1.0, {'down', 0.05}, 0.5, {'down', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'down', 0.05}, 0.5, {'down', 0.15}, 0.5, {'enter', 0.15}, 1.5, {'up', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'up', 0.05}, 0.5, {'enter', 0.15}}},
+			['aby2'] = {description='Abyssea Visitation - 2 Stone', entry_command = {1.0, {'down', 0.05}, 0.5, {'down', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'down', 0.05}, 0.5, {'down', 0.05}, 0.5, {'down', 0.15}, 0.5, {'enter', 0.15}, 1.5, {'up', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'up', 0.05}, 0.5, {'enter', 0.15}}},
+		}}
+	}},
+	[254] = {name ={
+		['Conflux Surveyor'] = {cmd = {
+			['aby'] = {description='Abyssea Visitation - Remaining time', entry_command = {1.0, {'down', 0.05}, 0.5, {'down', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'down', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'up', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'up', 0.05}, 0.5, {'enter', 0.15}}},
+			['aby1'] = {description='Abyssea Visitation - 1 Stone', entry_command = {1.0, {'down', 0.05}, 0.5, {'down', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'down', 0.05}, 0.5, {'down', 0.15}, 0.5, {'enter', 0.15}, 1.5, {'up', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'up', 0.05}, 0.5, {'enter', 0.15}}},
+			['aby2'] = {description='Abyssea Visitation - 2 Stone', entry_command = {1.0, {'down', 0.05}, 0.5, {'down', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'down', 0.05}, 0.5, {'down', 0.05}, 0.5, {'down', 0.15}, 0.5, {'enter', 0.15}, 1.5, {'up', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'up', 0.05}, 0.5, {'enter', 0.15}}},
+		}}
+	}},
+	[256] = {name ={
+		['Fleuricette'] = {cmd = {
+			['ionis'] = {description='Ionis', entry_command = {1.2, {'enter', 0.15}, 0.5, {'up', 0.15}, 0.5, {'enter', 0.15}}},
+		}},
+		['Rewardox'] = {cmd = {
+			['gobbiebox'] = {description='Gobbie Mystery Box', entry_command = {3.0, {'enter', 0.15}, 1.5, {'right', 1.0}, 1.0, {'enter', 0.15}, 9.0, {'escape', 0.15}}},
+		}},
+	}},
+	[257] = {name ={
+		['Quiri-Aliri'] = {cmd = {
+			['ionis'] = {description='Ionis', entry_command = {1.2, {'enter', 0.15}, 0.5, {'up', 0.15}, 0.5, {'enter', 0.15}}},
+		}},
+		['Winrix'] = {cmd = {
+			['gobbiebox'] = {description='Gobbie Mystery Box', entry_command = {3.0, {'enter', 0.15}, 1.5, {'right', 1.0}, 1.0, {'enter', 0.15}, 9.0, {'escape', 0.15}}},
+		}},
+	}},
+	[275] = {name ={
+		--	Main> A B C D
+		--	A > Main B C D
+		--	B > Main A C D
+		--	C > Main A B D
+		--	D > Main A B C
+		['Diaphanous Device'] = {cmd = {
+			['sortiea'] = {description='Go-> Sortie #A - From MAIN', entry_command = {1.2, {'enter', 0.15}}},
+			['sortieb'] = {description='Go-> Sortie #B - From MAIN', entry_command = {1.2, {'down', 0.04}, 1.0, {'enter', 0.15}}},
+			['sortiec'] = {description='Go-> Sortie #C - From MAIN', entry_command = {1.2, {'down', 0.04}, 1.0, {'down', 0.04}, 1.0, {'enter', 0.15}}},
+			['sortied'] = {description='Go-> Sortie #D - From MAIN', entry_command = {1.2, {'down', 0.04}, 1.0, {'down', 0.04}, 1.0, {'down', 0.04}, 1.0, {'enter', 0.15}}},
+		}},
+		['Diaphanous Device #A'] = {cmd = {
+			['sortiemain'] = {description='Go-> Sortie Main - From #A', entry_command = {1.2, {'enter', 0.15}}},
+			['sortieb'] = {description='Go-> Sortie #B - From #A', entry_command = {1.2, {'down', 0.04}, 1.0, {'enter', 0.15}}},
+			['sortiec'] = {description='Go-> Sortie #C - From #A', entry_command = {1.2, {'down', 0.04}, 1.0, {'down', 0.04}, 1.0, {'enter', 0.15}}},
+			['sortied'] = {description='Go-> Sortie #D - From #A', entry_command = {1.2, {'down', 0.04}, 1.0, {'down', 0.04}, 1.0, {'down', 0.04}, 1.0, {'enter', 0.15}}},
+		}},
+		['Diaphanous Device #B'] = {cmd = {
+			['sortiemain'] = {description='Go-> Sortie Main - From #B', entry_command = {1.2, {'enter', 0.15}}},
+			['sortiea'] = {description='Go-> Sortie #A - From #B', entry_command = {1.2, {'down', 0.04}, 1.0, {'enter', 0.15}}},
+			['sortiec'] = {description='Go-> Sortie #C - From #B', entry_command = {1.2, {'down', 0.04}, 1.0, {'down', 0.04}, 1.0, {'enter', 0.15}}},
+			['sortied'] = {description='Go-> Sortie #D - From #B', entry_command = {1.2, {'down', 0.04}, 1.0, {'down', 0.04}, 1.0, {'down', 0.04}, 1.0, {'enter', 0.15}}},
+		}},
+		['Diaphanous Device #C'] = {cmd = {
+			['sortiemain'] = {description='Go-> Sortie Main - From #C', entry_command = {1.2, {'enter', 0.15}}},
+			['sortiea'] = {description='Go-> Sortie #A - From #C', entry_command = {1.2, {'down', 0.04}, 1.0, {'enter', 0.15}}},
+			['sortieb'] = {description='Go-> Sortie #B - From #C', entry_command = {1.2, {'down', 0.04}, 1.0, {'down', 0.04}, 1.0, {'enter', 0.15}}},
+			['sortied'] = {description='Go-> Sortie #D - From #C', entry_command = {1.2, {'down', 0.04}, 1.0, {'down', 0.04}, 1.0, {'down', 0.04}, 1.0, {'enter', 0.15}}},
+		}},
+		['Diaphanous Device #D'] = {cmd = {
+			['sortiemain'] = {description='Go-> Sortie Main - From #D', entry_command = {1.2, {'enter', 0.15}}},
+			['sortiea'] = {description='Go-> Sortie #A - From #D', entry_command = {1.2, {'down', 0.04}, 1.0, {'enter', 0.15}}},
+			['sortieb'] = {description='Go-> Sortie #B - From #D', entry_command = {1.2, {'down', 0.04}, 1.0, {'down', 0.04}, 1.0, {'enter', 0.15}}},
+			['sortiec'] = {description='Go-> Sortie #C - From #D', entry_command = {1.2, {'down', 0.04}, 1.0, {'down', 0.04}, 1.0, {'down', 0.04}, 1.0, {'enter', 0.15}}},
+		}},
+	}},
+	[276] = {name ={
+		['Malobra'] = {cmd = {
+			['srki'] = {description='Sinister Reign KI', entry_command = {0.5, {'down', 0.15}, 1.0, {'enter', 0.15}, 1.0, {'up', 0.15}, 1.0, {'enter', 0.15}}},
+			['srdrops'] = {description='Sinsiter Reign Rewards', entry_command = {0.5, {'down', 0.15}, 1.0, {'enter', 0.15}}},
+		}}
+	}},
+	[279] = {name ={
+		['Otherworldly Vortex'] = {cmd = {
+			['ody'] = {description='Odyssey Rewards', entry_command = {1.3, {'escape', 0.15}}},
+		}}
+	}},
+	[280] = {name ={
+		['Green Thumb Moogle'] = {cmd = {
+			['mgexit'] = {description='Exit Mog Garden', entry_command = {3, {'right', 0.5}, 0.5, {'right', 0.5}, 0.5, {'up', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'down', 0.05}, 0.5, {'enter', 0.15}}},
+		}}
+	}}, 
+	[281] = {name ={
+		['Soupox'] = {cmd = {
+			['soupox'] = {description='Soupox NPC', entry_command = {}},
+		}}
+	}}, 
+	[291] = {name ={
+		['Emporox'] = {cmd = {
+			['pot'] = {description='Potpourri KI', entry_command = {1.1, {'right', 0.15}, 0.5, {'up', 0.15}, 0.5, {'enter', 0.15}, 1.0, {'up', 0.15}, 1,{'enter', 0.15}}},
+		}},
+		['Incantrix'] = {cmd = {
+			['canteen'] = {description='Omen KI', entry_command = {3.0, {'enter', 0.15}}},
+		}}
+	}},
+	[298] = {name ={
+		['Otherworldly Vortex'] = {cmd = {
+			['ody'] = {description='Odyssey Rewards', entry_command = {1.3, {'escape', 0.15}}},
+		}}
+	}},
+}
+
+
 basic_key_sequence = {
 	['ent'] = {command = {0.7, {'enter', 0.15}}},
 	['enup'] = {command = {0.7, {'up', 0.15}, 0.5, {'enter', 0.15}}},

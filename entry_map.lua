@@ -1,3 +1,13 @@
+command_map = {
+	['mnt'] = 'input /mount \"Red Crab\"',
+	['dis'] = 'input /dismount',
+	['warp'] = 'myhome',
+	['omen'] = 'myomen',
+	['fps30'] = 'config FrameRateDivisor 2',
+	['fps60'] = 'config FrameRateDivisor 2',
+	['lotall'] = 'tr lotall',
+} 
+
 deimos_orb_map = {
 	[23] = {name = {'Web of Recollections'}, entry_command ={10.5, {'right', 0.75}, 1.5, {'enter', 0.25}, 0.75, {'left', 1.15}, 0.75, {'enter', 0.25}}, follower_command = {5, {'down', 0.25}, 1.5, {'enter', 0.25}}},
     [139] = {name = {'Burning Circle'}, entry_command ={10.5, {'right', 0.75}, 1.5, {'enter', 0.25}, 0.75, {'left', 1.15}, 0.75, {'enter', 0.25}}, follower_command = {5, {'down', 0.25}, 1.5, {'enter', 0.25}}},

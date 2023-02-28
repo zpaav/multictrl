@@ -23,6 +23,102 @@ wsall_data = {
 	['RUN'] = 'Dimidiation',
 }
 
+wstype_data = {
+	['WAR'] = {wsgroup={}},
+	['MNK'] = {wsgroup={}},
+	['WHM'] = {wsgroup={}},
+	['BLM'] = {wsgroup={}},
+	['RDM'] = {wsgroup={}},
+	['THF'] = {wsgroup={}},
+	['PLD'] = {wsgroup={}},
+	['DRK'] = {wsgroup={}},
+	['BST'] = {wsgroup={}},
+	['BRD'] = {wsgroup={}},
+	['RNG'] = {wsgroup={}},
+	['SAM'] = {wsgroup={
+		['fudo'] = {
+			['NON']='gs c set weapons Masamune; gs c autows Tachi: Fudo',
+		},
+		['jinpu'] = {
+			['NON']='gs c set weapons Dojikiri; gs c autows Tachi: Jinpu',
+		},
+		['goten'] = {
+			['NON']='gs c set weapons Dojikiri; gs c autows Tachi: Goten',
+		},
+		['kagero'] = {
+			['NON']='gs c set weapons Dojikiri; gs c autows Tachi: Kagero',
+		},
+		['koki'] = {
+			['NON']='gs c set weapons Dojikiri; gs c autows Tachi: Koki',
+		},
+		['slash'] = {
+			['NON']='gs c set weapons Masamune; gs c autows Tachi: Fudo',
+		},
+		['hybrid'] = {
+			['NON']='gs c set weapons Dojikiri; gs c autows Tachi: Jinpu',
+		},
+		['hybridvolte'] = {
+			['NON']='gs c set weapons Dojikiri; gs c autows Tachi: Jinpu',
+		},
+	}},
+	['NIN'] = {wsgroup={}},
+	['DRG'] = {wsgroup={}},
+	['SMN'] = {wsgroup={}},
+	['BLU'] = {wsgroup={}},
+	['COR'] = {wsgroup={
+		['leaden'] = {
+			['NIN']='gs c set weapons DualLeaden; gs c autows Leaden Salute',
+			['DNC']='gs c set weapons DualLeaden; gs c autows Leaden Salute',
+			['NON']='gs c set weapons DeathPenalty; gs c autows Leaden Salute',
+		},
+		['savage'] = {
+			['NIN']='gs c set weapons DualSavage; gs c autows Savage Blade',
+			['DNC']='gs c set weapons DualSavage; gs c autows Savage Blade',
+			['NON']='gs c set weapons Naegling; gs c autows Savage Blade',
+		},
+		['wildfire'] = {
+			['NIN']='gs c set weapons DualWildfire; gs c autows Wildfire',
+			['DNC']='gs c set weapons DualWildfire; gs c autows Wildfire',
+			['NON']='gs c set weapons Armageddon; gs c autows Wildfire',
+		},
+		['slash'] = {
+			['NIN']='gs c set weapons DualSavage; gs c autows Savage Blade',
+			['DNC']='gs c set weapons DualSavage; gs c autows Savage Blade',
+			['NON']='gs c set weapons Naegling; gs c autows Savage Blade',
+		},
+		['pierce'] = {
+			['NIN']='gs c set weapons DualLastStand; gs c autows Last Stand',
+			['DNC']='gs c set weapons DualLastStand; gs c autows Last Stand',
+			['NON']='gs c set weapons Fomalhaut; gs c autows Last Stand',
+		},
+		['blunt'] = {
+			['NIN']='gs c set weapons DualWildfire; gs c autows Wildfire',
+			['DNC']='gs c set weapons DualWildfire; gs c autows Wildfire',
+			['NON']='gs c set weapons Armageddon; gs c autows Wildfire',
+		},
+		['magic'] = {
+			['NIN']='gs c set weapons DualLeaden; gs c autows Leaden Salute',
+			['DNC']='gs c set weapons DualLeaden; gs c autows Leaden Salute',
+			['NON']='gs c set weapons DeathPenalty; gs c autows Leaden Salute',
+		},
+		['hybrid'] = {
+			['NIN']='gs c set weapons DualLeaden; gs c autows Leaden Salute',
+			['DNC']='gs c set weapons DualLeaden; gs c autows Leaden Salute',
+			['NON']='gs c set weapons DeathPenalty; gs c autows Leaden Salute',
+		},
+		['hybridvolte'] = {
+			['NIN']='gs c set weapons DualWildfire; gs c autows Wildfire',
+			['DNC']='gs c set weapons DualWildfire; gs c autows Wildfire',
+			['NON']='gs c set weapons Armageddon; gs c autows Wildfire',
+		},
+	}},
+	['PUP'] = {wsgroup={}},
+	['DNC'] = {wsgroup={}},
+	['SCH'] = {wsgroup={}},
+	['GEO'] = {wsgroup={}},
+	['RUN'] = {wsgroup={}},
+}
+
 crowd_control_data = {
 	['WHM'] = {
 		['BLM'] = {spell='Sleepga II'},
@@ -72,9 +168,16 @@ job_change_data = {
 	['kalunga1'] = {name='Kalunga Farm #1', char1 = 'pld/rdm', char2 = 'smn/rdm', char3 = 'war/rdm', char4 = 'sch/rdm', char5 = 'brd/rdm', char6 = 'mnk/rdm',},
 	['kalunga2'] = {name='Kalunga Farm #2', char1 = 'run/rdm', char2 = 'sam/rdm', char3 = 'blu/rdm', char4 = 'geo/rdm', char5 = 'rdm/thf', char6 = 'thf/rdm',},
 	['kalunga3'] = {name='Kalunga Farm #3', char1 = 'drg/rdm', char2 = 'bst/rdm', char3 = 'drk/rdm', char4 = 'blm/rdm', char5 = 'whm/rdm', char6 = 'cor/rdm',},
+	['daelan'] = {name='Daelan-dhe Clear', char1 = 'pld/rdm', char2 = 'sam/rdm', char3 = 'war/rdm', char4 = 'brd/rdm', char5 = 'rdm/whm', char6 = 'cor/rdm',},
+	['ubnai'] = {name='U Bnai Clear', char1 = 'pld/rdm', char2 = 'sam/rdm', char3 = 'war/rdm', char4 = 'brd/rdm', char5 = 'rdm/whm', char6 = 'cor/rdm',},
+	['gogmagog'] = {name='Gogmagog Clear', char1 = 'pld/rdm', char2 = 'mnk/rdm', char3 = 'war/rdm', char4 = 'brd/rdm', char5 = 'rdm/whm', char6 = 'cor/rdm',},
+	['sgili'] = {name='Sgili Clear', char1 = 'run/rdm', char2 = 'blm/rdm', char3 = 'sch/rdm', char4 = 'geo/rdm', char5 = 'rdm/whm', char6 = 'cor/rdm',},
+	['aris'] = {name='Aristaeus Clear', char1 = 'war/rdm', char2 = 'sam/rdm', char3 = 'cor/rdm', char4 = 'brd/rdm', char5 = 'whm/rdm', char6 = 'geo/rdm',},
 	['marm'] = {name='Marmorkrebs Clear', char1 = 'run/rdm', char2 = 'blm/rdm', char3 = 'sch/rdm', char4 = 'geo/rdm', char5 = 'rdm/whm', char6 = 'cor/rdm',},
 	['rask'] = {name='Raskovniche Clear', char1 = 'run/rdm', char2 = 'blm/rdm', char3 = 'sch/rdm', char4 = 'geo/rdm', char5 = 'rdm/whm', char6 = 'cor/rdm',},
 	['procne'] = {name='Procne Clear', char1 = 'war/rdm', char2 = 'pld/rdm', char3 = 'drg/rdm', char4 = 'brd/rdm', char5 = 'rdm/whm', char6 = 'cor/rdm',},
+	['henwen'] = {name='Henwen Clear', char1 = 'pld/rdm', char2 = 'mnk/rdm', char3 = 'war/rdm', char4 = 'brd/rdm', char5 = 'rdm/whm', char6 = 'cor/rdm',},
+	['gige'] = {name='Gigelorum Clear', char1 = 'run/rdm', char2 = 'mnk/rdm', char3 = 'war/rdm', char4 = 'brd/rdm', char5 = 'rdm/whm', char6 = 'cor/rdm',},
 }
 
 stage_data = {

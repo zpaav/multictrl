@@ -92,7 +92,7 @@ InternalCMDS = S{
 	--Travel
 	'mnt','dis','warp','omen','enter','get','deimos','macro','htmb',
 	--Misc
-	'reload','unload','fps30','fps60','lotall','cleanup','drop','book','lockstyle',
+	'reload','unload','fps30','fps60','lotall','cleanup','drop','book','lockstyle','wstypenew',
 }
 
 DelayCMDS = S{'book','get','enter','deimos','macro','htmb','enup','endown','ent','esc'}
@@ -2834,6 +2834,24 @@ function buffall(cmd2)
 	end
 end
 
+function wstypenew(cmd2)
+	if not wstype_data[player.main_job] then
+		atcwarn("[WSTYPE]: Abort.")
+		return
+	end
+
+	for k,v in pairs(wstype_data[player.main_job].wsgroup) do
+		if k == cmd2:lower() then
+			if v[player.sub_job] then
+				log(v[player.sub_job])
+			elseif v['NON'] then
+				log(v['NON'])
+			end
+		end
+	end
+
+end
+
 function wstype(cmd2)
 	local player_job = windower.ffxi.get_player()
 	local WSjobs = S{'COR','DRG','SAM','BLU','DRK','WAR','RNG','GEO','RDM'}		
@@ -3425,27 +3443,6 @@ function trade_orb(npc_index, orb_type)
 	return npc_dialog
 end
 
-function get_poke_check(npc_name)
-	npc_dialog = false
-	count = 0
-
-	while npc_dialog == false and count < 3
-	do
-		count = count + 1
-        npcstats = windower.ffxi.get_mob_by_name(npc_name)
-		if npcstats and distance_check_npc(npcstats) and npcstats.valid_target then -- math.sqrt(npcstats.distance)<6 
-			atc('Poke #: ' ..count.. ' [NPC: ' .. npc_name.. ' ID: ' .. npcstats.id.. ']')
-			poke_npc(npcstats.id,npcstats.index)
-		else
-			atcwarn('POKE: NPC Target is too far!')
-		end
-		coroutine.sleep(2.1)
-		if npc_dialog == false then
-			coroutine.sleep(2.0)
-		end
-	end
-end
-
 function get_poke_check_index(npc_index)
 	npc_dialog = false
 	count = 0
@@ -3471,27 +3468,6 @@ function get_poke_check_index(npc_index)
 	return npc_dialog
 end
 
-function get_poke_check_id(npc_id)
-	npc_dialog = false
-	count = 0
-
-	while npc_dialog == false and count < 3
-	do
-		count = count + 1
-        npcstats = windower.ffxi.get_mob_by_id(npc_id)
-		if npcstats and distance_check_npc(npcstats) and npcstats.valid_target then -- math.sqrt(npcstats.distance)<6
-			atc('Poke #: ' ..count.. ' [NPC: ' .. npcstats.name.. ' ID: ' ..npcstats.id.. ']')
-			poke_npc(npcstats.id,npcstats.index)
-		else
-			atcwarn('POKE: NPC Target is too far!')
-		end
-		coroutine.sleep(2.1)
-		if npc_dialog == false then
-			coroutine.sleep(2.0)
-		end
-	end
-end
-
 function haveBuff(...)
 	local args = S{...}:map(string.lower)
 	local player = windower.ffxi.get_player()
@@ -3505,8 +3481,6 @@ function haveBuff(...)
 	end
 	return false
 end
-
-
 
 function poke_npc(npc,target_index)
 	if npc and target_index then

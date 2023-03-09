@@ -86,6 +86,7 @@ InternalCMDS = S{
 	--Battle
 	'on','off','stage','fight','fightmage','fightsmall','ws','food','autosub',
 	'wsall','zerg','wstype','buffup','rebuff','dd','attackon','reraise','smartws',
+	'turnaround','turnback',
 	
 	--Job
 	'brd','bst','sch','smnburn','geoburn','burn','rng','proc','wsproc','jc',
@@ -1296,7 +1297,19 @@ function sch(cmd2)
 	end
 end
 
+function turnaround()
+	windower.send_command('gaze ap off')
+	local target = windower.ffxi.get_mob_by_target('t')
+	local self_vector = windower.ffxi.get_mob_by_id(player.id)
+	local angle = (math.atan2((target.y - self_vector.y), (target.x - self_vector.x))*180/math.pi)*-1
+	coroutine.sleep(0.6)
+	windower.ffxi.turn((getAngle()+180):radian()+math.pi)
+	--windower.ffxi.turn:schedule(3.3,((angle):radian()))
+end
 
+function turnback()
+	windower.send_command('gaze ap on')
+end
 
 function lockstyle(cmd)
 	if cmd and cmd:lower() == 'off' then
@@ -3480,6 +3493,15 @@ function haveBuff(...)
 		end
 	end
 	return false
+end
+
+function getAngle(index)
+    local P = windower.ffxi.get_mob_by_target('me') --get player
+    local M = index and windower.ffxi.get_mob_by_id(index) or windower.ffxi.get_mob_by_target('t') --get target
+    local delta = {Y = (P.y - M.y),X = (P.x - M.x)} --subtracts target pos from player pos
+    local angleInDegrees = (math.atan2( delta.Y, delta.X) * 180 / math.pi)*-1 
+    local mult = 10^0
+    return math.floor(angleInDegrees * mult + 0.5) / mult
 end
 
 function poke_npc(npc,target_index)

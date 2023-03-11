@@ -556,6 +556,15 @@ stage_data = {
 		['DRK'] = {	action={'gs c set weapons Caladbolg; gs c set weaponskillmode Emnity'}},
 		['ALL'] = {	commands = 'autoitem on', mc_settings = {autows=true}},
 	}},
+	['kalungav25'] = { jobs = {
+		['PLD'] = {	action={'hb buffjob run protect5;'}},
+		['RUN'] = {	action={'gs c set runeelement unda; gs c set autotankmode on; hb buff <me> barfire'}},
+		['BRD'] = {	action={'wait 2.5; sing pl kalunga; sing n on; sing p on; sing sirvente RUN; sing ballad 1 RUN; sing fire 1 RUN; sing ballad 2 PLD; sing ballad 1 RDM'}},
+		['RDM'] = {	action={'hb buffjob pld shell5,refresh3,haste2; hb buffjob drk shell5,haste2,refresh3; hb buffjob run shell5,refresh3,haste2; hb buffjob cor shell5,haste2; hb as nolock on; hb as j RUN; hb debuff bio3,paralyze2,slow2,blind2,poison2'}},
+		['COR'] = {	action={'gs c set weapons Naegling; roll melee'}},
+		['DRK'] = {	action={'gs c set weaponskillmode Emnity'}},
+		['ALL'] = {	commands = 'autoitem on', mc_settings = {autows=true}},
+	}},
 	['mbozepre'] = { jobs = {
 		['RDM'] = {	action={'dmain; hb as j WAR; hb as nolock on; hb buffjob WAR haste2,protect5,shell5; hb buffjob SMN refresh3; hb mincure 4;'}},
 		['SMN'] = {	action={'gs c set AutoBPMode on; gs c set AutoWardMode Ward_Offense; gs c set avatar cait sith;'}},

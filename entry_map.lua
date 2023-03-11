@@ -433,7 +433,7 @@ get_map = {
 	}}, 
 	[241] = {name ={
 		['Harara, W.W.'] = {cmd = {
-			['signet'] = {description='Signet', entry_command = {0.7, {'enter', 0.15}}},
+			['signet'] = {description='Signet', menu_id = 32759, packet = {[1]={{1,0,0,false}}}},
 		}}
 	}}, 
 	[246] = {name ={
@@ -448,8 +448,8 @@ get_map = {
 	}},  
 	[247] = {name ={
 		['???'] = {cmd = {
-			['mog'] = {description='Moglophone', entry_command = {3, {'enter', 0.15}, 2, {'escape', 0.15}}},
-			['mog2'] = {description='Moglophone II', entry_command = {3, {'down', 0.05}, 0.5, {'down', 0.05}, 0.5, {'down', 0.05}, 0.5, {'down', 0.05}, 0.5, {'enter', 0.15}, 2.0, {'enter', 0.15}}},
+			['mog'] = {description='Moglophone', ki_max_num = 1, ki_check = S{3212}, menu_id = 2001, packet = {[1]={{1,0,0,true},{4,0,0,false}}}},
+			['mog2'] = {description='Moglophone II', ki_max_num = 3, ki_check = S{3234,3235,3236}, menu_id = 2001, packet = {[1]={{11,0,0,true},{268,0,0,true},{267,0,0,true},{0,16384,0,false}},[2]={{11,0,0,true},{524,0,0,true},{523,0,0,true},{0,16384,0,false}},[3]={{11,0,0,true},{780,0,0,true},{779,0,0,true},{0,16384,0,false}}}},
 		}}
 	}},
 	[253] = {name ={
@@ -476,7 +476,7 @@ get_map = {
 	}},
 	[257] = {name ={
 		['Quiri-Aliri'] = {cmd = {
-			['ionis'] = {description='Ionis', entry_command = {1.2, {'enter', 0.15}, 0.5, {'up', 0.15}, 0.5, {'enter', 0.15}}},
+			['ionis'] = {description='Ionis', menu_id = 1201, packet = {[1]={{1,0,0,false}}}},
 		}},
 		['Winrix'] = {cmd = {
 			['gobbiebox'] = {description='Gobbie Mystery Box', entry_command = {3.0, {'enter', 0.15}, 1.5, {'right', 1.0}, 1.0, {'enter', 0.15}, 9.0, {'escape', 0.15}}},

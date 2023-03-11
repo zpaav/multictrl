@@ -91,12 +91,12 @@ InternalCMDS = S{
 	--Job
 	'brd','bst','sch','smnburn','geoburn','burn','rng','proc','wsproc','jc',
 	--Travel
-	'mnt','dis','warp','omen','enter','get','deimos','macro','htmb',
+	'mnt','dis','warp','omen','enter','get','deimos','macro','htmb','getki',
 	--Misc
 	'reload','unload','fps30','fps60','lotall','cleanup','drop','book','lockstyle','wstypenew',
 }
 
-DelayCMDS = S{'book','get','enter','deimos','macro','htmb','enup','endown','ent','esc'}
+DelayCMDS = S{'book','get','enter','deimos','macro','htmb','enup','endown','ent','esc','getki'}
 
 TransferCMDS = S{'mnt','dis','warp','omen','fps30','fps60','lotall'}
 
@@ -107,6 +107,11 @@ if info.logged_in then
     zone_id = info.zone
 end
 	
+__busy = false
+__get_packet_sequence = {}
+__get_menu_id = 0
+__get_npc_name = ''
+
 isCasting = false
 isResting = false
 ipcflag = false
@@ -142,6 +147,11 @@ function handle_addon_command(input, ...)
 
 	if cmd == nil then
 		windower.add_to_chat(123,"Abort: No command specified")
+	elseif cmd == 'test' then
+		log(__get_npc_name)
+		log(__get_menu_id)
+		table.vprint(__get_packet_sequence)
+		if __busy then log('busy is true') else log('busy false') end
 	elseif cmd == 'job' then
 		find_job_charname(string.upper(cmd2),cmd3)
 	elseif cmd == 'buy' then						-- Leader
@@ -355,7 +365,20 @@ function handle_lose_buff(buff_id)
     end
 end
 
-function handle_incoming_chunk(id, data)
+ 
+function handle_outgoing_chunk(id, original)
+	if id == 0x05b then
+		local parsed = packets.parse('outgoing', original)
+		if parsed then
+			__get_packet_sequence = {}
+			__get_menu_id = 0
+			__get_npc_name = ''
+			__busy = parsed['Automated Message']
+		end
+	end
+end
+
+function handle_incoming_chunk(id, data, mod, inj, blk)
     if id == 0x028 then	-- Casting
         local action_message = packets.parse('incoming', data)
 		if action_message["Category"] == 4 then
@@ -371,6 +394,18 @@ function handle_incoming_chunk(id, data)
 			
 			if playerId and playerId > 0 then
 				set_registry(packet['ID'], packet['Main job'])
+			end
+		end
+	elseif (id == 0x032 or id == 0x034) and __busy and not inj then
+		local parsed = packets.parse('incoming', data)
+		if parsed then
+			local target = windower.ffxi.get_mob_by_index(parsed['NPC Index']) or false
+			if target and target.name == __get_npc_name and parsed['Menu ID'] == __get_menu_id and parsed['Zone'] == zone_id then
+				send_packet(parsed, __get_packet_sequence)
+				return true
+			else
+				atcwarn('ABORT! Wrong NPC interaction!')
+				send_packet(parsed, {{0,16384,0,false}})
 			end
 		end
 	end
@@ -2533,9 +2568,40 @@ function attackon()
 	end
 end
 
+-- function get(cmd2)
+	-- if not (get_map[zone_id]) then
+		-- atc('[GET] Not in an listed zone, cancelling.')
+		-- return
+	-- end
+	
+	-- if not cmd2 then atc('[GET] No parameter, cancelling.'); return end
+
+	-- if haveBuff('Invisible') then
+		-- windower.send_command('cancel invisible')
+		-- coroutine.sleep(2.0)
+	-- end
+	
+	-- local possible_npc = find_npc_to_poke("get")
+	-- if possible_npc and get_poke_check_index(possible_npc.index) then
+		-- if (get_map[zone_id].name[possible_npc.name].cmd) then
+			-- atc("[GET] - "..get_map[zone_id].name[possible_npc.name].cmd[cmd2].description)
+			-- keypress_cmd(get_map[zone_id].name[possible_npc.name].cmd[cmd2].entry_command)
+		-- end
+	-- else
+		-- atc("[GET] No NPC's nearby to poke, cancelling.")
+	-- end	
+-- end
+
 function get(cmd2)
+	local ki_count = 0
+	local ki_max = 0
 	if not (get_map[zone_id]) then
-		atc('[GET] Not in an listed zone, cancelling.')
+		atc('[GET KI] Not in an listed zone, cancelling.')
+		return
+	end
+	
+	if __busy then
+		atcwarn('[GET KI] ABORT! Currently interacting with some NPC')
 		return
 	end
 
@@ -2545,14 +2611,36 @@ function get(cmd2)
 	end
 	
 	local possible_npc = find_npc_to_poke("get")
-	if possible_npc and get_poke_check_index(possible_npc.index) then
-		if (get_map[zone_id].name[possible_npc.name].cmd) then
-			atc("[GET] - "..get_map[zone_id].name[possible_npc.name].cmd[cmd2].description)
-			keypress_cmd(get_map[zone_id].name[possible_npc.name].cmd[cmd2].entry_command)
+	local get_command = get_map[zone_id].name[possible_npc.name].cmd[cmd2] or nil
+	if possible_npc and get_command then
+		if (get_command.packet) then	-- Packets
+			ki_count = (get_command.ki_check and find_missing_ki(get_command.ki_check)) or 0
+			ki_max = get_command.ki_max_num or 1
+			if (ki_max-ki_count) > 0 then 
+				atc("[GET KI Packet] - "..get_command.description)
+				__get_packet_sequence = get_command.packet[ki_max-ki_count]
+				__get_menu_id = get_command.menu_id
+				__get_npc_name = possible_npc.name
+				__busy = true
+				--Poke NPC
+				if not get_poke_check_index(possible_npc.index) then
+					__get_packet_sequence = {}
+					__get_menu_id = 0
+					__get_npc_name = ''
+					__busy = false
+				end
+			else
+				atc("[GET Packet] - Abort! You already have maximum amount of "..get_command.description)
+			end
+		elseif (get_command.entry_command) then	-- KeyPress
+			if get_poke_check_index(possible_npc.index) then
+				atc("[GET] - "..get_command.description)
+				keypress_cmd(get_command.entry_command)
+			end
 		end
 	else
 		atc("[GET] No NPC's nearby to poke, cancelling.")
-	end	
+	end
 end
 
 function orb_entry(leader, orb_type)
@@ -3591,6 +3679,44 @@ function find_job_charname(job, job_count, in_party, with_self)
 	return nil
 end
 
+function find_missing_ki(ki_table)
+	local found_ki = 0
+	local keyitems = windower.ffxi.get_key_items()
+	for id,ki in pairs(keyitems) do
+		if ki_table:contains(ki) then
+			found_ki = found_ki +1
+		end
+	end
+	return found_ki
+end
+
+function send_packet(parsed, options, delay)
+	local delay = (delay or 0)
+
+	if parsed and options and type(options) == 'table' then
+		coroutine.schedule(function()
+
+			for option, index in T(options):it() do
+				local option = T(option)
+
+				coroutine.schedule(function()
+					packets.inject(packets.new('outgoing', 0x05b, {
+						['Menu ID']             = parsed['Menu ID'],
+						['Zone']                = parsed['Zone'],
+						['Target Index']        = parsed['NPC Index'],
+						['Target']              = parsed['NPC'],
+						['Option Index']        = option[1],
+						['_unknown1']           = option[2],
+						['_unknown2']           = option[3],
+						['Automated Message']   = option[4]
+					}))
+				end, (index * 0.25))
+			end
+		end, delay)
+	end
+end
+
+windower.register_event('outgoing chunk', handle_outgoing_chunk)
 windower.register_event('addon command', handle_addon_command)
 windower.register_event('ipc message', handle_ipc_message) 
 windower.register_event('incoming chunk', handle_incoming_chunk)

@@ -905,12 +905,12 @@ function cc(mob_index)
 		end
 	end
 	
-	if mob and not (player.target_locked) and spell_to_cast then
+	if mob and spell_to_cast then --and not (player.target_locked)  then
 		atcwarn("[CC]: "..spell_to_cast.." -> "..mob.name)
 		windower.send_command('input /ma \"'..spell_to_cast..'\" ' .. mob.id)
-	elseif spell_to_cast and not (player.target_locked) then
-		atcwarn("[CC]: "..spell_to_cast)
-		windower.send_command('input /ma \"'..spell_to_cast..'\" <t>')
+	-- elseif spell_to_cast and player.target_locked then
+		-- atcwarn("[CC]: "..spell_to_cast)
+		-- windower.send_command('input /ma \"'..spell_to_cast..'\" <t>')
 	else
 		atcwarn("[CC]: No proper spell to cast due to JOB combo.")
 	end
@@ -928,10 +928,10 @@ function dispelga(mob_index)
 		return
 	end
 	
-	if mob and not (player.target_locked) then
+	if mob then --and not (player.target_locked) then
 		windower.send_command("input /ma 'Dispelga " .. mob.id)
-	else
-		windower.send_command("input /ma 'Dispelga' <t>")
+	-- else
+		-- windower.send_command("input /ma 'Dispelga' <t>")
 	end
 end
 
@@ -948,17 +948,17 @@ function fin(mob_index)
         
 	if player.main_job == "BRD" then
 		atcwarn("[FIN]: Finale")
-		if mob and not (player.target_locked) then
+		if mob then --and not (player.target_locked) then
 			windower.send_command("input /ma 'Magic Finale' " .. mob.id)
-		else
-			windower.send_command("input /ma 'Magic Finale' <t>")
+		-- else
+			-- windower.send_command("input /ma 'Magic Finale' <t>")
 		end
 	elseif player.main_job == "RDM" or player.sub_job == "RDM" then
 		atcwarn("[FIN]: Dispel")
-		if mob and not (player.target_locked) then
+		if mob then --and not (player.target_locked) then
 			windower.send_command("input /ma 'Dispel " .. mob.id)
-		else
-			windower.send_command("input /ma 'Dispel' <t>")
+		-- else
+			-- windower.send_command("input /ma 'Dispel' <t>")
 		end
 	end
 
@@ -2568,30 +2568,6 @@ function attackon()
 	end
 end
 
--- function get(cmd2)
-	-- if not (get_map[zone_id]) then
-		-- atc('[GET] Not in an listed zone, cancelling.')
-		-- return
-	-- end
-	
-	-- if not cmd2 then atc('[GET] No parameter, cancelling.'); return end
-
-	-- if haveBuff('Invisible') then
-		-- windower.send_command('cancel invisible')
-		-- coroutine.sleep(2.0)
-	-- end
-	
-	-- local possible_npc = find_npc_to_poke("get")
-	-- if possible_npc and get_poke_check_index(possible_npc.index) then
-		-- if (get_map[zone_id].name[possible_npc.name].cmd) then
-			-- atc("[GET] - "..get_map[zone_id].name[possible_npc.name].cmd[cmd2].description)
-			-- keypress_cmd(get_map[zone_id].name[possible_npc.name].cmd[cmd2].entry_command)
-		-- end
-	-- else
-		-- atc("[GET] No NPC's nearby to poke, cancelling.")
-	-- end	
--- end
-
 function get(cmd2)
 	local ki_count = 0
 	local ki_max = 0
@@ -3592,18 +3568,6 @@ function getAngle(index)
     return math.floor(angleInDegrees * mult + 0.5) / mult
 end
 
-function poke_npc(npc,target_index)
-	if npc and target_index then
-		local packet = packets.new('outgoing', 0x01A, {
-			["Target"]=npc,
-			["Target Index"]=target_index,
-			["Category"]=0,
-			["Param"]=0,
-			["_unknown1"]=0})
-		packets.inject(packet)
-	end
-end
-
 -- Credit to partyhints
 function set_registry(id, job_id)
     if not id then return false end
@@ -3688,6 +3652,18 @@ function find_missing_ki(ki_table)
 		end
 	end
 	return found_ki
+end
+
+function poke_npc(npc,target_index)
+	if npc and target_index then
+		local packet = packets.new('outgoing', 0x01A, {
+			["Target"]=npc,
+			["Target Index"]=target_index,
+			["Category"]=0,
+			["Param"]=0,
+			["_unknown1"]=0})
+		packets.inject(packet)
+	end
 end
 
 function send_packet(parsed, options, delay)

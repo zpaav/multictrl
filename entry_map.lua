@@ -448,8 +448,12 @@ get_map = {
 	}},  
 	[247] = {name ={
 		['???'] = {cmd = {
-			['mog'] = {description='Moglophone', ki_max_num = 1, ki_check = S{3212}, menu_id = 2001, packet = {[1]={{1,0,0,true},{4,0,0,false}}}},
-			['mog2'] = {description='Moglophone II', ki_max_num = 3, ki_check = S{3234,3235,3236}, menu_id = 2001, packet = {[1]={{11,0,0,true},{268,0,0,true},{267,0,0,true},{0,16384,0,false}},[2]={{11,0,0,true},{524,0,0,true},{523,0,0,true},{0,16384,0,false}},[3]={{11,0,0,true},{780,0,0,true},{779,0,0,true},{0,16384,0,false}}}},
+			['mog'] = {	description='Moglophone', ki_max_num = 1, ki_check = S{3212}, menu_id = 2001, 
+						packet = {[1]={{1,0,0,true},{4,0,0,false}}}},
+			['mog2'] = {description='Moglophone II', ki_max_num = 3, ki_check = S{3234,3235,3236}, menu_id = 2001, 
+						packet = {	[1]={{11,0,0,true},{268,0,0,true},{267,0,0,true},{0,16384,0,false}},
+									[2]={{11,0,0,true},{524,0,0,true},{523,0,0,true},{0,16384,0,false}},
+									[3]={{11,0,0,true},{780,0,0,true},{779,0,0,true},{0,16384,0,false}}}},
 		}}
 	}},
 	[253] = {name ={
@@ -545,7 +549,7 @@ get_map = {
 			['pot'] = {description='Potpourri KI', entry_command = {1.1, {'right', 0.15}, 0.5, {'up', 0.15}, 0.5, {'enter', 0.15}, 1.0, {'up', 0.15}, 1,{'enter', 0.15}}},
 		}},
 		['Incantrix'] = {cmd = {
-			['canteen'] = {description='Omen KI', entry_command = {3.0, {'enter', 0.15}}},
+			['canteen'] = {description='Omen KI', ki_max_num = 1, entry_command = {3.0, {'enter', 0.15}}}, -- ki_check = S{3137}, menu_id = 31, packet = {[1]={{2,0,0,true},{3,0,0,false}}}}, ///(have canteen)menu: 31 / 2,0,0,true / 0,0,0,false   |||||| (no canteen) menu: 31/ 2,0,0,true / 3,0,0,false
 		}}
 	}},
 	[298] = {name ={

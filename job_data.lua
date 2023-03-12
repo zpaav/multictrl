@@ -156,6 +156,7 @@ job_change_data = {
 	['ongo1'] = {name='Ongo Farm #1', char1 = 'run/rdm', char2 = 'blm/rdm', char3 = 'blu/rdm', char4 = 'war/rdm', char5 = 'rdm/thf', char6 = 'nin/rdm',},
 	['ongo2'] = {name='Ongo Farm #2', char1 = 'pld/rdm', char2 = 'cor/rdm', char3 = 'drk/rdm', char4 = 'brd/rdm', char5 = 'whm/rdm', char6 = 'smn/rdm',},
 	['ongo3'] = {name='Ongo Farm #3', char1 = 'thf/rdm', char2 = 'pup/rdm', char3 = 'sch/rdm', char4 = 'geo/rdm', char5 = 'bst/rdm', char6 = 'mnk/rdm',},
+	['ongov20'] = {name='Ongo V20 Clear', char1 = 'run/rdm', char2 = 'blm/rdm', char3 = 'sch/rdm', char4 = 'brd/rdm', char5 = 'geo/rdm', char6 = 'cor/rdm',},
 	['bumbapre'] = {name='Bumba Pre-fight', char1 = 'run/rdm', char2 = 'bst/rdm', char3 = 'sch/rdm', char4 = 'blm/rdm', char5 = 'rdm/thf', char6 = 'smn/rdm',},
 	['bumba'] = {name='Bumba Main', char1 = 'war/rdm', char2 = 'cor/rdm', char3 = 'drg/rdm', char4 = 'brd/rdm', char5 = 'whm/thf', char6 = 'geo/rdm',},
 	['bumba1'] = {name='Bumba Farm #1', char1 = 'pld/rdm', char2 = 'bst/rdm', char3 = 'rng/rdm', char4 = 'cor/rdm', char5 = 'rdm/thf', char6 = 'thf/rdm',},
@@ -582,13 +583,13 @@ stage_data = {
 		['DRK'] = {	action={'gs c set weapons KajaChopper; gs c set hybridmode SubtleBlow; gs c autows tp 1750; lua l dressup'}},
 		['ALL'] = {	commands = 'autoitem on; gaze ap off; gs c othertargetws Mboze', mc_settings = {autows=true}},
 	}},
-	['ongo'] = { jobs = {
+	['ongov20'] = { jobs = {
 		['BLM'] = {	action={'gs c set magicburstmode lock;'}},
-		['BRD'] = {	action={'wait 2.5; sing pl ongo; sing n on; sing p on; sing sirvente 1 BRD; hb debuff earth threnody ii; hb as j tank; hb as nolock on; sing march 1 tank; sing earth 2 tank'}},
-		['SCH'] = {	action={'hb buff me regen5; hb buffjob BLM sandstorm2; schheal'}},
+		['BRD'] = {	action={'wait 2.5; gs c set AutoRecoverHPMode on; sing pl ongo; sing n on; sing p on; sing sirvente 1 BRD; sing minne 1 BRD; hb as j tank; hb as nolock on; sing march 1 tank; sing thunder 1 tank'}},
+		['SCH'] = {	action={''}},
 		['GEO'] = {	action={'gs c autoindi acumen; gs c autogeo malaise; gs c autoentrust INT;'}},
-		['RUN'] = {	action={'gs c set hybridmode Ongo; gs c set weapons Lycurgos; gs c set runeelement Tellus; gs c set autotankmode on;'}},
-		['COR'] = {	action={'roll roll1 wizard; roll roll2 warlock; gs c set weapons Fomalhaut'}},
+		['RUN'] = {	action={'gs c set AutoRecoverHPMode on; gs c set hybridmode Ongo; gs c set weapons Lycurgos; gs c set runeelement Tellus; gs c set autotankmode on; hb buff me barthunder; autoitem pana on;'}},
+		['COR'] = {	action={'gs c set WeaponskillMode STP; roll roll1 wizard; roll roll2 warlock; gs c set weapons Fomalhaut'}},
 		['ALL'] = {	commands = 'autoitem on', mc_settings = {autosc=true,autows=true}},
 	}},
 	['arepre'] = { jobs = {

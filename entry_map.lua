@@ -33,6 +33,8 @@ htmb_map = {
     [163] = {name = {'Mahogany Door'}, entry_command ={}},
     [165] = {name = {'Throne Room'}, entry_command ={}},
     [168] = {name = {'Shimmering Circle'}, entry_command ={}},
+	[179] = {name = {"Qe'lov Gate"}, entry_command ={9, {'right', 0.75}, 0.6, {'enter', 0.25}, 0.75, {'left', 0.75}, 0.6, {'enter', 0.25}, 4, {'up', 0.25}, 0.6, {'enter', 0.25}}},
+	[181] = {name = {"Celestial Gate"}, entry_command ={5, {'right', 0.75}, 0.6, {'enter', 0.25}, 0.75, {'left', 0.75}, 0.6, {'enter', 0.25}, 4, {'up', 0.25}, 0.6, {'enter', 0.25}}},
 	[201] = {name = {'Wind Protocrystal'}, entry_command ={5, {'right', 0.75}, 0.6, {'enter', 0.25}, 0.75, {'left', 0.75}, 0.6, {'enter', 0.25}}},
 	[202] = {name = {'Lightning Protocrystal'}, entry_command ={5, {'right', 0.75}, 0.6, {'enter', 0.25}, 0.75, {'left', 0.75}, 0.6, {'enter', 0.25}}},
 	[203] = {name = {'Ice Protocrystal'}, entry_command ={5, {'right', 0.75}, 0.6, {'enter', 0.25}, 0.75, {'left', 0.75}, 0.6, {'enter', 0.25}}},

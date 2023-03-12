@@ -127,6 +127,8 @@ orb_state = false
 orb_entered = false
 player_leader = ''
 
+__helix_timer = 0
+
 function handle_addon_command(input, ...)
 	local cmd
     if input ~= nil then
@@ -2249,16 +2251,14 @@ function autosc(cmd2, leader_char)
 	
 	local autosc_jobs = S{'COR','SCH','BLM','RUN','BRD','RDM','GEO'}
 
-	if cmd2 == nil then
-		if settings.autosc then
-			atc('Helper for Auto SC DISABLED')
-			settings.autosc = false
-		else
-			atc('Helper for Auto SC ACTIVE')
-			settings.autosc = true
-		end
+	local autosc_cmd = cmd2 and cmd2:lower() or (settings.autosc and 'off' or 'on')
+	if S{'off'}:contains(autosc_cmd) then
+		atc('Helper for Auto SC DISABLED')
+		settings.autosc = false
+	elseif S{'on'}:contains(autosc_cmd) then
+		atc('Helper for Auto SC ACTIVE')
+		settings.autosc = true
 	end
-	
 	
 	if settings.autosc then
 		if autosc_jobs:contains(player.main_job) then
@@ -2343,7 +2343,6 @@ function autosc(cmd2, leader_char)
 					windower.send_command:schedule(12.0, 'gs c set autobuffmode auto; gs c set autotankmode on; gs c set autorunemode on')
 				elseif player.main_job == 'COR' then
 					atc('[AUTOSC] COR Leaden and Earth Shot')
-
 					local abil_recasts = windower.ffxi.get_ability_recasts()
 					local latency = 0.7
 					if abil_recasts[195] < latency then
@@ -2356,12 +2355,42 @@ function autosc(cmd2, leader_char)
 				
 				elseif player.main_job == 'BLM' then
 					atc('[AUTOSC] BLM Nuke')
+					local abil_recasts = windower.ffxi.get_ability_recasts()
+					local latency = 0.7
 					windower.send_command('gs c set elementalmode earth; gs c set autobuffmode off')
-					windower.send_command:schedule(2.9, 'gs c elemental aja Ongo')
-					windower.send_command:schedule(7.3, 'gs c elemental nuke Ongo')
-					windower.send_command:schedule(12.7, 'gs c elemental nuke Ongo')
+					if abil_recasts[35] < latency then
+						windower.send_command:schedule(2.1, 'input /ma "Impact" '..windower.ffxi.get_mob_by_name('Ongo').id)
+					else
+						windower.send_command:schedule(2.9, 'gs c elemental aja Ongo')
+					end
+					windower.send_command:schedule(7.8, 'gs c elemental nuke Ongo')
+					windower.send_command:schedule(13.2, 'gs c elemental nuke Ongo')
 					windower.send_command:schedule(18.1, 'gs c elemental nuke Ongo')
 					windower.send_command:schedule(20.0, 'gs c set autobuffmode auto')
+					if abil_recasts[38] < latency then
+						windower.send_command:schedule(20.5, 'input /ma "Burn" '..windower.ffxi.get_mob_by_name('Ongo').id)
+					end
+				elseif player.main_job == 'SCH' then
+					atc('[AUTOSC] SCH Nuke')
+					windower.send_command('gs c set elementalmode earth; gs c set autobuffmode off; hb disable cure; hb mincure 3')
+						
+					if (os.clock()-__helix_timer) > 300 or haveBuff('Tablua Rasa') then
+						__helix_timer = os.clock()
+						windower.send_command:schedule(3.2, 'gs c scholar helix2 Ongo')
+					else
+						windower.send_command:schedule(4.1, 'gs c elemental nuke Ongo')
+					end
+					windower.send_command:schedule(9.6, 'gs c elemental nuke Ongo')
+					windower.send_command:schedule(14.0, 'gs c elemental nuke Ongo')
+					windower.send_command:schedule(19.0, 'gs c elemental nuke Ongo')
+					windower.send_command:schedule(21.5, 'gs c set autobuffmode auto; hb enable cure;')
+				elseif player.main_job == 'GEO' then
+					atc('[AUTOSC] GEO Nuke')
+					windower.send_command('gs c set elementalmode earth;')
+					windower.send_command:schedule(5.4, 'gs c elemental nuke Ongo')
+					windower.send_command:schedule(10.3, 'gs c elemental nuke Ongo')
+					windower.send_command:schedule(17.0, 'gs c elemental nuke Ongo')
+					windower.send_command:schedule(21.8, 'gs c elemental nuke Ongo')
 				end
 			--Sortie 4 Step: Aeolian Edge x4.
 			elseif cmd2 and cmd2:lower() == 'aeolian' then

@@ -1326,6 +1326,14 @@ function sch(cmd2)
 			atc('SCH Stance: Nuking')
 			autoarts='Dark'
 			windower.send_command('gs c set autoarts dark; hb disable cure; hb disable curaga; hb disable na; wait 2; gs c set autobuffmode Nuking')
+		elseif cmd2 == 'rebuff' then
+			atc('SCH Rebuff')
+			windower.send_command('gs c set autoarts off; hb disable cure; hb disable curaga; hb disable na; gs c set autobuffmode off;')
+			coroutine.sleep(1.8)
+			windower.send_command('input /ja "Tabula Rasa" <me>; wait 1.8; input /ja "Light Arts" <me>; wait 1.8; input /ja "Accession" <me>; wait 1.8; input /ja "Perpetuance" <me>; wait 1.8; regen5 me')
+			windower.send_command:schedule(13.0, 'input /ja "Penury" <me>; wait 1.8; input /ja "Accession" <me>; wait 1.8; input /ja "Perpetuance" <me>; wait 1.8; embrava me')
+			windower.send_command:schedule(25.0, 'input /ja "Perpetuance" <me>; wait 1.6; regen5 '..find_job_charname('RUN'))
+			windower.send_command:schedule(32.0, 'input /ja "Penury" <me>; wait 1.6; input /ja "Perpetuance" <me>; wait 1.6; embrava '..find_job_charname('RUN'))
 		else
 			atc('SCH Stance: No parameter specified')
 		end
@@ -2330,15 +2338,13 @@ function autosc(cmd2, leader_char)
 					if abil_recasts[116] < latency then
 						windower.send_command('gs c set autobuffmode off; gs c set autotankmode off; gs c set autorunemode off')
 						windower.send_command:schedule(3.1, 'input /ja "Gambit" <t>')
-						windower.send_command:schedule(4.2, 'gs c set autobuffmode auto; gs c set autotankmode on; gs c set autorunemode on')
+						--windower.send_command:schedule(4.2, 'gs c set autobuffmode auto; gs c set autotankmode on; gs c set autorunemode on')
 					elseif abil_recasts[119] < latency then
 						windower.send_command('gs c set autobuffmode off; gs c set autotankmode off; gs c set autorunemode off')
 						windower.send_command:schedule(3.1, 'input /ja "Rayke" <t>')
-						windower.send_command:schedule(4.2, 'gs c set autobuffmode auto; gs c set autotankmode on; gs c set autorunemode on')
-					elseif abil_recasts[25] < latency then
-						windower.send_command:schedule(5.1, 'input /ja "Lunge" <t>')
+						--windower.send_command:schedule(4.2, 'gs c set autobuffmode auto; gs c set autotankmode on; gs c set autorunemode on')
 					end
-					windower.send_command:schedule(8.0,'gs c set autobuffmode off; gs c set autotankmode off; gs c set autorunemode off')
+					--windower.send_command:schedule(8.0,'gs c set autobuffmode off; gs c set autotankmode off; gs c set autorunemode off')
 					windower.send_command:schedule(11.0, 'input /ws "Steel Cyclone" <t>')
 					windower.send_command:schedule(12.0, 'gs c set autobuffmode auto; gs c set autotankmode on; gs c set autorunemode on')
 				elseif player.main_job == 'COR' then
@@ -2346,7 +2352,7 @@ function autosc(cmd2, leader_char)
 					local abil_recasts = windower.ffxi.get_ability_recasts()
 					local latency = 0.7
 					if abil_recasts[195] < latency then
-						windower.send_command:schedule(1.7, 'gs c set elementalmode Earth; gs c elemental quickdraw Ongo')
+						windower.send_command:schedule(1.5, 'gs c set elementalmode Earth; gs c elemental quickdraw Ongo')
 					end
 					windower.send_command:schedule(3.3, 'input /ws "Leaden Salute" <t>')
 					windower.send_command:schedule(6.9, 'autora start')
@@ -2358,32 +2364,32 @@ function autosc(cmd2, leader_char)
 					local abil_recasts = windower.ffxi.get_ability_recasts()
 					local latency = 0.7
 					windower.send_command('gs c set elementalmode earth; gs c set autobuffmode off')
-					if abil_recasts[35] < latency then
-						windower.send_command:schedule(2.1, 'input /ma "Impact" '..windower.ffxi.get_mob_by_name('Ongo').id)
-					else
-						windower.send_command:schedule(2.9, 'gs c elemental aja Ongo')
-					end
+					windower.send_command:schedule(2.9, 'gs c elemental aja Ongo')
 					windower.send_command:schedule(7.8, 'gs c elemental nuke Ongo')
 					windower.send_command:schedule(13.2, 'gs c elemental nuke Ongo')
-					windower.send_command:schedule(18.1, 'gs c elemental nuke Ongo')
-					windower.send_command:schedule(20.0, 'gs c set autobuffmode auto')
-					if abil_recasts[38] < latency then
-						windower.send_command:schedule(20.5, 'input /ma "Burn" '..windower.ffxi.get_mob_by_name('Ongo').id)
+					if abil_recasts[35] < latency then
+						windower.send_command:schedule(18.1, 'gs c elemental impact Ongo')
+					else
+						windower.send_command:schedule(18.1, 'gs c elemental nuke Ongo')
 					end
+					if abil_recasts[38] < latency then
+						windower.send_command:schedule(20.5, 'gs c elemental burn Ongo')
+					end
+					windower.send_command:schedule(22.0, 'gs c set autobuffmode auto')
 				elseif player.main_job == 'SCH' then
 					atc('[AUTOSC] SCH Nuke')
-					windower.send_command('gs c set elementalmode earth; gs c set autobuffmode off; hb disable cure; hb mincure 3')
-						
+					local nuke_target = windower.ffxi.get_mob_by_name('Ongo').id
+					windower.send_command('gs c set elementalmode earth; gs c set autobuffmode off; hb disable cure; hb mincure 4')
 					if (os.clock()-__helix_timer) > 300 or haveBuff('Tablua Rasa') then
 						__helix_timer = os.clock()
-						windower.send_command:schedule(3.2, 'gs c scholar helix2 Ongo')
+						windower.send_command:schedule(3.2, 'gs c elemental helix Ongo ')
 					else
 						windower.send_command:schedule(4.1, 'gs c elemental nuke Ongo')
 					end
 					windower.send_command:schedule(9.6, 'gs c elemental nuke Ongo')
 					windower.send_command:schedule(14.0, 'gs c elemental nuke Ongo')
 					windower.send_command:schedule(19.0, 'gs c elemental nuke Ongo')
-					windower.send_command:schedule(21.5, 'gs c set autobuffmode auto; hb enable cure;')
+					windower.send_command:schedule(21.5, 'gs c set autobuffmode nuking; hb enable cure;')
 				elseif player.main_job == 'GEO' then
 					atc('[AUTOSC] GEO Nuke')
 					windower.send_command('gs c set elementalmode earth;')
@@ -2725,6 +2731,17 @@ function basic_keys(cmd)
 	keypress_cmd(basic_key_sequence[cmd].command)
 end
 
+function CheckItemInInventory(item_name)
+	local bag_id = 0
+	local item_id = res.items:with('en', item_name:capitalize()).id
+	for item, index in T(windower.ffxi.get_items(bag_id)):it() do
+		if type(item) == 'table' and item.id == item_id then
+			return true
+		end
+	end
+	return false
+end
+
 function cleanup()
 	local items = S{'Tropical Crepe','Grape Daifuku','Rolan. Daifuku','Om. Sandwich','Pluton case','Pluton box','Boulder case','Boulder box','Beitetsu parcel','Beitetsu box','Abdhaljs Seal',}
 	local meds = S{'Echo Drops','Holy Water','Remedy','Panacea','Reraiser','Hi-Reraiser','Super Reraiser','Instant Reraise','Scapegoat','Silent Oil','Prism Powder','El. Pachira Fruit'}
@@ -2732,10 +2749,10 @@ function cleanup()
     
     --get
 	for k,v in pairs(items) do
-        if k:contains('case') or k:contains('box') or k:contains('parcel') then
+        if (k:contains('case') or k:contains('box') or k:contains('parcel')) and CheckItemInInventory(k) then
             windower.send_command('get "' ..k.. '" 600')
             coroutine.sleep(0.5)
-        else
+        elseif CheckItemInInventory(k) then
             windower.send_command('get "' ..k.. '" 600')
             coroutine.sleep(0.5)
         end
@@ -2743,20 +2760,20 @@ function cleanup()
     
     --put
     for k,v in pairs(items) do
-        if k:contains('case') or k:contains('box') or k:contains('parcel') then
+        if (k:contains('case') or k:contains('box') or k:contains('parcel')) and CheckItemInInventory(k) then
             windower.send_command('put "' ..k.. '" case 600')
             coroutine.sleep(0.5)
-        else
+        elseif CheckItemInInventory(k) then
             windower.send_command('put "' ..k.. '" sack 600')
             coroutine.sleep(0.5)
         end
 	end
 	
 	for k,v in pairs(meds) do
-        if k:contains('case') or k:contains('box') or k:contains('parcel') then
+        if (k:contains('case') or k:contains('box') or k:contains('parcel')) and CheckItemInInventory(k) then
             windower.send_command('get "' ..k.. '" 600')
             coroutine.sleep(0.5)
-        else
+        elseif CheckItemInInventory(k) then
             windower.send_command('get "' ..k.. '" 600')
             coroutine.sleep(0.5)
         end
@@ -2764,10 +2781,10 @@ function cleanup()
     
     --put
     for k,v in pairs(meds) do
-        if k:contains('case') or k:contains('box') or k:contains('parcel') then
+        if (k:contains('case') or k:contains('box') or k:contains('parcel')) and CheckItemInInventory(k) then
             windower.send_command('put "' ..k.. '" case 600')
             coroutine.sleep(0.5)
-        else
+        elseif CheckItemInInventory(k) then
             windower.send_command('put "' ..k.. '" sack 600')
             coroutine.sleep(0.5)
         end

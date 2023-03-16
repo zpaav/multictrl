@@ -1333,7 +1333,7 @@ function sch(cmd2)
 			windower.send_command('input /ja "Tabula Rasa" <me>; wait 1.8; input /ja "Light Arts" <me>; wait 1.8; input /ja "Accession" <me>; wait 1.8; input /ja "Perpetuance" <me>; wait 1.8; regen5 me')
 			windower.send_command:schedule(13.0, 'input /ja "Penury" <me>; wait 1.8; input /ja "Accession" <me>; wait 1.8; input /ja "Perpetuance" <me>; wait 1.8; embrava me')
 			windower.send_command:schedule(25.0, 'input /ja "Perpetuance" <me>; wait 1.6; regen5 '..find_job_charname('RUN'))
-			windower.send_command:schedule(32.0, 'input /ja "Penury" <me>; wait 1.6; input /ja "Perpetuance" <me>; wait 1.6; embrava '..find_job_charname('RUN'))
+			windower.send_command:schedule(32.0, 'input /ja "Penury" <me>; wait 1.8; input /ja "Perpetuance" <me>; wait 1.8; embrava '..find_job_charname('RUN'))
 		else
 			atc('SCH Stance: No parameter specified')
 		end
@@ -1343,12 +1343,14 @@ function sch(cmd2)
 end
 
 function turnaround()
-	windower.send_command('gaze ap off')
-	local target = windower.ffxi.get_mob_by_target('t')
-	local self_vector = windower.ffxi.get_mob_by_id(player.id)
-	local angle = (math.atan2((target.y - self_vector.y), (target.x - self_vector.x))*180/math.pi)*-1
-	coroutine.sleep(0.6)
-	windower.ffxi.turn((getAngle()+180):radian()+math.pi)
+	if not( player.main_job == 'PLD' or player.main_job == 'RUN') then
+		windower.send_command('gaze ap off')
+		local target = windower.ffxi.get_mob_by_target('t')
+		local self_vector = windower.ffxi.get_mob_by_id(player.id)
+		local angle = (math.atan2((target.y - self_vector.y), (target.x - self_vector.x))*180/math.pi)*-1
+		coroutine.sleep(0.6)
+		windower.ffxi.turn((getAngle()+180):radian()+math.pi)
+	end
 	--windower.ffxi.turn:schedule(3.3,((angle):radian()))
 end
 
@@ -2408,6 +2410,15 @@ function autosc(cmd2, leader_char)
 					windower.send_command:schedule(3.9, 'input /ws "Aeolian Edge" <t>')
 					windower.send_command:schedule(11.6, 'input /ws "Aeolian Edge" <t>')
 				end
+			elseif cmd2 and cmd2:lower() == '4step' then
+				windower.send_command('gs c set autobuffmode off; gs c set autowsmode off')
+				if player.main_job == 'DRK' then
+					windower.send_command:schedule(0.2, 'input /ws "Herculean Slash" <t>')
+					windower.send_command:schedule(8.1, 'input /ws "Herculean Slash" <t>')
+				elseif player.main_job == 'COR' then
+					windower.send_command:schedule(3.9, 'input /ws "Savage Blade" <t>')
+					windower.send_command:schedule(11.6, 'input /ws "Savage Blade" <t>')
+				end
 			--Sortie E/F/G Boss
 			elseif (cmd2 and cmd2:lower() == 'fire') or (cmd2 and cmd2:lower() == 'ice') or (cmd2 and cmd2:lower() == 'earth') or (cmd2 and cmd2:lower() == 'wind') or (cmd2 and cmd2:lower() == 'lightning') then
 				local element = cmd2:gsub("^%l", string.upper)
@@ -2758,9 +2769,10 @@ function cleanup()
         end
 	end
     
+	coroutine.sleep(1.5)
     --put
     for k,v in pairs(items) do
-        if (k:contains('case') or k:contains('box') or k:contains('parcel')) and CheckItemInInventory(k) then
+        if (k:contains('case') or k:contains('box') or k:contains('parcel')) then
             windower.send_command('put "' ..k.. '" case 600')
             coroutine.sleep(0.5)
         elseif CheckItemInInventory(k) then
@@ -2769,6 +2781,7 @@ function cleanup()
         end
 	end
 	
+	--get
 	for k,v in pairs(meds) do
         if (k:contains('case') or k:contains('box') or k:contains('parcel')) and CheckItemInInventory(k) then
             windower.send_command('get "' ..k.. '" 600')
@@ -2779,9 +2792,10 @@ function cleanup()
         end
 	end
     
+	coroutine.sleep(1.5)
     --put
     for k,v in pairs(meds) do
-        if (k:contains('case') or k:contains('box') or k:contains('parcel')) and CheckItemInInventory(k) then
+        if (k:contains('case') or k:contains('box') or k:contains('parcel')) then
             windower.send_command('put "' ..k.. '" case 600')
             coroutine.sleep(0.5)
         elseif CheckItemInInventory(k) then

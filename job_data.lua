@@ -155,7 +155,7 @@ job_change_data = {
 	['mboze3'] = {name='Mboze Farm #3', char1 = 'thf/rdm', char2 = 'nin/rdm', char3 = 'drk/rdm', char4 = 'sch/rdm', char5 = 'geo/rdm', char6 = 'smn/rdm',},
 	['ongo1'] = {name='Ongo Farm #1', char1 = 'run/rdm', char2 = 'blm/rdm', char3 = 'blu/rdm', char4 = 'war/rdm', char5 = 'rdm/thf', char6 = 'nin/rdm',},
 	['ongo2'] = {name='Ongo Farm #2', char1 = 'pld/rdm', char2 = 'cor/rdm', char3 = 'drk/rdm', char4 = 'brd/rdm', char5 = 'whm/rdm', char6 = 'smn/rdm',},
-	['ongo3'] = {name='Ongo Farm #3', char1 = 'thf/rdm', char2 = 'pup/rdm', char3 = 'sch/rdm', char4 = 'geo/rdm', char5 = 'bst/rdm', char6 = 'mnk/rdm',},
+	['ongofarming'] = {name='Ongo Farm #3', char1 = 'thf/rdm', char2 = 'pup/rdm', char3 = 'geo/rdm', char4 = 'sch/rdm', char5 = 'bst/rdm', char6 = 'mnk/rdm',},
 	['bumbapre'] = {name='Bumba Pre-fight', char1 = 'run/rdm', char2 = 'bst/rdm', char3 = 'sch/rdm', char4 = 'blm/rdm', char5 = 'rdm/thf', char6 = 'smn/rdm',},
 	['bumba1'] = {name='Bumba Farm #1', char1 = 'pld/rdm', char2 = 'bst/rdm', char3 = 'rng/rdm', char4 = 'cor/rdm', char5 = 'rdm/thf', char6 = 'thf/rdm',},
 	['bumba2'] = {name='Bumba Farm #2', char1 = 'run/rdm', char2 = 'nin/rdm', char3 = 'sch/rdm', char4 = 'blm/rdm', char5 = 'dnc/thf', char6 = 'smn/rdm',},
@@ -164,12 +164,13 @@ job_change_data = {
 	['arebatiwar'] = {name='Arebati Main - Melee', char1 = 'pld/rdm', char2 = 'bst/rdm', char3 = 'war/rdm', char4 = 'brd/rdm', char5 = 'rdm/thf', char6 = 'cor/rdm',},
 	['arebatirng'] = {name='Arebati Main - Ranged', char1 = 'run/rdm', char2 = 'rng/rdm', char3 = 'sch/rdm', char4 = 'brd/rdm', char5 = 'geo/thf', char6 = 'cor/rdm',},
 	['xeviosov20'] = {name='Xevioso V20 Clear', char1 = 'war/rdm', char2 = 'sam/rdm', char3 = 'dnc/rdm', char4 = 'brd/rdm', char5 = 'whm/rdm', char6 = 'cor/rdm',},
+	['xeviosov25'] = {name='Xevioso V25 Clear', char1 = 'war/rdm', char2 = 'geo/rdm', char3 = 'dnc/rdm', char4 = 'brd/rdm', char5 = 'whm/rdm', char6 = 'cor/rdm',},
 	['ngai20'] = {name='Ngai V20 Clear', char1 = 'geo/rdm', char2 = 'mnk/rdm', char3 = 'war/rdm', char4 = 'brd/rdm', char5 = 'whm/rdm', char6 = 'cor/rdm',},
 	['mbozev20'] = {name='Mboze V20 Clear', char1 = 'blu/rdm', char2 = 'cor/rdm', char3 = 'drk/rdm', char4 = 'brd/rdm', char5 = 'bst/rdm', char6 = 'whm/rdm',},
 	['ongov20'] = {name='Ongo V20 Clear', char1 = 'run/rdm', char2 = 'blm/rdm', char3 = 'sch/rdm', char4 = 'brd/rdm', char5 = 'geo/rdm', char6 = 'cor/rdm',},
 	['bumba'] = {name='Bumba Main', char1 = 'war/rdm', char2 = 'cor/rdm', char3 = 'drg/rdm', char4 = 'brd/rdm', char5 = 'whm/thf', char6 = 'geo/rdm',},
 	['kalunga'] = {name='Kalunga Main', char1 = 'run/rdm', char2 = 'cor/rdm', char3 = 'drk/rdm', char4 = 'brd/rdm', char5 = 'whm/thf', char6 = 'geo/rdm',},
-	['kalungav25'] = {name='Kalunga V25', char1 = 'blu/rdm', char2 = 'pld/rdm', char3 = 'drk/rdm', char4 = 'brd/rdm', char5 = 'run/thf', char6 = 'cor/rdm',},
+	['kalungav25'] = {name='Kalunga V25 Clear', char1 = 'blu/rdm', char2 = 'pld/rdm', char3 = 'drk/rdm', char4 = 'brd/rdm', char5 = 'whm/rdm', char6 = 'cor/rdm',},
 	['kalungafarm'] = {name='Kalunga Farm', char1 = 'run/rdm', char2 = 'bst/rdm', char3 = 'geo/rdm', char4 = 'brd/rdm', char5 = 'war/rdm', char6 = 'whm/rdm',},
 	['gog1'] = {name='Gogmagog Farm #1', char1 = 'pld/rdm', char2 = 'sam/rdm', char3 = 'blu/rdm', char4 = 'sch/rdm', char5 = 'dnc/rdm', char6 = 'smn/rdm',},
 	['gog2'] = {name='Gogmagog Farm #2', char1 = 'drg/rdm', char2 = 'thf/rdm', char3 = 'drk/rdm', char4 = 'blm/rdm', char5 = 'rdm/drk', char6 = 'cor/rdm',},
@@ -504,10 +505,10 @@ stage_data = {
 		['WHM'] = {	action={'hb buffjob tank shell5,regen4; hb buff me barthundra;'}},
 		['ALL'] = {	commands = 'autoitem on; gaze ap off', mc_settings = {autows=true}},
 	}},
-	['ongo3'] = { jobs = {
+	['ongofarming'] = { jobs = {
 		['PUP'] = {	action={'gs c set AutoManeuvers TankMEVA; gs c set petmode TankMEVA; gs c set weapons Midnights; autocontrol equipset mevatank'}},
 		['GEO'] = {	action={'gs c autogeo malaise; gs c autoindi acumen; gs c autoentrust refresh'}},
-		['SCH'] = {	action={'reraise; wait 10; schnuke'}}, -- fix reraise???
+		['SCH'] = {	action={'schheal'}}, -- fix reraise???
 		['ALL'] = {	commands = 'autoitem on; gaze ap off', mc_settings = {autows=true}},
 	}},
 	['gog1'] = { jobs = {
@@ -542,13 +543,13 @@ stage_data = {
 		['WAR'] = {	action={'gs c set weapons Loxotic'}},
 		['ALL'] = {	commands = 'autoitem on', mc_settings = {autows=true}},
 	}},
-	['xev'] = { jobs = {
-		['WHM'] = {	action={'hb buff <me> baraera; gs c set castingmode SIRD; hb debuff dia2; hb disable na; mc buffall haste'}},
-		['DNC'] = {	action={'gs c set weapons Terpsichore;'}},
-		['BRD'] = {	action={'wait 2.5; sing pl xev; sing n on; sing p on; gs c set weapons Aeneas; gaze ap on sing ballad 2 WHM'}},
-		['GEO'] = {	action={'gs c autoindi attunement; gs c autogeo fury; gs c autoentrust STR;'}},
-		['COR'] = {	action={'gs c set weapons Fomalhaut; roll melee'}},
-		['WAR'] = {	action={'gs c set weapons ShiningOne;'}},
+	['xeviosov'] = { jobs = {
+		['WHM'] = {	action={'hb buff <me> baraera; gs c set castingmode SIRD; hb debuff dia2; hb disable na; mc buffall haste'},food='Om. Sandwich'},
+		['DNC'] = {	action={'gs c set weapons Terpsichore;'},food='Om. Sandwich'},
+		['BRD'] = {	action={'wait 2.5; sing pl xev; sing n on; sing p on; gs c set weapons Aeneas; gaze ap on; sing ballad 1 GEO; sing ballad 1 WHM; sing minne 2 WHM'},food='Om. Sandwich'},
+		['GEO'] = {	action={'gs c autoindi barrier; gs c autogeo fury; gs c autoentrust attunement;'},food='Maringna'},
+		['COR'] = {	action={'gs c set weapons Fomalhaut; roll melee'},food='Om. Sandwich'},
+		['WAR'] = {	action={'gs c set weapons ShiningOne;'},food='Om. Sandwich'},
 		['ALL'] = {	commands = 'autoitem on', mc_settings = {autows=true}},
 	}},
 	['kalunga'] = { jobs = {
@@ -561,13 +562,13 @@ stage_data = {
 		['ALL'] = {	commands = 'autoitem on', mc_settings = {autows=true}},
 	}},
 	['kalungav25'] = { jobs = {
-		['PLD'] = {	action={'hb buffjob run protect5;'}},
-		['RUN'] = {	action={'gs c set runeelement unda; gs c set autotankmode on; hb buff <me> barfire'}},
-		['BRD'] = {	action={'wait 2.5; sing pl kalunga; sing n on; sing p on; sing sirvente RUN; sing ballad 1 RUN; sing fire 1 RUN; sing ballad 2 PLD; sing ballad 1 RDM'}},
-		['RDM'] = {	action={'hb buffjob pld shell5,refresh3,haste2; hb buffjob drk shell5,haste2,refresh3; hb buffjob run shell5,refresh3,haste2; hb buffjob cor shell5,haste2; hb as nolock on; hb as j RUN; hb debuff bio3,paralyze2,slow2,blind2,poison2'}},
-		['COR'] = {	action={'gs c set weapons Naegling; roll melee'}},
-		['DRK'] = {	action={'gs c set weaponskillmode Emnity'}},
-		['ALL'] = {	commands = 'autoitem on', mc_settings = {autows=true}},
+		['PLD'] = {	action={'gs c set autotankmode on; gs c set autobuffmode Crucial'},food='Om. Sandwich'},
+		['WHM'] = {	action={'mc buffall haste; hb buffjob tank shell5,protect5; mc buffall regen4; hb buff me auspice,barfira,barparalyzra; hb disable erase; hb debuff dia2,slow,paralyze; hb as nolock on; hb as j PLD'},food='Maringna'},
+		['BRD'] = {	action={'wait 2.5; sing pl kalunga; sing n off; sing p on; sing aoe off; sing sirvente tank; sing ballad 1 tank; sing fire 1 tank; sing ballad 2 WHM; hb dispel off;'},food='Maringna'},
+		['BLU'] = {	action={'gs c set weapons TizSak; azuresets set melee; hb debuff tenebral crush; hb ind on; hb buff me cocoon,nat. meditation;'},food='Om. Sandwich'},
+		['COR'] = {	action={'gs c set weapons Naegling; gs c set hybridmode Tank; roll roll1 sam; roll roll2 chaos;'},food='Om. Sandwich'},
+		['DRK'] = {	action={'gs c set weaponskillmode Emnity'},food='Om. Sandwich'},
+		['ALL'] = {	commands = 'autoitem on; autoitem pana on;', mc_settings = {autosc=true,autows=true}},
 	}},
 	['mbozepre'] = { jobs = {
 		['RDM'] = {	action={'dmain; hb as j WAR; hb as nolock on; hb buffjob WAR haste2,protect5,shell5; hb buffjob SMN refresh3; hb mincure 4;'}},

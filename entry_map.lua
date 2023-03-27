@@ -104,6 +104,9 @@ npc_map = {
     [137] = {name = {
 		['Veridical Conflux'] = {entry_command = {2.0, {'up', 0.15}, 0.5, {'enter', 0.15}}},
 		}},
+	[176] = {name ={
+		['Grounds Tome'] = {description='Grounds Tome', menu_id = 24, packet = {[1]={{20,0,0,true},{20,0,0,false}}}},
+		}},
 	[182] = {name = {
 		['Veridical Conflux'] = {entry_command = {1.8, {'enter', 0.15}}},
 		['Veridical Conflux #01'] = {entry_command = {3.5, {'right', 0.75}, 0.6, {'enter', 0.15}}},
@@ -141,6 +144,7 @@ npc_map = {
 		['Dangueubert'] = {entry_command = {1.3, {'enter', 0.15}}},
 		}},
 	[257] = {name = {	-- Eastern Adoulin
+		--['Cunegonde'] = {menu_id = 24, packet = {[1]={{20,0,0,true},{20,0,0,false}}}},
 		['Cunegonde'] = {entry_command = {1.3, {'enter', 0.15}}},
 		['Krepol'] = {entry_command = {0.85, {'enter', 0.15}}},
 		['Glowing Hearth'] = {entry_command = {0.85, {'enter', 0.15}}},
@@ -230,6 +234,9 @@ npc_map = {
 		['Veridical Conflux #11'] = {entry_command = {0.1, {'up', 0.15}, 0.5, {'enter', 0.15}}},
 		['Otherworldly Vortex'] = {entry_command = {0.1, {'up', 0.15}, 0.5, {'enter', 0.15}}},
 		}},
+	[280] = {name ={
+		['Green Thumb Moogle']  = {description='Exit Mog Garden', menu_id=1016, packet={[1]={{255,4092,0,false}}}},
+		}}, 
 	[283] = {name = {
 		['Dusky Forest'] = {entry_command = {0.85, {'enter', 0.15}}},
 		['Reglert'] = {entry_command = {0.85, {'enter', 0.15}}},
@@ -536,11 +543,6 @@ get_map = {
 			['ody'] = {description='Odyssey Rewards', entry_command = {1.3, {'escape', 0.15}}},
 		}}
 	}},
-	[280] = {name ={
-		['Green Thumb Moogle'] = {cmd = {
-			['mgexit'] = {description='Exit Mog Garden', entry_command = {3, {'right', 0.5}, 0.5, {'right', 0.5}, 0.5, {'up', 0.05}, 0.5, {'enter', 0.15}, 1.5, {'down', 0.05}, 0.5, {'enter', 0.15}}},
-		}}
-	}}, 
 	[281] = {name ={
 		['Soupox'] = {cmd = {
 			['soupox'] = {description='Soupox NPC', entry_command = {}},

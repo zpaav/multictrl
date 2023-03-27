@@ -1120,6 +1120,7 @@ function off()
 	windower.send_command('gs c set autosambamode off')
 	windower.send_command('gs c set autozergmode off')
 	windower.send_command('gs c set autoarts off')
+	windower.send_command('gs c set autofoodmode off')
 end
 
 -- Does NOT use IPC
@@ -1513,10 +1514,10 @@ function buy(cmd2,leader_buy)
 			windower.send_command('powder buy 3315; wait 10; fa prize powder')
 		elseif cmd2 == 'ss' then
 			windower.send_command('sellnpc s')
-			get_poke_check:schedule(1.7,'Olwyn')
+			get_poke_check_index:schedule(1.7,29)
 		elseif cmd2 == 'sp' then
 			windower.send_command('sellnpc p')
-			get_poke_check:schedule(1.7,'Olwyn')
+			get_poke_check_index:schedule(1.7,29)
 			windower.send_command('wait 10; fa prize powder')
 		elseif cmd2 == 're' then
 			windower.send_command('lua r sparks; wait 0.5; lua r powder;')
@@ -1722,7 +1723,7 @@ function as(namearg,cmd,cmd2)
 				as_helper('lead_reset')
 			else
 				local player_job = windower.ffxi.get_player()
-				local MeleeJobs = S{'WAR','SAM','DRG','DRK','NIN','MNK','COR','BLU','PUP','DNC','RUN','PLD','THF','BST','RNG'}		
+				local MeleeJobs = S{'WAR','SAM','DRG','DRK','NIN','MNK','COR','BLU','PUP','DNC','THF','BST','RNG'}		
 				if MeleeJobs:contains(player_job.main_job) then
 					atc('[Assist] Attack -> ' ..namearg)
 					windower.send_command('hb as ' .. namearg)
@@ -1740,7 +1741,7 @@ function as(namearg,cmd,cmd2)
 				as_helper('lead_reset')
 			else
 				local player_job = windower.ffxi.get_player()
-				local MeleeJobs = S{'WAR','SAM','DRG','DRK','NIN','MNK','COR','BLU','PUP','DNC','RUN','PLD','THF','BST','RNG','BRD'}		
+				local MeleeJobs = S{'WAR','SAM','DRG','DRK','NIN','MNK','COR','BLU','PUP','DNC','THF','BST','RNG','BRD','RDM'}		
 				if MeleeJobs:contains(player_job.main_job) then
 					atc('[Assist] Attack -> ' ..namearg)
 					windower.send_command('hb as ' .. namearg)
@@ -2259,7 +2260,7 @@ end
 function autosc(cmd2, leader_char)
 	player=windower.ffxi.get_player()
 	
-	local autosc_jobs = S{'COR','SCH','BLM','RUN','BRD','RDM','GEO'}
+	local autosc_jobs = S{'COR','SCH','BLM','RUN','BRD','RDM','GEO','DRK','BLU'}
 
 	local autosc_cmd = cmd2 and cmd2:lower() or (settings.autosc and 'off' or 'on')
 	if S{'off'}:contains(autosc_cmd) then
@@ -2413,11 +2414,14 @@ function autosc(cmd2, leader_char)
 			elseif cmd2 and cmd2:lower() == '4step' then
 				windower.send_command('gs c set autobuffmode off; gs c set autowsmode off')
 				if player.main_job == 'DRK' then
-					windower.send_command:schedule(0.2, 'input /ws "Herculean Slash" <t>')
-					windower.send_command:schedule(8.1, 'input /ws "Herculean Slash" <t>')
+					windower.send_command:schedule(4.0, 'input /ws "Herculean Slash" <t>')
+					windower.send_command:schedule(15.7, 'input /ws "Herculean Slash" <t>')
 				elseif player.main_job == 'COR' then
-					windower.send_command:schedule(3.9, 'input /ws "Savage Blade" <t>')
-					windower.send_command:schedule(11.6, 'input /ws "Savage Blade" <t>')
+					windower.send_command:schedule(0.2, 'input /ws "Savage Blade" <t>')
+				elseif player.main_job == 'BLU' or player.main_job == 'BRD' then
+					windower.send_command('hb disable cure; sing off;')
+					windower.send_command:schedule(9.8, 'input /ws "Savage Blade" <t>')
+					windower.send_command:schedule(9.7, 'hb enable cure; sing on;')
 				end
 			--Sortie E/F/G Boss
 			elseif (cmd2 and cmd2:lower() == 'fire') or (cmd2 and cmd2:lower() == 'ice') or (cmd2 and cmd2:lower() == 'earth') or (cmd2 and cmd2:lower() == 'wind') or (cmd2 and cmd2:lower() == 'lightning') then
@@ -2725,11 +2729,47 @@ function enter(leader)
 	end
 
 	local possible_npc = find_npc_to_poke()
-	if possible_npc and get_poke_check_index(possible_npc.index) then
+	if possible_npc then --and get_poke_check_index(possible_npc.index) then
 		if not(npc_map[zone_id].name[possible_npc.name].index) then
-			keypress_cmd(npc_map[zone_id].name[possible_npc.name].entry_command)
+			local enter_command = npc_map[zone_id].name[possible_npc.name] or nil
+			if (enter_command.packet) then	-- Packets
+				atc("[ENTER Packet] - "..enter_command.description)
+				__get_packet_sequence = enter_command.packet[1]
+				__get_menu_id = enter_command.menu_id
+				__get_npc_name = possible_npc.name
+				__busy = true
+				--Poke NPC
+				if not get_poke_check_index(possible_npc.index) then
+					__get_packet_sequence = {}
+					__get_menu_id = 0
+					__get_npc_name = ''
+					__busy = false
+				end
+			else
+				if get_poke_check_index(possible_npc.index) then
+					keypress_cmd(npc_map[zone_id].name[possible_npc.name].entry_command)
+				end
+			end
 		else
-			keypress_cmd(npc_map[zone_id].name[possible_npc.name].index[possible_npc.index].entry_command)
+			local enter_command = npc_map[zone_id].name[possible_npc.name].index[possible_npc.index] or nil
+			if (enter_command.packet) then	-- Packets
+				atc("[ENTER Packet] - "..enter_command.description)
+				__get_packet_sequence = enter_command.packet[1]
+				__get_menu_id = enter_command.menu_id
+				__get_npc_name = possible_npc.name
+				__busy = true
+				--Poke NPC
+				if not get_poke_check_index(possible_npc.index) then
+					__get_packet_sequence = {}
+					__get_menu_id = 0
+					__get_npc_name = ''
+					__busy = false
+				end
+			else
+				if get_poke_check_index(possible_npc.index) then
+					keypress_cmd(npc_map[zone_id].name[possible_npc.name].index[possible_npc.index].entry_command)
+				end
+			end
 		end
 	else
 		atc("[ENTER] No NPC's nearby to poke, cancelling.")
@@ -3559,8 +3599,7 @@ function trade_orb(npc_index, orb_type)
 	npc_dialog = false
 	count = 0
 
-	while npc_dialog == false and count < 3
-	do
+	while npc_dialog == false and count < 3 do
 		count = count + 1
         npcstats = windower.ffxi.get_mob_by_index(npc_index)
 		if npcstats and distance_check_npc(npcstats) and npcstats.valid_target then
@@ -3584,8 +3623,7 @@ function get_poke_check_index(npc_index)
 	npc_dialog = false
 	count = 0
 
-	while npc_dialog == false and count < 3
-	do
+	while npc_dialog == false and count < 3	do
 		count = count + 1
         npcstats = windower.ffxi.get_mob_by_index(npc_index)
 		if not npcstats then

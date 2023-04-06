@@ -762,7 +762,7 @@ function stage(cmd2)
 	end
 	
 	--Unload certain addons
-	windower.send_command('lua u maa; lua u react')
+	windower.send_command('lua u maa;')-- lua u react')
 	
 	for _,job_cmds in pairs(stage_data[cmd2]) do
 		if type(job_cmds)=='table' and job_cmds[player.main_job] then
@@ -2420,7 +2420,7 @@ function autosc(cmd2, leader_char)
 					end
 					windower.send_command('input /ja "Rayke" <t>')
 					windower.send_command:schedule(1.5,'input /ja "Rayke" <t>')
-					windower.send_command:schedule(3, 'gs c set runeelement Unda; send @DRK gs c set autowsmode on; gs c set autotankmode on; gs c set autobuffmode auto')
+					windower.send_command:schedule(3, 'gs c set runeelement Unda; send @DRK gs c set autowsmode on; gs c set autotankmode on; gs c set autobuffmode auto; wait 5; send @DRK gs c set weapons Caladbolg;')
 				elseif player.main_job == 'DRK' then
 					windower.send_command('gs c set autowsmode off; gs c set weapons Lycurgos;')
 				end
@@ -2437,7 +2437,8 @@ function autosc(cmd2, leader_char)
 					windower.send_command:schedule(9.7, 'hb enable cure; sing on;')
 				end
 			--Sortie E/F/G Boss
-			elseif (cmd2 and cmd2:lower() == 'fire') or (cmd2 and cmd2:lower() == 'ice') or (cmd2 and cmd2:lower() == 'earth') or (cmd2 and cmd2:lower() == 'wind') or (cmd2 and cmd2:lower() == 'lightning') then
+			elseif (cmd2 and cmd2:lower() == 'fire') or (cmd2 and cmd2:lower() == 'ice') or (cmd2 and cmd2:lower() == 'earth') 
+				or (cmd2 and cmd2:lower() == 'wind') or (cmd2 and cmd2:lower() == 'lightning') or (cmd2 and cmd2:lower() == 'water') then
 				local element = cmd2:gsub("^%l", string.upper)
 				local mob_target = windower.ffxi.get_mob_by_target('bt') or nil
 				
@@ -2807,9 +2808,9 @@ function CheckItemInInventory(item_name)
 end
 
 function cleanup()
-	local items = S{'Tropical Crepe','Grape Daifuku','Rolan. Daifuku','Om. Sandwich','Pluton case','Pluton box','Boulder case','Boulder box','Beitetsu parcel','Beitetsu box','Abdhaljs Seal',}
+	local items = S{'Tropical Crepe','Maringna','Grape Daifuku','Rolan. Daifuku','Om. Sandwich','Pluton case','Pluton box','Boulder case','Boulder box','Beitetsu parcel','Beitetsu box','Abdhaljs Seal',}
 	local meds = S{'Echo Drops','Holy Water','Remedy','Panacea','Reraiser','Hi-Reraiser','Super Reraiser','Instant Reraise','Scapegoat','Silent Oil','Prism Powder','El. Pachira Fruit'}
-	local case_stuff = S{'case','box','parcel'}
+	--local case_stuff = S{'case','box','parcel'}
     
     --get
 	for k,v in pairs(items) do
@@ -2822,10 +2823,10 @@ function cleanup()
         end
 	end
     
-	coroutine.sleep(1.5)
+	coroutine.sleep(1.8)
     --put
     for k,v in pairs(items) do
-        if (k:contains('case') or k:contains('box') or k:contains('parcel')) then
+        if (k:contains('case') or k:contains('box') or k:contains('parcel')) and CheckItemInInventory(k) then
             windower.send_command('put "' ..k.. '" case 600')
             coroutine.sleep(0.5)
         elseif CheckItemInInventory(k) then
@@ -2834,24 +2835,19 @@ function cleanup()
         end
 	end
 	
+	--Meds
 	--get
 	for k,v in pairs(meds) do
-        if (k:contains('case') or k:contains('box') or k:contains('parcel')) and CheckItemInInventory(k) then
+		if CheckItemInInventory(k) then
             windower.send_command('get "' ..k.. '" 600')
             coroutine.sleep(0.5)
-        elseif CheckItemInInventory(k) then
-            windower.send_command('get "' ..k.. '" 600')
-            coroutine.sleep(0.5)
-        end
+		end
 	end
     
-	coroutine.sleep(1.5)
+	coroutine.sleep(1.8)
     --put
     for k,v in pairs(meds) do
-        if (k:contains('case') or k:contains('box') or k:contains('parcel')) then
-            windower.send_command('put "' ..k.. '" case 600')
-            coroutine.sleep(0.5)
-        elseif CheckItemInInventory(k) then
+        if CheckItemInInventory(k) then
             windower.send_command('put "' ..k.. '" sack 600')
             coroutine.sleep(0.5)
         end

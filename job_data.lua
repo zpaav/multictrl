@@ -139,7 +139,7 @@ crowd_control_data = {
 }
 
 job_change_data = {
-	['ambu'] = {name='Ambuscade', char1 = 'war/sam', char2 = 'sam/war', char3 = 'blu/war', char4 = 'geo/rdm', char5 = 'rdm/sch', char6 = 'cor/nin',},
+	['ambu'] = {name='Ambuscade', char1 = 'run/drk', char2 = 'cor/nin', char3 = 'drk/sam', char4 = 'brd/dnc', char5 = 'rdm/sch', char6 = 'whm/sch',},
 	['ody'] = {name='Odyssey Farm', char1 = 'run/pld', char2 = 'sam/war', char3 = 'cor/nin', char4 = 'brd/rdm', char5 = 'whm/sch', char6 = 'sam/war',},
 	['alex'] = {name='Alexander', char1 = 'pld/run', char2 = 'thf/war', char3 = 'war/drg', char4 = 'brd/nin', char5 = 'geo/rdm', char6 = 'whm/sch',},
 	['sortie'] = {name='Sortie Melee', char1 = 'run/drk', char2 = 'cor/nin', char3 = 'blu/drg', char4 = 'brd/dnc', char5 = 'war/drg', char6 = 'whm/sch',},
@@ -170,7 +170,7 @@ job_change_data = {
 	['ongov20'] = {name='Ongo V20 Clear', char1 = 'run/rdm', char2 = 'blm/rdm', char3 = 'sch/rdm', char4 = 'brd/rdm', char5 = 'geo/rdm', char6 = 'cor/rdm',},
 	['bumba'] = {name='Bumba Main', char1 = 'war/rdm', char2 = 'cor/rdm', char3 = 'drg/rdm', char4 = 'brd/rdm', char5 = 'whm/thf', char6 = 'geo/rdm',},
 	['kalunga'] = {name='Kalunga Main', char1 = 'run/rdm', char2 = 'cor/rdm', char3 = 'drk/rdm', char4 = 'brd/rdm', char5 = 'whm/thf', char6 = 'geo/rdm',},
-	['kalungav25'] = {name='Kalunga V25 Clear', char1 = 'run/rdm', char2 = 'pld/rdm', char3 = 'drk/rdm', char4 = 'brd/rdm', char5 = 'rdm/rdk', char6 = 'cor/rdm',},
+	['kalungav25'] = {name='Kalunga V25 Clear', char1 = 'blu/rdm', char2 = 'pld/rdm', char3 = 'drk/rdm', char4 = 'brd/rdm', char5 = 'run/rdm', char6 = 'cor/rdm',},
 	['kalungafarm'] = {name='Kalunga Farm', char1 = 'run/rdm', char2 = 'bst/rdm', char3 = 'geo/rdm', char4 = 'brd/rdm', char5 = 'war/rdm', char6 = 'whm/rdm',},
 	['gog1'] = {name='Gogmagog Farm #1', char1 = 'pld/rdm', char2 = 'sam/rdm', char3 = 'blu/rdm', char4 = 'sch/rdm', char5 = 'dnc/rdm', char6 = 'smn/rdm',},
 	['gog2'] = {name='Gogmagog Farm #2', char1 = 'drg/rdm', char2 = 'thf/rdm', char3 = 'drk/rdm', char4 = 'blm/rdm', char5 = 'rdm/drk', char6 = 'cor/rdm',},
@@ -188,14 +188,14 @@ job_change_data = {
 
 stage_data = {
 	['ambu'] = { jobs = {
-		['BRD'] = { action={'wait 2.5; sing pl ambu; sing ballad 2 SCH; sing sirvente SCH; gs c set weapons DualCarn; sing ballad 1 GEO;'}},
-		['RDM'] = {	action={'mc buffall haste2; hb moblist on; hb moblist add \"Bozzetto Songstress\"; hb mldb addle2,paralyze2,slow2; hb mincure 4; hb buff me regen2; hb debuff dia3; hb ind on; hb buff j GEO refresh3;'}},
-		['GEO'] = { action={'gs c autogeo frailty; gs c autoindi wilt; gs c autoentrust regen'}},
-		['COR'] = {	action={'gs c set weapons DualSavage; roll roll1 sam; roll roll2 dnc;'}},
-		['BLU'] = { action={'azuresets set melee; gs c autonuke Sudden Lunge; gs c set autonukemode on;'}},
-		['SAM'] = {	action={'gs c set weapons Dojikiri; gs c autows tachi: jinpu;'}},
-		['WAR'] = {	action={'gs c set weapons Chango;'}},
-		['ALL'] = {	commands = 'input /autotarget off; hb dispel ignore \"Bozzetto Songstress\"', mc_settings = {autows=true}},
+		['BRD'] = { action={'wait 2.5; sing pl meleehaste2; sing ballad 1 WHM; gs c set weapons DualCarn; sing ballad 1 GEO; hb moblist on; hb mldb horde lullaby ii; hb moblist add Bozzetto Incanter'}},
+		['WHM'] = {	action={'hb buff me regen5; hb buff me barfira'}},
+		['GEO'] = { action={'gs c autogeo frailty; gs c autoindi wilt; gs c autoentrust fury'}},
+		['COR'] = {	action={'gs c set weapons DualSavage; roll melee'}},
+		['DRK'] = { action={''}},
+		['RDM'] = { action={'mc buffall haste2; hb debuff dia3,paralyze2,slow2,addle2,silence,distract3,frazzle3; hb as attack off; hb as nolock on; hb as j RUN; hb f dist 15'}},
+		['RUN'] = {	action={'gs c set hybridmode DTLite;'}},
+		['ALL'] = {	commands = 'input /autotarget off;', mc_settings = {autows=true}},
 	}},
 	['ml'] = { jobs = {
 		['RDM'] = {	action={'hb debuff dia3,distract3; hb buffall refresh3,regen2;'}},
@@ -282,33 +282,103 @@ stage_data = {
 	}},
 	['eboss'] = { jobs = { 
 		['SCH'] = {	sj={
-			['RDM'] ={action={'gs c set elementalmode earth; hb cancelbuffjob GEO all; hb cancelbuff me all; hb buffjob GEO sandstorm2; hb buff me sandstorm2; schnuke; gs c set magicburstmode lock'}, food='Tropical Crepe',},
-			['WHM'] ={action={'gs c set elementalmode earth; hb cancelbuffjob BLM all; hb cancelbuff me all; hb buffjob BLM sandstorm2; hb buff me sandstorm2; schnuke; gs c set magicburstmode lock'}, food='Tropical Crepe',}}},
-		['GEO'] = {	action={'indiacumen; iacumen; gmalaise; gs c autoentrust none; hb buffjob tank haste; gs c set magicburstmode lock;'}, food='Tropical Crepe'},
+			['RDM'] ={action={'hb buff me haste; gs c set elementalmode earth; hb cancelbuffjob GEO all; hb cancelbuff me all; hb buffjob GEO sandstorm2; hb buff me sandstorm2; schnuke; gs c set magicburstmode lock'}, food='Tropical Crepe',},
+			['WHM'] ={action={'hb buff me haste; gs c set elementalmode earth; hb cancelbuffjob BLM all; hb cancelbuff me all; hb buffjob BLM sandstorm2; hb buff me sandstorm2; schnuke; gs c set magicburstmode lock'}, food='Tropical Crepe',}}},
+		['GEO'] = {	action={'hb buff me haste; indiacumen; iacumen; gmalaise; gs c autoentrust none; hb buffjob tank haste; gs c set magicburstmode lock;'}, food='Tropical Crepe'},
 		['COR'] = {	action={'roll roll1 evokers; roll roll2 wizard; hb buff me haste; hb mincuraga 3'}},
-		['RUN'] = {	action={'gs c set autotankmode on; gs c set runeelement tellus; gs c set hybridmode Ongo; hb buffjob COR refresh; mc foff; mc on;'}},
-		['BLM'] = {	action={'gs c set elementalmode earth; gs c set magicburstmode lock'}},
+		['RUN'] = {	action={'gs c set autotankmode on; gs c set runeelement tellus; gs c set hybridmode Ongo; hb buffjob COR refresh; hb f off; mc on;'}},
+		['BLM'] = {	action={'gs c set elementalmode earth; gs c set magicburstmode lock; hb buff me haste'}},
 		['ALL'] = {	commands = 'gs c set autowsmode off; lua u maa; ai on;', mc_settings = {autows=false,autosc=true}},
 	}},
 	['fboss'] = { jobs = {
 		['SCH'] = {	sj={
-			['RDM'] ={action={'gs c set elementalmode earth; hb cancelbuffjob GEO all; hb cancelbuff me all; hb buffjob GEO hailstorm2; hb buff me hailstorm2; schnuke; gs c set magicburstmode lock'}, food='Tropical Crepe',},
-			['WHM'] ={action={'gs c set elementalmode earth; hb cancelbuffjob BLM all; hb cancelbuff me all; hb buffjob BLM hailstorm2; hb buff me hailstorm2; schnuke; gs c set magicburstmode lock'}, food='Tropical Crepe',}}},
-		['GEO'] = {	action={'indiacumen; iacumen; gmalaise; gs c autoentrust none; hb buffjob tank haste; gs c set magicburstmode lock;'}, food='Tropical Crepe'},
+			['RDM'] ={action={'hb buff me haste; gs c set elementalmode ice; hb cancelbuffjob GEO all; hb cancelbuff me all; hb buffjob GEO hailstorm2; hb buff me hailstorm2; schnuke; gs c set magicburstmode lock'}, food='Tropical Crepe',},
+			['WHM'] ={action={'hb buff me haste; gs c set elementalmode ice; hb cancelbuffjob BLM all; hb cancelbuff me all; hb buffjob BLM hailstorm2; hb buff me hailstorm2; schnuke; gs c set magicburstmode lock'}, food='Tropical Crepe',}}},
+		['GEO'] = {	action={'hb buff me haste; indiacumen; iacumen; gmalaise; gs c autoentrust none; hb buffjob tank haste; gs c set magicburstmode lock;'}, food='Tropical Crepe'},
 		['COR'] = {	action={'roll roll1 evokers; roll roll2 wizard; hb buff me haste; hb mincuraga 3'}},
-		['RUN'] = {	action={'gs c set autotankmode on; gs c set runeelement gelus; gs c set hybridmode Ongo; hb buffjob COR refresh; mc foff; mc on;'}},
-		['BLM'] = {	action={'gs c set elementalmode ice; gs c set magicburstmode lock'}},
+		['RUN'] = {	action={'gs c set autotankmode on; gs c set runeelement gelus; gs c set hybridmode Ongo; hb buffjob COR refresh; hb f off; mc on;'}},
+		['BLM'] = {	action={'gs c set elementalmode ice; gs c set magicburstmode lock; hb buff me haste'}},
 		['ALL'] = {	commands = 'gs c set autowsmode off; lua u maa; ai on;', mc_settings = {autows=false,autosc=true}},
 	}},
 	['gboss'] = { jobs = {
 		['SCH'] = {	sj={
-			['RDM'] ={action={'gs c set elementalmode earth; hb cancelbuffjob GEO all; hb cancelbuff me all; hb buffjob GEO firestorm2; hb buff me firestorm2; schnuke; gs c set magicburstmode lock'}, food='Tropical Crepe',},
-			['WHM'] ={action={'gs c set elementalmode earth; hb cancelbuffjob BLM all; hb cancelbuff me all; hb buffjob BLM firestorm2; hb buff me firestorm2; schnuke; gs c set magicburstmode lock'}, food='Tropical Crepe',}}},
-		['GEO'] = {	action={'indiacumen; iacumen; gmalaise; gs c autoentrust focus; hb buffjob tank haste; gs c set autozergmode on; gs c set magicburstmode lock;'}, food='Tropical Crepe'},
+			['RDM'] ={action={'hb buff me haste; gs c set elementalmode fire; hb cancelbuffjob GEO all; hb cancelbuff me all; hb buffjob GEO firestorm2; hb buff me firestorm2; schnuke; gs c set magicburstmode lock'}, food='Tropical Crepe',},
+			['WHM'] ={action={'hb buff me haste; gs c set elementalmode fire; hb cancelbuffjob BLM all; hb cancelbuff me all; hb buffjob BLM firestorm2; hb buff me firestorm2; schnuke; gs c set magicburstmode lock'}, food='Tropical Crepe',}}},
+		['GEO'] = {	action={'hb buff me haste; indiacumen; iacumen; gmalaise; gs c autoentrust focus; hb buffjob tank haste; gs c set autozergmode on; gs c set magicburstmode lock;'}, food='Tropical Crepe'},
 		['COR'] = {	action={'roll roll1 warlock; roll roll2 wizard; hb buff me haste; hb mincuraga 3; hb ignore_debuff all curse;'}},
-		['RUN'] = {	action={'gs c set autotankmode on; gs c set runeelement ignis; barblizzard; gs c set hybridmode Ongo; hb buffjob COR refresh; mc foff; mc on;'}},
-		['BLM'] = {	action={'gs c set elementalmode fire; gs c set magicburstmode lock'}},
-		['ALL'] = {	commands = 'gs c set autowsmode off; lua u maa; ai on; lua r mobtimer; wait 2; mobtimer start', mc_settings = {autows=false,autosc=true}},
+		['RUN'] = {	action={'gs c set autotankmode on; gs c set runeelement ignis; barblizzard; gs c set hybridmode Ongo; hb buffjob COR refresh; hb f off; mc on;'}},
+		['BLM'] = {	action={'gs c set elementalmode fire; gs c set magicburstmode lock; hb buff me haste'}},
+		['ALL'] = {	commands = 'gs c set autowsmode off; lua u maa; ai off; lua r mobtimer; wait 2; mobtimer start', mc_settings = {autows=false,autosc=true}},
+	}},
+	['hboss'] = { jobs = {
+		['SCH'] = {	sj={
+			['RDM'] ={action={'schnuke; gs c set magicburstmode lock'}, food='Tropical Crepe',},
+			['WHM'] ={action={'schnuke; gs c set magicburstmode lock'}, food='Tropical Crepe',}}},
+		['GEO'] = {	action={'indiacumen; iacumen; gmalaise; gs c autoentrust focus; hb buffjob tank haste; gs c set autozergmode on; gs c set magicburstmode lock;'}, food='Tropical Crepe'},
+		['COR'] = {	action={'roll roll1 evokers; roll roll2 wizard; hb buff me haste; hb mincuraga 3; hb ignore_debuff all curse;'}},
+		['RUN'] = {	action={'gs c set autotankmode on; gs c set hybridmode Ongo; hb buffjob COR refresh; hb f off; mc on;'}},
+		['BLM'] = {	action={'gs c set magicburstmode lock; hb buff me haste'}},
+		['ALL'] = {	commands = 'gs c set autowsmode off; lua u maa; ai off; lua r mobtimer; wait 2; mobtimer start', mc_settings = {autows=false,autosc=true}},
+	}},
+	['fire'] = { jobs = {
+		['SCH'] = {	sj={
+			['RDM'] ={action={'firestorm2 me; hb buff me haste; gs c set elementalmode fire; schnuke; gs c set magicburstmode lock'}, food='Tropical Crepe',},
+			['WHM'] ={action={'firestorm2 me; hb buff me haste; gs c set elementalmode fire; schnuke; gs c set magicburstmode lock'}, food='Tropical Crepe',}}},
+		['GEO'] = {	action={'hb buff me haste; indiacumen; iacumen; gmalaise; hb buffjob tank haste; gs c set magicburstmode lock;'}, food='Tropical Crepe'},
+		['COR'] = {	action={'roll roll1 evokers; roll roll2 wizard; hb buff me haste; hb mincuraga 3; hb ignore_debuff all curse;'}},
+		['RUN'] = {	action={'gs c set autotankmode on; gs c set runeelement ignis; barblizzard; gs c set hybridmode Ongo; hb buffjob COR refresh; hb f off; mc on;'}},
+		['BLM'] = {	action={'firestorm me; gs c set elementalmode fire; gs c set magicburstmode lock; hb buff me haste'}},
+		['ALL'] = {	commands = 'gs c set autowsmode off; lua u maa; ai off;', mc_settings = {autows=false,autosc=true}},
+	}},
+	['stone'] = { jobs = { 
+		['SCH'] = {	sj={
+			['RDM'] ={action={'sandstorm2 me; hb buff me haste; gs c set elementalmode earth; schnuke; gs c set magicburstmode lock'}, food='Tropical Crepe',},
+			['WHM'] ={action={'sandstorm2 me; hb buff me haste; gs c set elementalmode earth; schnuke; gs c set magicburstmode lock'}, food='Tropical Crepe',}}},
+		['GEO'] = {	action={'hb buff me haste; indiacumen; iacumen; gmalaise; gs c autoentrust none; hb buffjob tank haste; gs c set magicburstmode lock;'}, food='Tropical Crepe'},
+		['COR'] = {	action={'roll roll1 evokers; roll roll2 wizard; hb buff me haste; hb mincuraga 3'}},
+		['RUN'] = {	action={'gs c set autotankmode on; gs c set runeelement tellus; gs c set hybridmode Ongo; hb buffjob COR refresh; hb f off; mc on;'}},
+		['BLM'] = {	action={'sandstorm me; gs c set elementalmode earth; gs c set magicburstmode lock; hb buff me haste'}},
+		['ALL'] = {	commands = 'gs c set autowsmode off; lua u maa; ai on;', mc_settings = {autows=false,autosc=true}},
+	}},
+	['ice'] = { jobs = {
+		['SCH'] = {	sj={
+			['RDM'] ={action={'hailstorm2 me; hb buff me haste; gs c set elementalmode ice; schnuke; gs c set magicburstmode lock'}, food='Tropical Crepe',},
+			['WHM'] ={action={'hailstorm2 me; hb buff me haste; gs c set elementalmode ice; schnuke; gs c set magicburstmode lock'}, food='Tropical Crepe',}}},
+		['GEO'] = {	action={'hb buff me haste; indiacumen; iacumen; gmalaise; gs c autoentrust none; hb buffjob tank haste; gs c set magicburstmode lock;'}, food='Tropical Crepe'},
+		['COR'] = {	action={'roll roll1 evokers; roll roll2 wizard; hb buff me haste; hb mincuraga 3'}},
+		['RUN'] = {	action={'gs c set autotankmode on; gs c set runeelement gelus; gs c set hybridmode Ongo; hb buffjob COR refresh; hb f off; mc on;'}},
+		['BLM'] = {	action={'hailstorm me; gs c set elementalmode ice; gs c set magicburstmode lock; hb buff me haste'}},
+		['ALL'] = {	commands = 'gs c set autowsmode off; lua u maa; ai on;', mc_settings = {autows=false,autosc=true}},
+	}},
+	['water'] = { jobs = {
+		['SCH'] = {	sj={
+			['RDM'] ={action={'rainstorm2 me; hb buff me haste; gs c set elementalmode water; schnuke; gs c set magicburstmode lock'}, food='Tropical Crepe',},
+			['WHM'] ={action={'rainstorm2 me; hb buff me haste; gs c set elementalmode water; schnuke; gs c set magicburstmode lock'}, food='Tropical Crepe',}}},
+		['GEO'] = {	action={'hb buff me haste; indiacumen; iacumen; gmalaise; hb buffjob tank haste; gs c set magicburstmode lock;'}, food='Tropical Crepe'},
+		['COR'] = {	action={'roll roll1 evokers; roll roll2 wizard; hb buff me haste; hb mincuraga 3; hb ignore_debuff all curse;'}},
+		['RUN'] = {	action={'gs c set autotankmode on; gs c set runeelement unda; gs c set hybridmode Ongo; hb buffjob COR refresh; hb f off; mc on;'}},
+		['BLM'] = {	action={'rainstorm me; gs c set elementalmode water; gs c set magicburstmode lock; hb buff me haste'}},
+		['ALL'] = {	commands = 'gs c set autowsmode off; lua u maa; ai off;', mc_settings = {autows=false,autosc=true}},
+	}},
+	['wind'] = { jobs = {
+		['SCH'] = {	sj={
+			['RDM'] ={action={'windstorm2 me; hb buff me haste; gs c set elementalmode wind; schnuke; gs c set magicburstmode lock'}, food='Tropical Crepe',},
+			['WHM'] ={action={'windstorm2 me; hb buff me haste; gs c set elementalmode wind; schnuke; gs c set magicburstmode lock'}, food='Tropical Crepe',}}},
+		['GEO'] = {	action={'hb buff me haste; indiacumen; iacumen; gmalaise; hb buffjob tank haste; gs c set magicburstmode lock;'}, food='Tropical Crepe'},
+		['COR'] = {	action={'roll roll1 evokers; roll roll2 wizard; hb buff me haste; hb mincuraga 3; hb ignore_debuff all curse;'}},
+		['RUN'] = {	action={'gs c set autotankmode on; gs c set runeelement flabra; gs c set hybridmode Ongo; hb buffjob COR refresh; hb f off; mc on;'}},
+		['BLM'] = {	action={'windstorm me; gs c set elementalmode wind; gs c set magicburstmode lock; hb buff me haste'}},
+		['ALL'] = {	commands = 'gs c set autowsmode off; lua u maa; ai off;', mc_settings = {autows=false,autosc=true}},
+	}},
+	['thunder'] = { jobs = {
+		['SCH'] = {	sj={
+			['RDM'] ={action={'thunderstorm2 me; hb buff me haste; gs c set elementalmode lightning; schnuke; gs c set magicburstmode lock'}, food='Tropical Crepe',},
+			['WHM'] ={action={'thunderstorm2 me; hb buff me haste; gs c set elementalmode lightning; schnuke; gs c set magicburstmode lock'}, food='Tropical Crepe',}}},
+		['GEO'] = {	action={'hb buff me haste; indiacumen; iacumen; gmalaise; hb buffjob tank haste; gs c set magicburstmode lock;'}, food='Tropical Crepe'},
+		['COR'] = {	action={'roll roll1 evokers; roll roll2 wizard; hb buff me haste; hb mincuraga 3; hb ignore_debuff all curse;'}},
+		['RUN'] = {	action={'gs c set autotankmode on; gs c set runeelement sulpor; gs c set hybridmode Ongo; hb buffjob COR refresh; hb f off; mc on;'}},
+		['BLM'] = {	action={'thunderstorm me; gs c set elementalmode lightning; gs c set magicburstmode lock; hb buff me haste'}},
+		['ALL'] = {	commands = 'gs c set autowsmode off; lua u maa; ai off;', mc_settings = {autows=false,autosc=true}},
 	}},
 	['sortiesc'] = { jobs = {
 		['RUN'] = {	action={'gs c set weapons Naegling;'}},
@@ -381,11 +451,11 @@ stage_data = {
 	}},
 	['alex'] = { jobs = {
 		['WHM'] = {	action={'hb buff <me> barstonra,barpetra,auspice; hb buffjob THF haste; hb buffjob tank haste;'}},
-		['PLD'] = {	action={'gs c autows Savage Blade; wait 3; lua r react'}},
-		['BRD'] = {	action={'wait 2.5; sing pl alex; sing p off; sing debuffing off; gs c set weapons DualSavage; gs c autows Savage Blade;'}},
+		['PLD'] = {	action={'gs c autows Savage Blade;'}},
+		['BRD'] = {	action={'wait 2.5; sing pl alex; sing p off; sing aoe on; sing debuffing off; gs c set weapons DualSavage; gs c autows Savage Blade;'}},
 		['WAR'] = {	action={'gs c set weapons Naegling'}},
 		['THF'] = {	action={'gs c set weapons Naegling; gs c set treasuremode fulltime'}},
-		['GEO'] = {	action={'gs c autogeo fury; gs c autoindi refresh; gs c autoentrust haste; hb buffjob WAR haste;'}},
+		['GEO'] = {	action={'gs c autogeo fury; gs c autoindi refresh; gs c autoentrust haste; hb buffjob WAR haste; hb buffjob BRD haste;'}},
 		['ALL'] = {	commands = '', mc_settings = {autows=true}},
 	}},
 	['cait'] = { jobs = {

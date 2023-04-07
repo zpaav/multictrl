@@ -142,6 +142,7 @@ job_change_data = {
 	['ambu'] = {name='Ambuscade', char1 = 'run/drk', char2 = 'cor/nin', char3 = 'drk/sam', char4 = 'brd/dnc', char5 = 'rdm/sch', char6 = 'whm/sch',},
 	['ody'] = {name='Odyssey Farm', char1 = 'run/pld', char2 = 'sam/war', char3 = 'cor/nin', char4 = 'brd/rdm', char5 = 'whm/sch', char6 = 'sam/war',},
 	['alex'] = {name='Alexander', char1 = 'pld/run', char2 = 'thf/war', char3 = 'war/drg', char4 = 'brd/nin', char5 = 'geo/rdm', char6 = 'whm/sch',},
+	['odin'] = {name='Odin', char1 = 'thf/war', char2 = 'mnk/war', char3 = 'cor/nin', char4 = 'brd/whm', char5 = 'rdm/sch', char6 = 'geo/whm',},
 	['sortie'] = {name='Sortie Melee', char1 = 'run/drk', char2 = 'cor/nin', char3 = 'blu/drg', char4 = 'brd/dnc', char5 = 'war/drg', char6 = 'whm/sch',},
 	['sortie2'] = {name='Sortie Mage', char1 = 'run/pld', char2 = 'blm/rdm', char3 = 'sch/rdm', char4 = 'sch/whm', char5 = 'geo/rdm', char6 = 'cor/whm',},
 	['shinryu'] = {name='Shinryu', char1 = 'thf/war', char2 = 'mnk/war', char3 = 'sch/whm', char4 = 'brd/dnc', char5 = 'whm/sch', char6 = 'geo/sch',},
@@ -194,7 +195,7 @@ stage_data = {
 		['COR'] = {	action={'gs c set weapons DualSavage; roll melee'}},
 		['DRK'] = { action={''}},
 		['RDM'] = { action={'mc buffall haste2; hb debuff dia3,paralyze2,slow2,addle2,silence,distract3,frazzle3; hb as attack off; hb as nolock on; hb as j RUN; hb f dist 15'}},
-		['RUN'] = {	action={'gs c set hybridmode DTLite;'}},
+		['RUN'] = {	action={'gs c set hybridmode DTLite; gs c set runeelement Unda'}},
 		['ALL'] = {	commands = 'input /autotarget off;', mc_settings = {autows=true}},
 	}},
 	['ml'] = { jobs = {
@@ -457,6 +458,15 @@ stage_data = {
 		['THF'] = {	action={'gs c set weapons Naegling; gs c set treasuremode fulltime'}},
 		['GEO'] = {	action={'gs c autogeo fury; gs c autoindi refresh; gs c autoentrust haste; hb buffjob WAR haste; hb buffjob BRD haste;'}},
 		['ALL'] = {	commands = '', mc_settings = {autows=true}},
+	}},
+	['odin'] = { jobs = {
+		['RDM'] = {	action={'hb buffjob MNK haste2; hb buffjob COR haste2; hb buffjob THF haste2; hb buffjob GEO refresh3; hb buffjob BRD refresh3; hb debuff Bio3,Silence,Slow2,Paralyze2,Addle2,Inundation,Blind2,Poison2;'}},
+		['MNK'] = {	action={'gs c set hybridmode DT'}},
+		['BRD'] = {	action={'wait 2.5; sing pl odin; sing p on; sing aoe on; sing n on; sing ballad 2 GEO; sing ballad 1 RDM; sing ballad 1 BRD; hb debuff silence'}},
+		['COR'] = {	action={'gs c set weapons Naegling; roll roll1 gallant; roll roll2 chaos'}},
+		['THF'] = {	action={'gs c set treasuremode fulltime'}},
+		['GEO'] = {	action={'gs c autogeo fury; gs c autoindi barrier; gs c autoentrust haste; hb debuff silence'}},
+		['ALL'] = {	commands = 'gaze ap on;', mc_settings = {autows=true}},
 	}},
 	['cait'] = { jobs = {
 		['WHM'] = {	action={'hb buff <me> baraera,barsilencera,auspice; hb buffjob tank regen4;'}},

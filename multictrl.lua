@@ -91,12 +91,12 @@ InternalCMDS = S{
 	--Job
 	'brd','bst','sch','smnburn','geoburn','burn','rng','proc','wsproc','jc',
 	--Travel
-	'mnt','dis','warp','omen','enter','get','deimos','macro','htmb','getki',
+	'mnt','dis','warp','omen','enter','get','htmb','getki',
 	--Misc
 	'reload','unload','fps30','fps60','lotall','cleanup','drop','book','lockstyle','wstypenew',
 }
 
-DelayCMDS = S{'book','get','enter','deimos','macro','htmb','enup','endown','ent','esc','getki'}
+DelayCMDS = S{'book','get','enter','deimos','macro','htmb','enup','endown','ent','esc','getki','jc'}
 
 TransferCMDS = S{'mnt','dis','warp','omen','fps30','fps60','lotall'}
 
@@ -120,6 +120,7 @@ old = 0
 log_flag = true
 cancel = false
 
+macro_orb_type = false
 htmb_state = false
 htmb_entered = false
 orb_type = ''
@@ -180,9 +181,11 @@ function handle_addon_command(input, ...)
 	elseif cmd == 'htmb' then
 		htmb:schedule(0, player.name)
 	elseif cmd == 'deimos' then
-		orb_entry:schedule(0, player.name,cmd)
+		cmd2 = cmd2 or player.name
+		orb_entry:schedule(0, cmd2,'deimos')
 	elseif cmd == 'macro' then
-		orb_entry:schedule(0, player.name,cmd)
+		cmd2 = cmd2 or player.name
+		orb_entry:schedule(0, cmd2,'macro')
 	elseif cmd == 'ein' then						-- Long delay
 		ein:schedule(0, cmd2)
 		if cmd2 == 'enter' then
@@ -268,6 +271,10 @@ function handle_ipc_message(msg, ...)
 			coroutine.sleep(delay)
 		end
 		_G[cmd](cmd2,cmd3)
+	elseif cmd == 'deimos' then
+		orb_entry(cmd2,'deimos')
+	elseif cmd == 'macro' then
+		orb_entry(cmd2,'macro')
 	elseif cmd == 'as' then
 		as(cmd2, cmd3, cmd4)
 	elseif cmd == 'send' then
@@ -349,9 +356,13 @@ function handle_gain_buff(buff_id)
 			send_to_IPC:schedule(1.0, 'htmb',player_leader)
 		elseif orb_state and orb_type then
 			orb_entered = true
-			orb_label = (orb_type:gsub("^%l", string.upper))
-			atc('['..orb_label..' Orb] IPC Trigger.')
-			send_to_IPC:schedule(1.0, orb_label,player_leader)
+			if macro_orb_type then
+				atc('[Macro Orb] IPC Trigger. Lead: '..player_leader)
+				send_to_IPC:schedule(1.0, 'macro',player_leader)
+			elseif deimos_orb_type then
+				atc('[Deimos Orb] IPC Trigger. Lead: '..player_leader)
+				send_to_IPC:schedule(1.0, 'deimos',player_leader)
+			end
 		end
     end
 end
@@ -362,7 +373,10 @@ function handle_lose_buff(buff_id)
 		htmb_entered = false
 		orb_state = false
 		orb_entered = false
+		macro_orb_type = false
+		deimos_orb_type = false
 		orb_type = ''
+		player_leader = ''
 		off:schedule(3)
     end
 end
@@ -2651,7 +2665,7 @@ function get(cmd2)
 	end
 	
 	local possible_npc = find_npc_to_poke("get")
-	local get_command = get_map[zone_id].name[possible_npc.name].cmd[cmd2] or nil
+	local get_command = (possible_npc and get_map[zone_id].name[possible_npc.name].cmd[cmd2]) or nil
 	if possible_npc and get_command then
 		if (get_command.packet) then	-- Packets
 			ki_count = (get_command.ki_check and find_missing_ki(get_command.ki_check)) or 0
@@ -2691,15 +2705,20 @@ function orb_entry(leader, orb_type)
 	
 	if (leader == player.name and not orb_entered) or (leader ~= player.name and haveBuff('Battlefield')) then
 	local possible_npc = find_npc_to_poke(orb_type)
-		if possible_npc and trade_orb(possible_npc.index, orb_type) then
-			if leader == player.name and not orb_state then
+		if leader == player.name and not orb_state then
+			if possible_npc and trade_orb(possible_npc.index, orb_type) then
 				if orb_type == 'macro' then
+					macro_orb_type = true
 					keypress_cmd(macro_orb_map[zone_id].entry_command)
 				elseif orb_type == 'deimos' then
+					deimos_orb_type = true
 					keypress_cmd(deimos_orb_map[zone_id].entry_command)
 				end
 				orb_state=true
-			else
+				player_leader = player.name
+			end
+		else
+			if possible_npc and get_poke_check_index(possible_npc.index) then
 				if orb_type == 'macro' then
 					keypress_cmd(macro_orb_map[zone_id].follower_command)
 				elseif orb_type == 'deimos' then

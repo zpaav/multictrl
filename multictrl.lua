@@ -364,6 +364,9 @@ function handle_gain_buff(buff_id)
 				send_to_IPC:schedule(1.0, 'deimos',player_leader)
 			end
 		end
+	elseif buff_id == 475 then
+		atc('[VW]')
+		on()
     end
 end
 
@@ -424,6 +427,15 @@ function handle_incoming_chunk(id, data, mod, inj, blk)
 				send_packet(parsed, {{0,16384,0,false}})
 			end
 		end
+	elseif (id == 0x38) and haveBuff('Voidwatcher') then
+        local parsed = packets.parse('incoming', data)
+        local mob = windower.ffxi.get_mob_by_id(parsed['Mob'])
+        if not mob then elseif (mob.name == 'Riftworn Pyxis') then
+            if parsed['Type'] == 'deru' then
+                atc('[VW] Riftworn Pyxis spawn')
+				off()
+            end
+        end
 	end
 end
 

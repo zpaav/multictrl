@@ -146,6 +146,9 @@ npc_map = {
 		['Diaphanous Bitzer #D'] = {entry_command = {0.3, {'up', 0.15}, 0.5, {'enter', 0.15}}},
 		['Diaphanous Bitzer'] = {entry_command = {0.3, {'up', 0.15}, 0.5, {'enter', 0.15}, 0.5, {'up', 0.15}, 0.5, {'enter', 0.15}}},
 		}},
+	[212] = {name ={
+		['Grounds Tome'] = {description='Grounds Tome', menu_id = 19, packet = {[1]={{20,0,0,true},{20,0,0,false}}}},
+		}},
 	[230] = {name = {
 		['Gate: Chocobo Circuit'] = {entry_command = {0.85, {'up', 0.15}, 0.5, {'enter', 0.15}}},
 		}},

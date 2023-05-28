@@ -1005,7 +1005,7 @@ end
 
 function on()
 	atc('ON: Turning on addons.')
-	local world = res.zones[zone_id].name
+	local world = res.zones[zone_id] and res.zones[zone_id].name
 	local di_zones = S{288,289,291}
 		
 	local MeleeJobs = S{'WAR','SAM','DRG','DRK','NIN','MNK','COR','BLU','PUP','DNC','RUN','THF','RNG','PLD','BST','GEO','BRD'}
@@ -3627,10 +3627,10 @@ local function distance_check_npc(npc)
     local player = windower.ffxi.get_mob_by_target('me')
 
     if npc and calc_lazy_distance(player, npc) < 6^2 then
-		atc('[Dist Check] -Found-: ' ..npc.name.. ' [Distance]: ' .. math.sqrt(npc.distance))
+		atc('[Dist Check] -Found-: ' ..npc.name.. ' [Distance]: ' .. math.floor(math.sqrt(npc.distance)*(10^2))/(10^2))
         return true
     else
-        atcwarn('[Dist Check] -TOO FAR AWAY-: ' ..npc.name.. ' [Distance]: ' .. math.sqrt(npc.distance))
+        atcwarn('[Dist Check] -TOO FAR AWAY-: ' ..npc.name.. ' [Distance]: ' .. math.floor(math.sqrt(npc.distance)*(10^2))/(10^2))
         return false
     end
 end

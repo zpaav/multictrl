@@ -263,6 +263,8 @@ function handle_ipc_message(msg, ...)
 	local term = msg:split(' ')
 	term:remove(1)
 	local send_cmd = table.concat(term, " ")
+	
+	--if windower.ffxi.get_info().mog_house then atcwarn('Abort: In Mog House.') return end
 
 	if TransferCMDS:contains(cmd) then
 		transfer_commands(cmd)
@@ -884,11 +886,25 @@ function wsall()
                     windower.send_command('input /ws \'Leaden Salute\' <t>')
 				elseif weapon == 22142 then
 					windower.send_command('input /ws \'Wildfire\' <t>')
-                else
+				elseif weapon == 22143 then
+					windower.send_command('input /ws \'Last Stand\' <t>')
+                elseif weapon == 19611 then
                     windower.send_command('input /ws \'Savage Blade\' <t>')
                 end
             elseif player_job.main_job == "RNG" then
-                windower.send_command('input /ws \'Last Stand\' <t>')
+			    local player = windower.ffxi.get_items('equipment')
+                local bag = player.range_bag
+                local index = player.range
+                local weapon =  windower.ffxi.get_items(bag, index).id
+                if weapon == 22139 then
+                    windower.send_command('input /ws \'Trueflight\' <t>')
+				elseif weapon == 22142 then
+					windower.send_command('input /ws \'Wildfire\' <t>')
+				elseif weapon == 22143 then
+					windower.send_command('input /ws \'Last Stand\' <t>')
+                elseif weapon == 19607 then
+                    windower.send_command('input /ws \'Savage Blade\' <t>')
+                end
             elseif player_job.main_job == "BLU" then
                 windower.send_command('input /ws \'Expiacion\' <t>')
 			elseif player_job.main_job == "RDM" then
@@ -2827,13 +2843,21 @@ function basic_keys(cmd)
 	keypress_cmd(basic_key_sequence[cmd].command)
 end
 
-function CheckItemInInventory(item_name)
+function CheckItemInInventory(item_name, amt)
 	local bag_id = 0
+	local seal_count = 0
 	local item_id = res.items:with('en', item_name:capitalize()).id
 	for item, index in T(windower.ffxi.get_items(bag_id)):it() do
 		if type(item) == 'table' and item.id == item_id then
-			return true
+			if amt then 
+				seal_count = seal_count + item.count
+			else
+				return true
+			end
 		end
+	end
+	if seal_count > 0 and amt then
+		return seal_count
 	end
 	return false
 end
@@ -2841,6 +2865,7 @@ end
 function cleanup()
 	local items = S{'Tropical Crepe','Maringna','Grape Daifuku','Rolan. Daifuku','Om. Sandwich','Pluton case','Pluton box','Boulder case','Boulder box','Beitetsu parcel','Beitetsu box','Abdhaljs Seal',}
 	local meds = S{'Echo Drops','Holy Water','Remedy','Panacea','Reraiser','Hi-Reraiser','Super Reraiser','Instant Reraise','Scapegoat','Silent Oil','Prism Powder','El. Pachira Fruit'}
+	local satchel_items = S{"Old Case","Ra'Kaz. Starstone","Ra'Kaz. Sapphire","Octahedrite"}
 	--local case_stuff = S{'case','box','parcel'}
     
     --get
@@ -2884,6 +2909,46 @@ function cleanup()
         end
 	end
     
+	--get
+	for k,v in pairs(satchel_items) do
+		if CheckItemInInventory(k) then
+            windower.send_command('get "' ..k.. '" 600')
+            coroutine.sleep(0.5)
+		end
+	end
+    
+	coroutine.sleep(1.8)
+    --put
+    for k,v in pairs(satchel_items) do
+        if CheckItemInInventory(k) then
+            windower.send_command('put "' ..k.. '" satchel 600')
+            coroutine.sleep(0.5)
+        end
+	end
+	
+	-- Seal trade
+	
+	if windower.ffxi.get_info()['zone'] == 246 then
+		atc('In Port Jeuno - attempt to trade seals to NPC')
+		local seal_count
+		seal_count = CheckItemInInventory('H. Kindred Crest', true)
+		if seal_count and seal_count < 792 then
+			atc('H. Kindred Crest: '..seal_count)
+            windower.send_command('tradenpc '.. seal_count..' \"H. Kindred Crest\" Shami')
+			coroutine.sleep(3.5)
+			windower.send_command('setkey enter down; wait 0.25; setkey enter up;')
+        end
+		coroutine.sleep(1.5)
+		seal_count = 0
+		seal_count = CheckItemInInventory('S. Kindred Crest', true)
+		if seal_count and seal_count < 792 then
+			atc('S. Kindred Crest: '..seal_count)
+            windower.send_command('tradenpc '.. seal_count..' \"S. Kindred Crest\" Shami')
+			coroutine.sleep(3.5)
+			windower.send_command('setkey enter down; wait 0.25; setkey enter up;')
+        end
+	end
+	
 end
 
 function book()
@@ -2919,7 +2984,7 @@ function drop(cmd2)
                          3205,3206,3207,3208,3209,3210,3211,3212,3213,3214,3215,3216,3217,3218,3219,3220,3221,3222,3223,
                          3224,3225,3226,3227,3228,3229}
 	local crystals = S{4096,4097,4098,4099,4100,4101,4102,4103}
-	local escha_trash = S{9084,9085,9210,9212,9214,9215,9216,6486,6488}
+	local escha_trash = S{9084,9085,9210,9212,9214,9215,9216,6486,6488,6391}
 
 	if cmd2 == 'rem' then
 		atc('[Drop] Rem Chapters 6-10')

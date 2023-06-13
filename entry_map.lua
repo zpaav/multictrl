@@ -125,6 +125,9 @@ npc_map = {
 		['Veridical Conflux #14'] = {entry_command = {3.5, {'right', 0.75}, 0.6, {'enter', 0.15}}},
 		['Veridical Conflux #15'] = {entry_command = {3.5, {'right', 0.75}, 0.6, {'enter', 0.15}}},
 		}},
+	-- [188] = {name = { -- Dynamis Jeuno
+		-- ['Sominal Threshold'] = {description='Sominal Threshold',  menu_id = 101, packet = {[1]={{0,0,0,true},{1,0,0,false}}}},
+		-- }},
 	[189] = {name = {
 		['Diaphanous Device'] = {entry_command = {0.3, {'up', 0.15}, 0.5, {'enter', 0.15}}},
 		['Diaphanous Device #A'] = {entry_command = {0.3, {'up', 0.15}, 0.5, {'enter', 0.15}}},
@@ -157,6 +160,9 @@ npc_map = {
 		}},
 	[241] = {name = {
 		['Gate: Chocobo Circuit'] = {entry_command = {0.85, {'up', 0.15}, 0.5, {'enter', 0.15}}},
+		}},
+	[243] = {name = { -- Ru'Lude
+		['Trail Markings'] = {description='Trail Markings',  menu_id = 10176, packet = {[1]={{0,0,0,false}}}},
 		}},
 	[246] = {name = {
 		['Gate: Chocobo Circuit'] = {entry_command = {0.85, {'up', 0.15}, 0.5, {'enter', 0.15}}},
@@ -220,6 +226,7 @@ npc_map = {
 		}},
 	[274] = {name = {
 		['Entwined Roots'] = {entry_command = {0.85, {'up', 0.15}, 0.5, {'enter', 0.15}}},
+		['Vertical Transit Device'] = {entry_command = {1.1, {'enter', 0.15}}},
 		}},
 	[275] = {name = {
 		['Diaphanous Device'] = {entry_command = {0.3, {'up', 0.15}, 0.5, {'enter', 0.15}}},

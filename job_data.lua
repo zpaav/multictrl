@@ -139,7 +139,7 @@ crowd_control_data = {
 }
 
 job_change_data = {
-	['ambu'] = {name='Ambuscade', char1 = 'pld/run', char2 = 'sam/war', char3 = 'cor/nin', char4 = 'brd/dnc', char5 = 'rdm/sch', char6 = 'geo/whm',},
+	['ambu'] = {name='Ambuscade', char1 = 'run/pld', char2 = 'rng/nin', char3 = 'cor/nin', char4 = 'brd/sch', char5 = 'whm/sch', char6 = 'cor/dnc',},
 	['ody'] = {name='Odyssey Farm', char1 = 'run/pld', char2 = 'sam/war', char3 = 'cor/nin', char4 = 'brd/rdm', char5 = 'whm/sch', char6 = 'sam/war',},
 	['alex'] = {name='Alexander', char1 = 'pld/run', char2 = 'thf/war', char3 = 'war/drg', char4 = 'brd/nin', char5 = 'geo/rdm', char6 = 'whm/sch',},
 	['odin'] = {name='Odin', char1 = 'thf/war', char2 = 'mnk/war', char3 = 'cor/nin', char4 = 'brd/whm', char5 = 'rdm/sch', char6 = 'geo/whm',},
@@ -192,12 +192,19 @@ job_change_data = {
 
 stage_data = {
 	['ambu'] = { jobs = {
-		['BRD'] = { action={'wait 2.5; hb as nolock off; hb as attack on; hb as j SAM; hb f j SAM; hb f dist 3; sing pl meleehaste2; sing ballad 1 GEO; sing ballad 1 PLD; sing ballad 1 RDM; gs c set weapons DualCarn; hb moblist on; hb mldb horde lullaby ii; hb moblist add \"Bozzetto Warlock\"'}},
-		['GEO'] = { action={'hb mincure 4; hb mincuraga 3; hb debuff dia2; hb as nolock on; hb as j SAM; hb f j SAM; hb f dist 3.7; gs c autogeo frailty; gs c autoindi fury; gs c autoentrust attunement'}},
-		['COR'] = {	action={'gs c set weapons DualSavage; roll melee; hb as nolock off; hb as attack on; hb as j PLD; hb f j PLD; hb f dist 5;'}},
-		['SAM'] = { action={'gs c set weapons Masamune; hb f j PLD; hb f dist 10; lua r easy; easy listmode on; easy on; easy distance 10'}},
-		['RDM'] = { action={'dmain; mc buffall haste2; hb buffjob PLD refresh3; hb buffjob GEO refresh3; hb as attack off; hb as nolock on; hb as j PLD; hb f dist 5.5; hb f j PLD; hb mincure 4; hb aoe on; hb moblist on; hb moblist add \"Bozzetto Warlock\"; hb moblist add \"Bozzetto Reaver\"; hb mldb silence'}},
-		['PLD'] = {	action={'gs c set runeelement Tenebrae; gs c set autotankmode on; hb f off'}},
+		['BRD'] = { action={'wait 2.5; sing pl melee; sing ballad 1 WHM; sing ballad 1 RUN; hb aoe on; hb f j RNG; hb f dist 2.0'}},
+		['COR'] = {	sj={ 
+						['NIN'] = {action={'gs c set weapons DualLeadenRanged; roll melee; hb as j RNG; hb f j RNG; hb f dist 2.0; hb as attack on'}},
+						['DNC'] = {action={'gs c set weapons DualLeadenRanged; roll magic; hb as j RNG; hb f j RNG; hb f dist 2.0; hb as attack on'}},}
+					},
+		['RNG'] = {	action={'gs c set weapons DualGastra; gs c autows TrueFlight'}},
+		['WHM'] = { action={'hb buff me regen4,auspice,barstonra,barpetra; hb moblist on; hb moblist add \"Bozzetto Elementalist\"; hb mldb silence,dia2; hb f j RNG; hb buffjob RNG aurorastorm; hb f dist 2.0'}},
+		['RUN'] = {	action={'gs c set runeelement Flabra; gs c set autotankmode on; hb f off; hb as off; hb as attack off;'}},
+		['ALL'] = {	commands = 'input /autotarget off; ai on;', mc_settings = {autows=true}},
+	}},
+	['ambu2'] = { jobs = {
+		['RNG'] = {	action={'gs c set weapons DualGastra; gs c autows TrueFlight'}},
+		['COR'] = {	action={'gs c set weapons DualLeadenRanged; hb as attack off'}},
 		['ALL'] = {	commands = 'input /autotarget off; ai on;', mc_settings = {autows=true}},
 	}},
 	['ml'] = { jobs = {

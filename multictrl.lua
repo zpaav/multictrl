@@ -7,6 +7,7 @@ require('functions')
 require('logger')
 require('tables')
 require('coroutine')
+require('vectors')
 config = require('config')
 packets = require('packets')
 res = require('resources')
@@ -155,6 +156,9 @@ function handle_addon_command(input, ...)
 		log(__get_menu_id)
 		table.vprint(__get_packet_sequence)
 		if __busy then log('busy is true') else log('busy false') end
+	elseif cmd == 'moveto' then
+		log('what')
+		moveto(cmd2,cmd3,cmd4)
 	elseif cmd == 'job' then
 		find_job_charname(string.upper(cmd2),cmd3)
 	elseif cmd == 'buy' then						-- Leader
@@ -166,15 +170,17 @@ function handle_addon_command(input, ...)
 		local mob_index = target and target.valid_target and target.is_npc and target.index
 		_G[cmd]:schedule(0, cmd2, mob_index)
 		send_to_IPC:schedule(1, cmd,cmd2,mob_index)
-	elseif cmd == 'cc' or cmd == 'fin' or cmd == 'dispelga' or cmd == 'poke' then	-- Index / Command
+	elseif cmd == 'cc' or cmd == 'fin' or cmd == 'dispelga' or cmd == 'poke' or cmd == 'pokesingle' then	-- Index / Command
 		local target = windower.ffxi.get_mob_by_target('t')
 		local mob_index = target and target.valid_target and target.is_npc and target.index
-		if cmd == 'poke' and not mob_index then
+		if (cmd == 'poke' or cmd == 'pokesingle') and not mob_index then
 			atc('[POKE] Abort: No target or invalid target.')
 			return
 		end
 		_G[cmd]:schedule(0, mob_index)
-		send_to_IPC:schedule(1, cmd,mob_index)
+		if cmd ~= 'pokesingle' then
+			send_to_IPC:schedule(1, cmd,mob_index)
+		end
 	elseif S{'enup','endown','ent','esc'}:contains(cmd) then
 		basic_keys:schedule(0, cmd)
 		send_to_IPC:schedule(0.25, 'basic_keys',cmd)
@@ -1018,8 +1024,17 @@ function poke(mob_index)
 	end
 end
 
+function pokesingle(mob_index)
+    atcwarn("[POKE] - Attempt to poke NPC - Single Char!")
+    if not mob_index then
+		return
+		atcwarn("[POKE] - Abort, no valid target. - Single Char")
+	else
+		get_poke_check_index(mob_index)	
+	end
+end
 
-function on()
+function on(cor_toggle)
 	atc('ON: Turning on addons.')
 	local world = res.zones[zone_id] and res.zones[zone_id].name
 	local di_zones = S{288,289,291}
@@ -1066,7 +1081,7 @@ function on()
 			windower.send_command('gs c set autobuffmode auto')
 		elseif player.main_job == "BRD" then
 			windower.send_command('singer on')
-		elseif player.main_job == "COR" then
+		elseif player.main_job == "COR" and not cor_toggle then
 			windower.send_command('roller on')
 		elseif player.main_job == "SCH" then
 			windower.send_command('gs c set autosubmode on')
@@ -2865,7 +2880,7 @@ end
 function cleanup()
 	local items = S{'Tropical Crepe','Maringna','Grape Daifuku','Rolan. Daifuku','Om. Sandwich','Pluton case','Pluton box','Boulder case','Boulder box','Beitetsu parcel','Beitetsu box','Abdhaljs Seal',}
 	local meds = S{'Echo Drops','Holy Water','Remedy','Panacea','Reraiser','Hi-Reraiser','Super Reraiser','Instant Reraise','Scapegoat','Silent Oil','Prism Powder','El. Pachira Fruit'}
-	local satchel_items = S{"Old Case","Ra'Kaz. Starstone","Ra'Kaz. Sapphire","Octahedrite"}
+	local satchel_items = S{"Old Case","Ra'Kaz. Starstone","Ra'Kaz. Sapphire","Octahedrite","Hexahedrite","Voracious Psyche"}
 	--local case_stuff = S{'case','box','parcel'}
     
     --get
@@ -3607,6 +3622,7 @@ function keypress_cmd(key_table)
 		end
 	end
 	windower.send_command(keypress_string)
+	__busy = false
 end
 
 function calc_lazy_distance(a,b)
@@ -3746,6 +3762,24 @@ function get_poke_check_index(npc_index)
 		end
 	end
 	return npc_dialog
+end
+
+function moveto(tx,ty,tz, min_distance)
+	min_distance = min_distance or 1.25
+	
+	local p = windower.ffxi.get_mob_by_target('me')
+
+	atcwarn("Start running toward: "..tx.." ,"..ty.." ,"..tz)
+	windower.ffxi.run(tx-p.x, ty-p.y)
+	p_2 = windower.ffxi.get_mob_by_index(p.index)
+	
+	while ((V{p_2.x, p_2.y, (p_2.z*-1)} - V{tx, ty, (tz*-1)}):length()) >= min_distance do
+		p_2 = windower.ffxi.get_mob_by_index(p.index)
+		windower.ffxi.run(tx-p_2.x, ty-p_2.y)
+		coroutine.sleep(0.15)
+	end
+	atcwarn("Stop running.")
+	windower.ffxi.run(false)
 end
 
 function haveBuff(...)

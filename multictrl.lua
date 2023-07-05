@@ -2317,7 +2317,7 @@ end
 function autosc(cmd2, leader_char)
 	player=windower.ffxi.get_player()
 	
-	local autosc_jobs = S{'COR','SCH','BLM','RUN','BRD','RDM','GEO','DRK','BLU'}
+	local autosc_jobs = S{'COR','SCH','BLM','RUN','BRD','RDM','GEO','DRK','BLU','WHM'}
 
 	local autosc_cmd = cmd2 and cmd2:lower() or (settings.autosc and 'off' or 'on')
 	if S{'off'}:contains(autosc_cmd) then
@@ -2460,13 +2460,16 @@ function autosc(cmd2, leader_char)
 				end
 			--Sortie 4 Step: Aeolian Edge x4.
 			elseif cmd2 and cmd2:lower() == 'aeolian' then
-				windower.send_command('gs c set autobuffmode off; gs c set autowsmode off')
+				windower.send_command('gs c set autobuffmode off; gs c set autowsmode off; sing off;')
 				if player.main_job == 'COR' then
 					windower.send_command:schedule(0.2, 'input /ws "Aeolian Edge" <t>')
 					windower.send_command:schedule(8.1, 'input /ws "Aeolian Edge" <t>')
 				elseif player.main_job == 'BRD' then
 					windower.send_command:schedule(3.9, 'input /ws "Aeolian Edge" <t>')
 					windower.send_command:schedule(11.6, 'input /ws "Aeolian Edge" <t>')
+				elseif S{'DRK','WHM','RDM'}:contains(player.main_job) then
+					windower.send_command:schedule(5.0, 'input /ma "Aero" <bt>')
+					windower.send_command:schedule(9.0, 'input /ma "Stone" <bt>')
 				end
 			elseif cmd2 and cmd2:lower() == 'def' then
 				if player.main_job == 'RUN' then

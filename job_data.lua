@@ -142,6 +142,7 @@ job_change_data = {
 	['ambu'] = {name='Ambuscade', char1 = 'run/pld', char2 = 'rng/nin', char3 = 'cor/nin', char4 = 'brd/sch', char5 = 'whm/sch', char6 = 'cor/dnc',},
 	['ody'] = {name='Odyssey Farm', char1 = 'run/pld', char2 = 'sam/war', char3 = 'cor/nin', char4 = 'brd/rdm', char5 = 'whm/sch', char6 = 'sam/war',},
 	['ody2'] = {name='Odyssey Farm PLD', char1 = 'pld/blu', char2 = 'sam/war', char3 = 'cor/nin', char4 = 'brd/whm', char5 = 'war/sam', char6 = 'sam/war',},
+	['lilith'] = {name='Lilith', char1 = 'geo/drk', char2 = 'mnk/war', char3 = 'cor/drk', char4 = 'brd/drk', char5 = 'whm/drk', char6 = 'thf/drk',},
 	['alex'] = {name='Alexander', char1 = 'pld/run', char2 = 'thf/war', char3 = 'war/drg', char4 = 'brd/nin', char5 = 'geo/rdm', char6 = 'whm/sch',},
 	['odin'] = {name='Odin', char1 = 'thf/war', char2 = 'mnk/war', char3 = 'cor/nin', char4 = 'brd/whm', char5 = 'rdm/sch', char6 = 'geo/whm',},
 	['sortie'] = {name='Sortie Melee Weak Farm', char1 = 'run/drk', char2 = 'cor/nin', char3 = 'blu/drg', char4 = 'brd/dnc', char5 = 'war/drg', char6 = 'whm/sch',},

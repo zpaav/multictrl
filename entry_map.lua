@@ -28,7 +28,7 @@ macro_orb_map =  {
 }
 
 htmb_map = {
-	[31] = {name = {'Spatial Displacement'}, entry_command ={17, {'down', 0.75}, 0.6, {'enter', 0.15}, 0.75, {'down', 0.5}, 0.6, {'enter', 0.15}}},
+	[31] = {name = {'Spatial Displacement'}, entry_command ={17, {'down', 0.75}, 0.6, {'enter', 0.15}, 0.75, {'up', 1.0}, 0.6, {'enter', 0.15}}},
 	[67] = {name = {'Ornamental Door'}, entry_command ={12.3, {'down', 0.15}, 0.6, {'enter', 0.15}, 1.0, {'up', 1.0}, 0.7, {'enter', 0.15}}},
     [163] = {name = {'Mahogany Door'}, entry_command ={}},
     [165] = {name = {'Throne Room'}, entry_command ={}},
@@ -439,7 +439,25 @@ get_map = {
 	[232] = {name ={
 		['Habitox'] = {cmd = {
 			['gobbiebox'] = {description='Gobbie Mystery Box', entry_command = {3.0, {'enter', 0.15}, 1.5, {'right', 1.0}, 1.0, {'enter', 0.15}, 9.0, {'escape', 0.15}}},
-		}}
+		}},
+		['Curio Vendor Moogle'] = {cmd = {
+			['meds'] = {description='Meds', menu_id = 9601, packet = {[1]={{1,0,0,false}}}, count = 0, category = 'none'},
+			['scrolls'] = {description='Scrolls', menu_id = 9601, packet = {[1]={{5,0,0,false}}}, count = 0, category = 'none'},
+			['foods'] = {description='Foods', menu_id = 9601, packet = {[1]={{4,0,0,false}}}, count = 0, category = 'none'},
+			-- Actual shop items
+			['panacea'] = {description='Panacea', menu_id = 9601, packet = {[1]={{1,0,0,false}}}, shop_packet_slot = 11, count = 24, category = 'meds'},
+			['echodrops'] = {description='Echo Drops', menu_id = 9601, packet = {[1]={{1,0,0,false}}}, shop_packet_slot = 13, count = 48, category = 'meds'},
+			['holywater'] = {description='Holy Water', menu_id = 9601, packet = {[1]={{1,0,0,false}}}, shop_packet_slot = 15, count = 48, category = 'meds'},
+			['remedy'] = {description='Remedy', menu_id = 9601, packet = {[1]={{1,0,0,false}}}, shop_packet_slot = 16, count = 48, category = 'meds'},
+			['prismpowder'] = {description='Prism Powder', menu_id = 9601, packet = {[1]={{1,0,0,false}}}, shop_packet_slot = 18, count = 24, category = 'meds'},
+			['silentoil'] = {description='Silent Oil', menu_id = 9601, packet = {[1]={{1,0,0,false}}}, shop_packet_slot = 19, count = 24, category = 'meds'},
+			['reraiser'] = {description='Reraiser', menu_id = 9601, packet = {[1]={{1,0,0,false}}}, shop_packet_slot = 21, count = 1, category = 'meds'},
+			['hireraiser'] = {description='Hi-Reraiser', menu_id = 9601, packet = {[1]={{1,0,0,false}}}, shop_packet_slot = 22, count = 1, category = 'meds'},
+			['instantreraise'] = {description='Instant Reraise', menu_id = 9601, packet = {[1]={{5,0,0,false}}}, shop_packet_slot = 1, count = 1, category = 'scrolls'},
+			['grapedaifuku'] = {description='Grape Daifuku', menu_id = 9601, packet = {[1]={{4,0,0,false}}}, shop_packet_slot = 67, count = 24, category = 'foods'},
+			['rolandaifuku'] = {description='Rolan. Daifuku', menu_id = 9601, packet = {[1]={{4,0,0,false}}}, shop_packet_slot = 65, count = 24, category = 'foods'},
+			['maringna'] = {description='Maringna', menu_id = 9601, packet = {[1]={{4,0,0,false}}}, shop_packet_slot = 57, count = 24, category = 'foods'},
+		}},
 	}}, 
 	[234] = {name ={
 		['Bountibox'] = {cmd = {

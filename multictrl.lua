@@ -94,10 +94,10 @@ InternalCMDS = S{
 	--Travel
 	'mnt','dis','warp','omen','enter','get','htmb','getki',
 	--Misc
-	'reload','unload','fps30','fps60','lotall','cleanup','drop','book','lockstyle','wstypenew',
+	'reload','unload','fps30','fps60','lotall','cleanup','drop','book','lockstyle','wstypenew','refillmeds',
 }
 
-DelayCMDS = S{'book','get','enter','deimos','macro','htmb','enup','endown','ent','esc','getki','jc'}
+DelayCMDS = S{'book','get','enter','deimos','macro','htmb','enup','endown','ent','esc','getki','jc','refillmeds'}
 
 TransferCMDS = S{'mnt','dis','warp','omen','fps30','fps60','lotall'}
 
@@ -112,6 +112,14 @@ __busy = false
 __get_packet_sequence = {}
 __get_menu_id = 0
 __get_npc_name = ''
+__received_response = false
+__poke = false
+
+__get_shop_slot = 0
+__get_shop_item_count = 0
+__shop_busy = false
+__shop_packet = false
+__shop_opened = false
 
 isCasting = false
 isResting = false
@@ -151,6 +159,9 @@ function handle_addon_command(input, ...)
 
 	if cmd == nil then
 		windower.add_to_chat(123,"Abort: No command specified")
+	-- elseif cmd == 'refillmeds' then
+		-- refill_meds()
+		-- send_to_IPC:schedule(1, cmd,cmd2,leader.name)
 	elseif cmd == 'test' then
 		log(__get_npc_name)
 		log(__get_menu_id)
@@ -335,6 +346,8 @@ function handle_statue_change(new, old)
             npc_dialog = true
         elseif old == 4 then
             npc_dialog = false
+			__busy = false
+			__poke = false
         end
     end
 	if new == 33 then	-- resting
@@ -349,11 +362,13 @@ function handle_zone_change(new_id, old_id)
 	zone_id = new_id
 end
 
-function handle_job_change(mid, mlvl, sid, slvl)
-	player.main_job = res.jobs[mid].ens
-	player.main_job_level = mlvl
-	player.sub_job = res.jobs[sid].ens
-	player.sub_job_level = slvl
+function handle_job_change(main_job_id, main_job_level, sub_job_id, sub_job_level)
+	player.main_job = res.jobs[main_job_id].ens
+	player.main_job_id = main_job_id
+	player.main_job_level = main_job_level
+	player.sub_job = res.jobs[sub_job_id].ens
+	player.sub_job_id = sub_job_id
+	player.sub_job_level = sub_job_level
 end
 
 function handle_gain_buff(buff_id)
@@ -401,6 +416,8 @@ function handle_outgoing_chunk(id, original)
 			__get_menu_id = 0
 			__get_npc_name = ''
 			__busy = parsed['Automated Message']
+			__poke = parsed['Automated Message']
+			--__received_response = false
 		end
 	end
 end
@@ -424,16 +441,36 @@ function handle_incoming_chunk(id, data, mod, inj, blk)
 			end
 		end
 	elseif (id == 0x032 or id == 0x034) and __busy and not inj then
+		atcwarn('Packet 0x032 / 0x034 received.')
+		__received_response = true
 		local parsed = packets.parse('incoming', data)
 		if parsed then
 			local target = windower.ffxi.get_mob_by_index(parsed['NPC Index']) or false
 			if target and target.name == __get_npc_name and parsed['Menu ID'] == __get_menu_id and parsed['Zone'] == zone_id then
+				if __shop_packet then
+					__shop_busy = true
+				end
 				send_packet(parsed, __get_packet_sequence)
 				return true
-			else
-				atcwarn('ABORT! Wrong NPC interaction!')
-				send_packet(parsed, {{0,16384,0,false}})
+			-- else
+				-- if not __poke then
+					-- atcwarn('ABORT! Wrong NPC interaction!')
+					-- send_packet(parsed, {{0,16384,0,false}})
+					-- __busy = false
+					-- __shop_packet = false
+					-- __shop_opened = false
+					-- __shop_busy = false
+					-- __received_response = false
+				-- end
 			end
+		end
+	-- Open shop sub menu
+	elseif id == 0x03C and ((not __busy and not inj and __shop_busy) or __poke) then
+		local parsed = packets.parse('incoming', data)
+		if parsed then
+			__received_response = true
+			atcwarn('Shop opened - Packet 03C received.')
+			__shop_opened = true
 		end
 	elseif (id == 0x38) and haveBuff('Voidwatcher') then
         local parsed = packets.parse('incoming', data)
@@ -1020,7 +1057,11 @@ function poke(mob_index)
 		return
 		atcwarn("[POKE] - Abort, no valid target.")
 	else
+		__busy = true
+		__poke = true
 		get_poke_check_index(mob_index)	
+		__received_response = false
+		__busy = false
 	end
 end
 
@@ -1030,7 +1071,11 @@ function pokesingle(mob_index)
 		return
 		atcwarn("[POKE] - Abort, no valid target. - Single Char")
 	else
+		__busy = true
+		__poke = true
 		get_poke_check_index(mob_index)	
+		__received_response = false
+		__busy = false
 	end
 end
 
@@ -1571,10 +1616,18 @@ function buy(cmd2,leader_buy)
 			windower.send_command('powder buy 3315; wait 10; fa prize powder')
 		elseif cmd2 == 'ss' then
 			windower.send_command('sellnpc s')
+			__busy = true
+			__poke = true
 			get_poke_check_index:schedule(1.7,29)
+			__received_response = false
+			__busy = false
 		elseif cmd2 == 'sp' then
 			windower.send_command('sellnpc p')
+			__busy = true
+			__poke = true
 			get_poke_check_index:schedule(1.7,29)
+			__received_response = false
+			__busy = false
 			windower.send_command('wait 10; fa prize powder')
 		elseif cmd2 == 're' then
 			windower.send_command('lua r sparks; wait 0.5; lua r powder;')
@@ -2317,7 +2370,7 @@ end
 function autosc(cmd2, leader_char)
 	player=windower.ffxi.get_player()
 	
-	local autosc_jobs = S{'COR','SCH','BLM','RUN','BRD','RDM','GEO','DRK','BLU','WHM'}
+	local autosc_jobs = S{'COR','SCH','BLM','RUN','BRD','RDM','GEO','DRK','BLU','WHM','WAR'}
 
 	local autosc_cmd = cmd2 and cmd2:lower() or (settings.autosc and 'off' or 'on')
 	if S{'off'}:contains(autosc_cmd) then
@@ -2458,18 +2511,29 @@ function autosc(cmd2, leader_char)
 					windower.send_command:schedule(17.0, 'gs c elemental nuke Ongo')
 					windower.send_command:schedule(21.8, 'gs c elemental nuke Ongo')
 				end
-			--Sortie 4 Step: Aeolian Edge x4.
-			elseif cmd2 and cmd2:lower() == 'aeolian' then
+			--Sortie 4 Step
+			elseif cmd2 and cmd2:lower() == 'sortiesc' then
 				windower.send_command('gs c set autobuffmode off; gs c set autowsmode off; sing off;')
-				if player.main_job == 'COR' then
-					windower.send_command:schedule(0.2, 'input /ws "Aeolian Edge" <t>')
-					windower.send_command:schedule(8.1, 'input /ws "Aeolian Edge" <t>')
-				elseif player.main_job == 'BRD' then
-					windower.send_command:schedule(3.9, 'input /ws "Aeolian Edge" <t>')
-					windower.send_command:schedule(11.6, 'input /ws "Aeolian Edge" <t>')
-				elseif S{'DRK','WHM','RDM'}:contains(player.main_job) then
-					windower.send_command:schedule(5.0, 'input /ma "Aero" <bt>')
-					windower.send_command:schedule(9.0, 'input /ma "Stone" <bt>')
+				if player.main_job == 'DRK' then
+					windower.send_command:schedule(0.2, 'input /ws "Herculean Slash" <t>')
+					windower.send_command:schedule(8.8, 'input /ws "Herculean Slash" <t>')
+				elseif player.main_job == 'WAR' then
+					windower.send_command:schedule(3.9, 'input /ws "Crescent Moon" <t>')
+					windower.send_command:schedule(14.3, 'input /ws "Crescent Moon" <t>')
+				end
+			--Sortie SC
+			elseif cmd2 and cmd2:lower() == 'sortiemb' then
+				windower.send_command('gs c set autobuffmode off; gs c set autowsmode off; sing off;')
+				if player.main_job == 'DRK' then
+					windower.send_command:schedule(0.2, 'input /ws "Herculean Slash" <t>')
+					windower.send_command:schedule(4.0, 'input /ma "Stone" <t>')
+					windower.send_command:schedule(8.8, 'input /ws "Herculean Slash" <t>')
+				elseif player.main_job == 'WAR' then
+					windower.send_command:schedule(3.9, 'input /ws "Crescent Moon" <t>')
+					windower.send_command:schedule(14.3, 'input /ws "Crescent Moon" <t>')
+				elseif S{'WHM','RDM'}:contains(player.main_job) then
+					windower.send_command:schedule(4.2, 'input /ma "Stone" <bt>')
+					windower.send_command:schedule(9.1, 'input /ma "Aero" <bt>')
 				end
 			elseif cmd2 and cmd2:lower() == 'def' then
 				if player.main_job == 'RUN' then
@@ -2692,7 +2756,107 @@ function attackon()
 	end
 end
 
-function get(cmd2)
+local function pre_check()
+	if not (get_map[zone_id]) then
+		atc('[GET KI] Not in an listed zone, cancelling.')
+		return
+	end
+	
+	if __busy then
+		atcwarn('[GET KI] ABORT! Currently interacting with some NPC')
+		return
+	end
+	
+	if haveBuff('Invisible') then
+		windower.send_command('cancel invisible')
+		coroutine.sleep(2.0)
+	end
+end
+
+function refillmeds()
+	pre_check()
+
+	local category_curio = S{'meds','scrolls','foods'}
+	
+	for our_categories,_ in pairs (category_curio) do
+		local possible_npc = find_npc_to_poke("get")
+		local get_command = (possible_npc and get_map[zone_id].name[possible_npc.name].cmd[our_categories]) or nil
+		if possible_npc and get_command then
+			if get_command.packet then
+				atc("[REFILL MEDS] - "..get_command.description)
+				__get_packet_sequence = get_command.packet[1]
+				__get_menu_id = get_command.menu_id
+				__get_npc_name = possible_npc.name
+				--__get_shop_slot = get_command.shop_packet_slot
+				__shop_packet = true
+				__busy = true
+			end
+			--Poke NPC
+			if not get_poke_check_index(possible_npc.index) then
+				__get_packet_sequence = {}
+				__get_menu_id = 0
+				__get_npc_name = ''
+				__busy = false
+				__shop_packet = false
+			end
+			coroutine.sleep(1.8)
+			if __shop_opened then
+				atc('Buying '..our_categories)
+				for k,v in pairs(get_map[zone_id].name[possible_npc.name]) do
+					for _,med_table in pairs(v) do
+						if med_table.category == our_categories then
+							windower.send_command('get "' ..med_table.description.. '" 100')
+							coroutine.sleep(1.2)
+							local item_count = 0
+							item_count = CheckItemInInventory(med_table.description, true)
+							if item_count and item_count < med_table.count and med_table.category == our_categories then
+								local amount_to_buy = med_table.count - item_count
+								atc(med_table.description.." - "..item_count.." <> Buying: "..amount_to_buy)
+								if amount_to_buy > 12 then
+									atc("Buying in multiple transactions")
+									local small_count = 1
+									for i = amount_to_buy, 1, -12 do
+										if i > 12 then
+											atc('TX: '..small_count..' - '..med_table.description..' <> Buying: 12')
+											send_packet_shop(med_table.shop_packet_slot, 12)
+										else
+											atc('TX: '..small_count..' - '..med_table.description..' <> Buying: '..i)
+											send_packet_shop(med_table.shop_packet_slot, i)
+										end
+										small_count = small_count +1
+										coroutine.sleep(2.0)
+									end
+									
+								else
+									send_packet_shop(med_table.shop_packet_slot, amount_to_buy)
+								end
+							end
+							coroutine.sleep(2.0)
+							windower.send_command('put "' ..med_table.description.. '" sack 100')
+							coroutine.sleep(1.2)
+						end
+					end
+				end
+				windower.send_command('setkey escape down; wait 0.25; setkey escape up;')
+				__busy = false
+				__shop_packet = false
+				__shop_opened = false
+				__shop_busy = false
+				__received_response = false
+				atc("Finish refilling all: "..our_categories)
+			else
+				atcwarn("Shop did not open!  0x03C was not received.")
+				__received_response = false
+			end
+		else
+			atc("[REFILL MEDS] No NPC's nearby to poke, cancelling.")
+			__received_response = false
+		end
+	
+	end
+end
+
+function get(cmd2,cmd3)
 	local ki_count = 0
 	local ki_max = 0
 	if not (get_map[zone_id]) then
@@ -2722,24 +2886,41 @@ function get(cmd2)
 				__get_menu_id = get_command.menu_id
 				__get_npc_name = possible_npc.name
 				__busy = true
+				if get_command.shop_packet_slot and cmd3 and tonumber(cmd3, 10) < 12 then
+					__shop_packet = true
+				end
 				--Poke NPC
 				if not get_poke_check_index(possible_npc.index) then
 					__get_packet_sequence = {}
 					__get_menu_id = 0
 					__get_npc_name = ''
 					__busy = false
+					__received_response = false
+				end
+				--Curio command
+				coroutine.sleep(1.8)
+				if __shop_opened then
+					atcwarn(get_command.description.." - Buying: "..cmd3)
+					send_packet_shop(get_command.shop_packet_slot, tonumber(cmd3, 10))
+					__busy = false
+					__shop_packet = false
+					__shop_opened = false
+					__shop_busy = false
 				end
 			else
 				atc("[GET Packet] - Abort! You already have maximum amount of "..get_command.description)
 			end
 		elseif (get_command.entry_command) then	-- KeyPress
+			__busy = true
 			if get_poke_check_index(possible_npc.index) then
 				atc("[GET] - "..get_command.description)
 				keypress_cmd(get_command.entry_command)
 			end
 		end
+		__received_response = false
 	else
 		atc("[GET] No NPC's nearby to poke, cancelling.")
+		__received_response = false
 	end
 end
 
@@ -2773,7 +2954,7 @@ function orb_entry(leader, orb_type)
 			end
 		end
 	end
-	
+	__received_response = false	
 end
 
 function htmb(leader)
@@ -2791,6 +2972,7 @@ function htmb(leader)
 			end
 		end
 	end
+	__received_response = false
 end
 
 function enter(leader)
@@ -2823,8 +3005,10 @@ function enter(leader)
 					__get_menu_id = 0
 					__get_npc_name = ''
 					__busy = false
+					__received_response = false
 				end
 			else
+				__busy = true
 				if get_poke_check_index(possible_npc.index) then
 					keypress_cmd(npc_map[zone_id].name[possible_npc.name].entry_command)
 				end
@@ -2843,6 +3027,7 @@ function enter(leader)
 					__get_menu_id = 0
 					__get_npc_name = ''
 					__busy = false
+					__received_response = false
 				end
 			else
 				if get_poke_check_index(possible_npc.index) then
@@ -2850,8 +3035,10 @@ function enter(leader)
 				end
 			end
 		end
+		__received_response = false
 	else
 		atc("[ENTER] No NPC's nearby to poke, cancelling.")
+		__received_response = false
 	end	
 end
 
@@ -2874,7 +3061,7 @@ function CheckItemInInventory(item_name, amt)
 			end
 		end
 	end
-	if seal_count > 0 and amt then
+	if seal_count >= 0 and amt then
 		return seal_count
 	end
 	return false
@@ -2950,16 +3137,16 @@ function cleanup()
 		atc('In Port Jeuno - attempt to trade seals to NPC')
 		local seal_count
 		seal_count = CheckItemInInventory('H. Kindred Crest', true)
-		if seal_count and seal_count < 792 then
+		if seal_count > 0 and seal_count < 792 then
 			atc('H. Kindred Crest: '..seal_count)
             windower.send_command('tradenpc '.. seal_count..' \"H. Kindred Crest\" Shami')
 			coroutine.sleep(3.5)
 			windower.send_command('setkey enter down; wait 0.25; setkey enter up;')
         end
-		coroutine.sleep(1.5)
+		coroutine.sleep(5.5)
 		seal_count = 0
 		seal_count = CheckItemInInventory('S. Kindred Crest', true)
-		if seal_count and seal_count < 792 then
+		if seal_count > 0 and seal_count < 792 then
 			atc('S. Kindred Crest: '..seal_count)
             windower.send_command('tradenpc '.. seal_count..' \"S. Kindred Crest\" Shami')
 			coroutine.sleep(3.5)
@@ -3747,7 +3934,8 @@ function get_poke_check_index(npc_index)
 	npc_dialog = false
 	count = 0
 
-	while npc_dialog == false and count < 3	do
+	--while (npc_dialog == false and __received_response == false) and count < 3 do
+	while __received_response == false and count < 3 do
 		count = count + 1
         npcstats = windower.ffxi.get_mob_by_index(npc_index)
 		if not npcstats then
@@ -3760,11 +3948,13 @@ function get_poke_check_index(npc_index)
 		end
 		
 		coroutine.sleep(2.1)
-		if npc_dialog == false then
+		--if (npc_dialog == false and __received_response == false) then
+		if __received_response == false then
 			coroutine.sleep(2.0)
 		end
 	end
-	return npc_dialog
+	return __received_response
+	--return npc_dialog
 end
 
 function moveto(tx,ty,tz, min_distance)
@@ -3935,6 +4125,18 @@ function send_packet(parsed, options, delay)
 				end, (index * 0.25))
 			end
 		end, delay)
+	end
+end
+
+function send_packet_shop(shop_slot, item_count)
+	if shop_slot and item_count then
+		packets.inject(packets.new('outgoing', 0x083, {
+			['Count']             	= item_count,
+			['_unknown2']           = 0,
+			['Shop Slot']        	= shop_slot,
+			['_unknown3']        	= 0,
+			['_unknown4']           = 0,
+		}))
 	end
 end
 

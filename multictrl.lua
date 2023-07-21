@@ -2787,7 +2787,6 @@ function refillmeds()
 				__get_packet_sequence = get_command.packet[1]
 				__get_menu_id = get_command.menu_id
 				__get_npc_name = possible_npc.name
-				--__get_shop_slot = get_command.shop_packet_slot
 				__shop_packet = true
 				__busy = true
 			end
@@ -2799,37 +2798,47 @@ function refillmeds()
 				__busy = false
 				__shop_packet = false
 			end
-			coroutine.sleep(1.8)
+			coroutine.sleep(2.5)
 			if __shop_opened then
-				atc('Buying '..our_categories)
+				windower.send_command('setkey escape down; wait 0.25; setkey escape up;')
+				coroutine.sleep(0.5)
+				atc('[REFILL MEDS] - Cateogry: '..our_categories:capitalize())
 				for k,v in pairs(get_map[zone_id].name[possible_npc.name]) do
 					for _,med_table in pairs(v) do
 						if med_table.category == our_categories then
 							windower.send_command('get "' ..med_table.description.. '" 100')
 							coroutine.sleep(1.2)
 							local item_count = 0
-							item_count = CheckItemInInventory(med_table.description, true)
+							item_count = CheckItemInInventory(med_table.description, true, true)
 							if item_count and item_count < med_table.count and med_table.category == our_categories then
 								local amount_to_buy = med_table.count - item_count
-								atc(med_table.description.." - "..item_count.." <> Buying: "..amount_to_buy)
-								if amount_to_buy > 12 then
-									atc("Buying in multiple transactions")
-									local small_count = 1
-									for i = amount_to_buy, 1, -12 do
-										if i > 12 then
-											atc('TX: '..small_count..' - '..med_table.description..' <> Buying: 12')
-											send_packet_shop(med_table.shop_packet_slot, 12)
-										else
-											atc('TX: '..small_count..' - '..med_table.description..' <> Buying: '..i)
-											send_packet_shop(med_table.shop_packet_slot, i)
-										end
-										small_count = small_count +1
-										coroutine.sleep(2.0)
-									end
-									
+								local free_space = count_inv()
+								local total_space = math.ceil(amount_to_buy/12)
+
+								if free_space < total_space then
+									atcwarn("WARNING:  Not enough space, skipping - "..med_table.description)
 								else
-									send_packet_shop(med_table.shop_packet_slot, amount_to_buy)
+									atc(med_table.description.." - "..item_count.." <> Buying: "..amount_to_buy)
+									if amount_to_buy > 12 then
+										atc("TX: Buying in multiple transactions!")
+										local small_count = 1
+										for i = amount_to_buy, 1, -12 do
+											if i > 12 then
+												atc('TX: '..small_count..' - '..med_table.description..' <> Buying: 12')
+												send_packet_shop(med_table.shop_packet_slot, 12)
+											else
+												atc('TX: '..small_count..' - '..med_table.description..' <> Buying: '..i)
+												send_packet_shop(med_table.shop_packet_slot, i)
+											end
+											small_count = small_count +1
+											coroutine.sleep(2.0)
+										end
+									else
+										send_packet_shop(med_table.shop_packet_slot, amount_to_buy)
+									end
 								end
+							else
+								atcwarn('Skipping: '..med_table.description..' - Have: '..item_count)
 							end
 							coroutine.sleep(2.0)
 							windower.send_command('put "' ..med_table.description.. '" sack 100')
@@ -2837,23 +2846,22 @@ function refillmeds()
 						end
 					end
 				end
-				windower.send_command('setkey escape down; wait 0.25; setkey escape up;')
 				__busy = false
 				__shop_packet = false
 				__shop_opened = false
 				__shop_busy = false
 				__received_response = false
-				atc("Finish refilling all: "..our_categories)
+				atc("[REFILL MEDS] - Finish refilling all: "..our_categories:capitalize())
 			else
-				atcwarn("Shop did not open!  0x03C was not received.")
+				atcwarn("[REFILL MEDS] - Shop did not open!  0x03C was not received.")
 				__received_response = false
 			end
 		else
-			atc("[REFILL MEDS] No NPC's nearby to poke, cancelling.")
+			atcwarn("[REFILL MEDS] No NPC's nearby to poke, cancelling.")
 			__received_response = false
 		end
-	
 	end
+	atc("[REFILL MEDS] All actions complete.")
 end
 
 function get(cmd2,cmd3)
@@ -3048,16 +3056,19 @@ function basic_keys(cmd)
 	keypress_cmd(basic_key_sequence[cmd].command)
 end
 
-function CheckItemInInventory(item_name, amt)
-	local bag_id = 0
+function CheckItemInInventory(item_name, amt, all_bags)
+	local bag_id = (all_bags and {0,5,6,7}) or {0}
 	local seal_count = 0
 	local item_id = res.items:with('en', item_name:capitalize()).id
-	for item, index in T(windower.ffxi.get_items(bag_id)):it() do
-		if type(item) == 'table' and item.id == item_id then
-			if amt then 
-				seal_count = seal_count + item.count
-			else
-				return true
+	for _,bag in ipairs(bag_id) do
+		local storage = windower.ffxi.get_items(bag)
+		for item, index in T(storage):it() do
+			if type(item) == 'table' and item.id == item_id then
+				if amt then 
+					seal_count = seal_count + item.count
+				else
+					return true
+				end
 			end
 		end
 	end
@@ -4023,6 +4034,11 @@ function get_registry(id)
     else
         return 'UNK'
     end
+end
+
+function count_inv()
+	local playerinv = windower.ffxi.get_items().inventory
+	return playerinv.max - playerinv.count
 end
 
 -- Find which char has which job

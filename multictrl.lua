@@ -37,7 +37,6 @@ default = {
 	autosub='sleep',
 	autosc=false,
 	autoarts='',
-	npc_dialog=false,
     smartws=false,
 	smartws_target='',
 }
@@ -102,8 +101,8 @@ DelayCMDS = S{'book','get','enter','deimos','macro','htmb','enup','endown','ent'
 
 TransferCMDS = S{'mnt','dis','warp','omen','fps30','fps60','lotall'}
 
-local player = windower.ffxi.get_player()
-local info = windower.ffxi.get_info()
+player = windower.ffxi.get_player()
+info = windower.ffxi.get_info()
 
 if info.logged_in then
     zone_id = info.zone
@@ -117,6 +116,7 @@ old = 0
 log_flag = true
 cancel = false
 
+__npc_dialog=false
 __helix_timer = 0
 
 function handle_addon_command(input, ...)
@@ -152,7 +152,7 @@ function handle_addon_command(input, ...)
 		local mob_index = target and target.valid_target and target.is_npc and target.index
 		_G[cmd]:schedule(0, cmd2, mob_index)
 		send_to_IPC:schedule(1, cmd,cmd2,mob_index)
-	elseif cmd == 'cc' or cmd == 'fin' or cmd == 'dispelga' or cmd == 'poke' or cmd == 'pokesingle' then	-- Index / Command
+	elseif cmd == 'cc' or cmd == 'fin' or cmd == 'dispelga' or cmd == 'poke' or cmd == 'pokesingle' or cmd == 'sell' then	-- Index / Command
 		local target = windower.ffxi.get_mob_by_target('t')
 		local mob_index = target and target.valid_target and target.is_npc and target.index
 		if (cmd == 'poke' or cmd == 'pokesingle') and not mob_index then
@@ -285,8 +285,8 @@ function handle_ipc_message(msg, ...)
 		buy(cmd2, cmd3)	
 	elseif cmd == 'blu' or cmd == 'cor' then
 		_G[cmd](cmd2, cmd3)	
-	elseif cmd == 'cc' or cmd == 'fin' or cmd == 'dispelga' or cmd == 'poke' then
-		if cmd == 'poke' then
+	elseif cmd == 'cc' or cmd == 'fin' or cmd == 'dispelga' or cmd == 'poke' or cmd == 'sell' then
+		if cmd == 'poke' or cmd == 'sell' then
 			coroutine.sleep(delay)
 		end
 		_G[cmd](cmd2)	
@@ -314,9 +314,9 @@ function handle_statue_change(new, old)
 	local target = windower.ffxi.get_mob_by_target('t')
     if not target or target then
         if new == 4 then
-            npc_dialog = true
+            __npc_dialog = true
         elseif old == 4 then
-            npc_dialog = false
+            __npc_dialog = false
         end
     end
 	if new == 33 then	-- resting
@@ -1475,7 +1475,7 @@ function buy(cmd2,leader_buy)
 							coroutine.sleep(0.5)
 						else
 							-- In zone, do distance check
-							if math.sqrt(ptymember.distance) < 8 and (windower.ffxi.get_mob_by_name(v.name).in_party or windower.ffxi.get_mob_by_name(v.name).in_alliance)then
+							if math.sqrt(ptymember.distance) < 10 and (windower.ffxi.get_mob_by_name(v.name).in_party or windower.ffxi.get_mob_by_name(v.name).in_alliance)then
 								coroutine.sleep(1.63)
 								windower.send_command('send ' .. v.name .. ' sparks buyall acheron shield')
 								atc('[BUY] Buying shields for: ' .. v.name)
@@ -1490,7 +1490,7 @@ function buy(cmd2,leader_buy)
 			end
 			-- Buy shield for self
 			windower.send_command('sparks buyall acheron shield')
-			coroutine.sleep(47)
+			coroutine.sleep(48)
 			atc('[BUY] All done buying shields.')
 		end
 	end

@@ -137,30 +137,34 @@ end
 
 function poke(mob_index)
     atcwarn("[POKE] - Attempt to poke NPC")
-    if not mob_index then
+	__get_npc_name = windower.ffxi.get_mob_by_index(mob_index) and windower.ffxi.get_mob_by_index(mob_index).name or nil
+    if not mob_index or not __get_npc_name then
 		return
 		atcwarn("[POKE] - Abort, no valid target.")
 	else
 		__busy = true
 		__poke = true
-		__get_npc_name = windower.ffxi.get_mob_by_index(mob_index).name
 		get_poke_check_index(mob_index)	
-		finish_interaction()
 	end
+	finish_interaction()
 end
 
-function pokesingle(mob_index)
-    atcwarn("[POKE] - Attempt to poke NPC - Single Char!")
-    if not mob_index then
+pokesingle = poke
+
+function sell(mob_index)
+	atcwarn("[SELL] - Attempt to poke NPC to sell junk.")
+    __get_npc_name = windower.ffxi.get_mob_by_index(mob_index) and windower.ffxi.get_mob_by_index(mob_index).name or nil
+    if not mob_index or not __get_npc_name then
 		return
-		atcwarn("[POKE] - Abort, no valid target. - Single Char")
+		atcwarn("[SELL] - Abort, no valid target.")
 	else
+		windower.send_command('sellnpc junk')
+		coroutine.sleep(1.5)
 		__busy = true
 		__poke = true
-		__get_npc_name = windower.ffxi.get_mob_by_index(mob_index).name
-		get_poke_check_index(mob_index)	
-		finish_interaction()
+		get_poke_check_index(mob_index)
 	end
+	finish_interaction()
 end
 
 local function pre_check(map_type)
@@ -425,7 +429,7 @@ function htmb(leader)
 	if (leader == player.name and not __htmb_entered) or (leader ~= player.name and haveBuff('Battlefield')) then
 		local possible_npc = find_npc_to_poke("htmb")
 		if possible_npc then
-			if not get_poke_check_index(possible_npc.index) then
+			if not get_poke_check_index(possible_npc.index, true) then
 				finish_orb_htmb_interaction()
 			else
 				keypress_cmd(htmb_map[zone_id].entry_command)
@@ -547,7 +551,7 @@ end
 function trade_orb(npc_index, __orb_type)
 	count = 0
 
-	while __received_response == false and count < 3 do
+	while __npc_dialog == false and count < 3 do
 		count = count + 1
         npcstats = windower.ffxi.get_mob_by_index(npc_index)
 		if npcstats and distance_check_npc(npcstats) and npcstats.valid_target then
@@ -560,26 +564,43 @@ function trade_orb(npc_index, __orb_type)
 		end
 		coroutine.sleep(2.1)
 	end
-	return __received_response
+	return __npc_dialog
 end
 
-function get_poke_check_index(npc_index)
+function get_poke_check_index(npc_index, menu_delay)
 	count = 0
-
-	while __received_response == false and count < 3 do
-		count = count + 1
-        npcstats = windower.ffxi.get_mob_by_index(npc_index)
-		if not npcstats then
-			atcwarn('[POKE]: Abort! NPC Target is beyond 50 yalms in current zone.')
-			return false
+	if not menu_delay then
+		while __received_response == false and count < 3 do
+			count = count + 1
+			npcstats = windower.ffxi.get_mob_by_index(npc_index)
+			if not npcstats then
+				atcwarn('[POKE]: Abort! NPC Target is beyond 50 yalms in current zone.')
+				return false
+			end
+			if npcstats and distance_check_npc(npcstats) and npcstats.valid_target then
+				atc('Poke #: ' ..count.. ' [NPC: ' .. npcstats.name.. ' ID: ' .. npcstats.id.. ']')
+				poke_npc(npcstats.id,npcstats.index)
+			end
+			coroutine.sleep(2.1)
 		end
-		if npcstats and distance_check_npc(npcstats) and npcstats.valid_target then
-			atc('Poke #: ' ..count.. ' [NPC: ' .. npcstats.name.. ' ID: ' .. npcstats.id.. ']')
-			poke_npc(npcstats.id,npcstats.index)
+		return __received_response
+	--Delayed like HTMB menus
+	else
+		while __npc_dialog == false and count < 3 do
+			count = count + 1
+			npcstats = windower.ffxi.get_mob_by_index(npc_index)
+			if not npcstats then
+				atcwarn('[POKE]: Abort! NPC Target is beyond 50 yalms in current zone.')
+				return false
+			end
+			if npcstats and distance_check_npc(npcstats) and npcstats.valid_target then
+				atc('Poke #: ' ..count.. ' [NPC: ' .. npcstats.name.. ' ID: ' .. npcstats.id.. ']')
+				poke_npc(npcstats.id,npcstats.index)
+			end
+			coroutine.sleep(2.1)
 		end
-		coroutine.sleep(2.1)
+		return __npc_dialog
 	end
-	return __received_response
 end
 
 function poke_npc(npc,target_index)

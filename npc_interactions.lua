@@ -3,6 +3,7 @@
 --Packet globals
 __busy = false
 __get_packet_sequence = {}
+__get_keypress_sequence = {}
 __get_menu_id = 0
 __get_npc_name = ''
 __received_response = false
@@ -56,9 +57,14 @@ function handle_incoming_chunk(id, data, mod, inj, blk)
 				end
 				send_packet(parsed, __get_packet_sequence)
 				return true
-			--Poke/Enter/Get/Macro + Keypresses
+			--Keypresses
+			elseif target and target.name == __get_npc_name and (next(__get_keypress_sequence) ~= nil) then
+				atcwarn('Packet 0x032 / 0x034 received: Keypress')
+				__received_response = true
+				keypress_cmd(__get_keypress_sequence)
+			--Poke
 			elseif target and target.name == __get_npc_name then
-				atcwarn('Packet 0x032 / 0x034 received: Keypress / Poke Command')
+				atcwarn('Packet 0x032 / 0x034 received: Poke Command')
 				__received_response = true
 			else
 				atcwarn('ABORT! Wrong NPC interaction! 0x032 / 0x034')
@@ -315,11 +321,13 @@ function get(cmd2,cmd3)
 				atcwarn("[GET Packet] - Abort! You already have maximum amount of "..get_command.description)
 			end
 		elseif (get_command.entry_command) then	-- KeyPress
+			atc("[GET] - "..get_command.description)
 			__busy = true
 			__get_npc_name = possible_npc.name
-			if get_poke_check_index(possible_npc.index) then
-				atc("[GET] - "..get_command.description)
-				keypress_cmd(get_command.entry_command)
+			__get_keypress_sequence = get_command.entry_command
+			if not get_poke_check_index(possible_npc.index) then
+				finish_interaction()
+				return
 			end
 		end
 		finish_interaction()
@@ -350,8 +358,9 @@ function enter(leader)
 			else
 				__busy = true
 				__get_npc_name = possible_npc.name
-				if get_poke_check_index(possible_npc.index) then
-					keypress_cmd(npc_map[zone_id].name[possible_npc.name].entry_command)
+				__get_keypress_sequence = npc_map[zone_id].name[possible_npc.name].entry_command
+				if not get_poke_check_index(possible_npc.index) then
+					finish_interaction()
 				end
 			end
 		-- Index type
@@ -370,8 +379,9 @@ function enter(leader)
 			else
 				__busy = true
 				__get_npc_name = possible_npc.name
-				if get_poke_check_index(possible_npc.index) then
-					keypress_cmd(npc_map[zone_id].name[possible_npc.name].index[possible_npc.index].entry_command)
+				__get_keypress_sequence = npc_map[zone_id].name[possible_npc.name].index[possible_npc.index].entry_command
+				if not get_poke_check_index(possible_npc.index) then
+					finish_interaction()
 				end
 			end
 		end
@@ -460,6 +470,7 @@ function basic_keys(cmd)
 end
 
 function finish_interaction()
+	__get_keypress_sequence = {}
 	__get_packet_sequence = {}
 	__get_menu_id = 0
 	__get_npc_name = ''
@@ -581,7 +592,7 @@ function get_poke_check_index(npc_index, menu_delay)
 				atc('Poke #: ' ..count.. ' [NPC: ' .. npcstats.name.. ' ID: ' .. npcstats.id.. ']')
 				poke_npc(npcstats.id,npcstats.index)
 			end
-			coroutine.sleep(2.1)
+			coroutine.sleep(2.5)
 		end
 		return __received_response
 	--Delayed like HTMB menus
@@ -597,7 +608,7 @@ function get_poke_check_index(npc_index, menu_delay)
 				atc('Poke #: ' ..count.. ' [NPC: ' .. npcstats.name.. ' ID: ' .. npcstats.id.. ']')
 				poke_npc(npcstats.id,npcstats.index)
 			end
-			coroutine.sleep(2.1)
+			coroutine.sleep(2.5)
 		end
 		return __npc_dialog
 	end

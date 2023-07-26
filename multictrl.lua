@@ -310,21 +310,7 @@ function handle_login_load()
 end
 
 
-function handle_statue_change(new, old)
-	local target = windower.ffxi.get_mob_by_target('t')
-    if not target or target then
-        if new == 4 then
-            __npc_dialog = true
-        elseif old == 4 then
-            __npc_dialog = false
-        end
-    end
-	if new == 33 then	-- resting
-		isResting = true
-	elseif new == 00 then	-- idle
-		isResting = false
-	end
-end
+
 
 
 function handle_zone_change(new_id, old_id)
@@ -3508,6 +3494,5 @@ end
 windower.register_event('addon command', handle_addon_command)
 windower.register_event('ipc message', handle_ipc_message) 
 windower.register_event('zone change', handle_zone_change)
-windower.register_event('status change', handle_statue_change)
 windower.register_event('load','login', handle_login_load)
 windower.register_event("job change", handle_job_change)

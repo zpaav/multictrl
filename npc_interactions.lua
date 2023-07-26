@@ -92,6 +92,22 @@ function handle_incoming_chunk(id, data, mod, inj, blk)
 	end
 end
 
+function handle_statue_change(new, old)
+	local target = windower.ffxi.get_mob_by_target('t')
+    if not target or target then
+        if new == 4 and __busy then
+            __npc_dialog = true
+        elseif old == 4 then
+            __npc_dialog = false
+        end
+    end
+	if new == 33 then	-- resting
+		isResting = true
+	elseif new == 00 then	-- idle
+		isResting = false
+	end
+end
+
 function handle_outgoing_chunk(id, original)
 	if id == 0x05b then
 		local parsed = packets.parse('outgoing', original)
@@ -176,12 +192,15 @@ end
 local function pre_check(map_type)
 	if map_type == 'get' and not (get_map[zone_id]) then
 		atcwarn('[GET] Not in an listed zone, cancelling.')
+		finish_interaction()
 		return false
 	elseif map_type == 'enter' and not (npc_map[zone_id]) then
 		atcwarn('[ENTER] Not in an listed zone, cancelling.')
+		finish_interaction()
 		return false
 	elseif map_type == 'htmb' and not (htmb_map[zone_id]) then
 		atcwarn('[HTMB] Not in an listed zone, cancelling.')
+		finish_interaction()
 		return false
 	end
 	
@@ -439,10 +458,12 @@ function htmb(leader)
 	if (leader == player.name and not __htmb_entered) or (leader ~= player.name and haveBuff('Battlefield')) then
 		local possible_npc = find_npc_to_poke("htmb")
 		if possible_npc then
-			if not get_poke_check_index(possible_npc.index, true) then
+			__busy = true
+			__get_npc_name = possible_npc.name
+			__get_keypress_sequence = htmb_map[zone_id].entry_command
+			if not get_poke_check_index(possible_npc.index) then
 				finish_orb_htmb_interaction()
 			else
-				keypress_cmd(htmb_map[zone_id].entry_command)
 				if leader == player.name and not __htmb_state then		
 					__htmb_state=true
 				end
@@ -573,45 +594,27 @@ function trade_orb(npc_index, __orb_type)
 				windower.send_command('tradenpc 1 "deimos orb" "'..npcstats.name..'"')
 			end
 		end
-		coroutine.sleep(2.1)
+		coroutine.sleep(3.0)
 	end
 	return __npc_dialog
 end
 
-function get_poke_check_index(npc_index, menu_delay)
+function get_poke_check_index(npc_index)
 	count = 0
-	if not menu_delay then
-		while __received_response == false and count < 3 do
-			count = count + 1
-			npcstats = windower.ffxi.get_mob_by_index(npc_index)
-			if not npcstats then
-				atcwarn('[POKE]: Abort! NPC Target is beyond 50 yalms in current zone.')
-				return false
-			end
-			if npcstats and distance_check_npc(npcstats) and npcstats.valid_target then
-				atc('Poke #: ' ..count.. ' [NPC: ' .. npcstats.name.. ' ID: ' .. npcstats.id.. ']')
-				poke_npc(npcstats.id,npcstats.index)
-			end
-			coroutine.sleep(2.5)
+	while __received_response == false and count < 3 do
+		count = count + 1
+		npcstats = windower.ffxi.get_mob_by_index(npc_index)
+		if not npcstats then
+			atcwarn('[POKE]: Abort! NPC Target is beyond 50 yalms in current zone.')
+			return false
 		end
-		return __received_response
-	--Delayed like HTMB menus
-	else
-		while __npc_dialog == false and count < 3 do
-			count = count + 1
-			npcstats = windower.ffxi.get_mob_by_index(npc_index)
-			if not npcstats then
-				atcwarn('[POKE]: Abort! NPC Target is beyond 50 yalms in current zone.')
-				return false
-			end
-			if npcstats and distance_check_npc(npcstats) and npcstats.valid_target then
-				atc('Poke #: ' ..count.. ' [NPC: ' .. npcstats.name.. ' ID: ' .. npcstats.id.. ']')
-				poke_npc(npcstats.id,npcstats.index)
-			end
-			coroutine.sleep(2.5)
+		if npcstats and distance_check_npc(npcstats) and npcstats.valid_target then
+			atc('Poke #: ' ..count.. ' [NPC: ' .. npcstats.name.. ' ID: ' .. npcstats.id.. ']')
+			poke_npc(npcstats.id,npcstats.index)
 		end
-		return __npc_dialog
+		coroutine.sleep(3.0)
 	end
+	return __received_response
 end
 
 function poke_npc(npc,target_index)
@@ -664,8 +667,8 @@ function send_packet_shop(shop_slot, item_count)
 	end
 end
 
-
 windower.register_event('incoming chunk', handle_incoming_chunk)
 windower.register_event('outgoing chunk', handle_outgoing_chunk)
 windower.register_event("gain buff", handle_gain_buff)
 windower.register_event("lose buff", handle_lose_buff)
+windower.register_event('status change', handle_statue_change)

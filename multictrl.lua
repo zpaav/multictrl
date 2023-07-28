@@ -1428,21 +1428,6 @@ function buy(cmd2,leader_buy)
 		elseif cmd2 == 'powder' then
 			atc('[BUY] Powder.')
 			windower.send_command('powder buy 3315; wait 10; fa prize powder')
-		elseif cmd2 == 'ss' then
-			windower.send_command('sellnpc s')
-			__busy = true
-			__poke = true
-			get_poke_check_index:schedule(1.7,29)
-			__received_response = false
-			__busy = false
-		elseif cmd2 == 'sp' then
-			windower.send_command('sellnpc p')
-			__busy = true
-			__poke = true
-			get_poke_check_index:schedule(1.7,29)
-			__received_response = false
-			__busy = false
-			windower.send_command('wait 10; fa prize powder')
 		elseif cmd2 == 're' then
 			windower.send_command('lua r sparks; wait 0.5; lua r powder;')
 		elseif cmd2 == 'allshields' and player.name == leader_buy then

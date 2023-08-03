@@ -171,13 +171,13 @@ npc_map = {
 		['Cavernous Maw'] = {entry_command = {0.85, {'up', 0.15}, 0.5, {'enter', 0.15}}},
 		}},
 	[256] = {name = {
-		['Dangueubert'] = {entry_command = {1.3, {'enter', 0.15}}},
+		['Dangueubert'] = {entry_command = {2.0, {'enter', 0.15}}},
 		}},
 	[257] = {name = {	-- Eastern Adoulin
 		--['Cunegonde'] = {menu_id = 24, packet = {[1]={{20,0,0,true},{20,0,0,false}}}},
-		['Cunegonde'] = {entry_command = {1.3, {'enter', 0.15}}},
-		['Krepol'] = {entry_command = {0.85, {'enter', 0.15}}},
-		['Glowing Hearth'] = {entry_command = {0.85, {'enter', 0.15}}},
+		['Cunegonde'] = {entry_command = {2.0, {'enter', 0.15}}},
+		['Krepol'] = {entry_command = {1.3, {'enter', 0.15}}},
+		['Glowing Hearth'] = {entry_command = {1.3, {'enter', 0.15}}},
 		}},
 	[261] = {name = { -- [Ceizak]
 		['???'] = {index = {

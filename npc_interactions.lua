@@ -583,7 +583,7 @@ end
 function trade_orb(npc_index, __orb_type)
 	count = 0
 
-	while __npc_dialog == false and count < 3 do
+	while __received_response == false and count < 3 do
 		count = count + 1
         npcstats = windower.ffxi.get_mob_by_index(npc_index)
 		if npcstats and distance_check_npc(npcstats) and npcstats.valid_target then
@@ -596,7 +596,7 @@ function trade_orb(npc_index, __orb_type)
 		end
 		coroutine.sleep(3.0)
 	end
-	return __npc_dialog
+	return __received_response
 end
 
 function get_poke_check_index(npc_index)

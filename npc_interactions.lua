@@ -422,6 +422,7 @@ function orb_entry(leader, __orb_type)
 		if leader == player.name and not __orb_state then
 			if possible_npc then
 				__busy = true
+				__get_npc_name = possible_npc.name
 				if not trade_orb(possible_npc.index, __orb_type) then
 					finish_orb_htmb_interaction()
 				else
@@ -439,6 +440,7 @@ function orb_entry(leader, __orb_type)
 		else
 			if possible_npc then
 				__busy = true
+				__get_npc_name = possible_npc.name
 				if not get_poke_check_index(possible_npc.index) then
 					finish_orb_htmb_interaction()
 				else

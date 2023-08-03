@@ -421,6 +421,7 @@ function orb_entry(leader, __orb_type)
 	local possible_npc = find_npc_to_poke(__orb_type)
 		if leader == player.name and not __orb_state then
 			if possible_npc then
+				__busy = true
 				if not trade_orb(possible_npc.index, __orb_type) then
 					finish_orb_htmb_interaction()
 				else
@@ -437,6 +438,7 @@ function orb_entry(leader, __orb_type)
 			end
 		else
 			if possible_npc then
+				__busy = true
 				if not get_poke_check_index(possible_npc.index) then
 					finish_orb_htmb_interaction()
 				else
@@ -583,7 +585,7 @@ end
 function trade_orb(npc_index, __orb_type)
 	count = 0
 
-	while __received_response == false and count < 3 do
+	while __npc_dialog == false and count < 3 do
 		count = count + 1
         npcstats = windower.ffxi.get_mob_by_index(npc_index)
 		if npcstats and distance_check_npc(npcstats) and npcstats.valid_target then
@@ -596,7 +598,7 @@ function trade_orb(npc_index, __orb_type)
 		end
 		coroutine.sleep(3.0)
 	end
-	return __received_response
+	return __npc_dialog
 end
 
 function get_poke_check_index(npc_index)
